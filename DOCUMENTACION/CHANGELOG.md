@@ -1,0 +1,39 @@
+# Registro de Cambios (Changelog)
+
+Todas las novedades, implementaciones tecnológicas y decisiones arquitecturales de Carrera Presidencial se documentarán aquí.
+
+## [v0.1.0] - Inicio del Proyecto
+- **Añadido:** Estructura de carpetas inicial y ecosistema de documentación base.
+- **Añadido:** `DOCUMENTACION/GDD.md`, `TODO.md` y `CHANGELOG.md`.
+
+## [v0.2.0] - Rediseño Visual "Presidential Midnight"
+- **Mejora:** Implementación de paleta de colores premium basada en investigación de juegos de estrategia modernos.
+- **Mejora:** Integración de Google Fonts (Inter para UI y Playfair Display para Periódicos).
+- **Añadido:** Efectos de Glassmorphism (desenfoque de fondo y bordes translúcidos).
+- **Añadido:** Micro-animaciones en cartas (entrada suave y hover interactivo).
+- **Añadido:** Forzado de recarga de assets para navegadores (Cache Busting).
+
+## [v0.3.0] - Rediseño Visual "Poder & Golpe"
+- **Mejora:** Nueva paleta "Poder Corrupto" (Negro + Crimson + Dorado + Esmeralda).
+- **Mejora:** Periódico estilo NYT con tipografía gótica (UnifrakturMaguntia), ornamentos, y estructura real.
+- **Añadido:** Tooltips en medidores — hover muestra descripción completa de cada métrica.
+- **Añadido:** Descripciones (icon + desc) para los 50+ medidores del juego.
+- **Añadido:** Sistema de semáforo visual (Verde > 50%, Amarillo 26-50%, Rojo ≤ 25%).
+- **Añadido:** Animaciones de feedback: Flash dorado al seleccionar carta, Screen Shake al perder.
+- **Añadido:** Animación de selección/rechazo de cartas (la elegida brilla, las otras se desvanecen).
+- **Fix:** Medidor permanente ahora puede ser modificado por cartas (35% de probabilidad).
+- **Fix:** Periódico ilegible reemplazado por diseño puro CSS sin textura.
+
+## [v0.3.1] - Semáforo Dinámico + Periódico Premium
+- **Mejora:** Semáforo de medidores ahora es dinámico basado en el umbral mínimo de cada cargo.
+  - Candidato: umbral 40%, Alcalde: 50%, Diputado: 60%, Senador: 65%, Presidente: 70%.
+  - Verde: ≥ umbral, Amarillo: ≥ 65% del umbral, Rojo: < 65% del umbral.
+- **Añadido:** Marca visual del umbral mínimo (▼) en cada barra de medidor.
+- **Añadido:** Etiqueta "MÍNIMO: XX%" en el encabezado del juego.
+- **Añadido:** Periódico con columna lateral ("Otros Titulares"), cita/blockquote y precio ficticio.
+- **Añadido:** Headlines y textos variados aleatorios para victorias y derrotas.
+- **Mejora:** Animaciones de cartas más lentas (900ms) para que se noten los efectos.
+- **Fix:** Bloqueo de doble-click en cartas durante la animación.
+- **Fix:** Efecto de "páginas apiladas" (box-shadow escalonado) en el periódico.
+
+*Reglas core establecidas:* Desarrollo en HTML/CSS/JS Vanilla. Motor lógico separado por responsabilidad (engine, cards, ui). Tolerancia cero a mecánicas ajenas a la decisión por contexto.
