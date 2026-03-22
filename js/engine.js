@@ -60,7 +60,7 @@ const ROLES = [
         totalRounds: 10,
         minThreshold: 65,
         tempMeters: [
-            { id: "pod_nac", name: "Poder Nacional", icon: "🏛️", desc: "Influencia real sobre decisiones de Estado." },
+            { id: "pod_nac", name: "Poder Nacional", icon: "🏛️", desc: "Influencia real sobre decisiones de State." },
             { id: "resp_inst", name: "Respeto Institucional", icon: "📋", desc: "Credibilidad ante las instituciones del país." },
             { id: "rel_part", name: "Relaciones Partidarias", icon: "🤝", desc: "Solidez de tus alianzas dentro y fuera del partido." },
             { id: "vis_int", name: "Visión Internacional", icon: "🌍", desc: "Percepción de tu capacidad diplomática y visión global." },
