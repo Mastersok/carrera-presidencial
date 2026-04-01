@@ -388,6 +388,25 @@ body::before {
 .effect-neg { color: var(--crimson); }
 
 /* ===========================
+   PERSONAJE DINÁMICO
+   =========================== */
+#role-character {
+    position: absolute;
+    right: -10px; bottom: 60px;
+    width: 180px; height: auto;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 2;
+    filter: drop-shadow(-3px 3px 0 rgba(0,0,0,0.3));
+    animation: charFloat 4s ease-in-out infinite;
+    transition: src 0.3s;
+}
+@keyframes charFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%       { transform: translateY(-8px) rotate(1deg); }
+}
+
+/* ===========================
    EVENTOS BAR
    =========================== */
 #events-bar { grid-area: events; min-height: 8px; }
@@ -594,6 +613,75 @@ body::before {
     box-shadow: 6px 6px 0 #1a1209;
 }
 #btn-continue:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+}
+
+/* ═══════════════════════════════════════════════════
+   PANTALLA DE INICIO
+   ═══════════════════════════════════════════════════ */
+@keyframes fade-out {
+    from { opacity: 1; transform: scale(1); }
+    to   { opacity: 0; transform: scale(1.05); }
+}
+
+#start-screen {
+    position: fixed; inset: 0;
+    background: url('img/bg_inicio.png.jpg') center center / cover no-repeat;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 200;
+}
+#start-screen::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(10, 12, 50, 0.72);
+}
+#start-content {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 16px;
+    text-align: center;
+    padding: 40px;
+    background: var(--gold);
+    border: var(--outline-thick);
+    box-shadow: var(--shadow-offset);
+    border-radius: 16px;
+    max-width: 420px; width: 90%;
+}
+#start-logo {
+    font-size: 4rem;
+    animation: iconFloat 3s ease-in-out infinite;
+}
+#start-title {
+    font-family: var(--font-title);
+    font-size: 3.2rem; line-height: 1;
+    color: #1a1209;
+    letter-spacing: 0.04em;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.15);
+}
+#start-subtitle {
+    font-family: var(--font-ui);
+    font-size: 0.85rem; color: #3a2a10;
+    font-weight: 600; max-width: 280px;
+    line-height: 1.4;
+}
+#btn-play {
+    margin-top: 8px;
+    padding: 14px 40px;
+    background: #1a1209; color: #fdf6e3;
+    font-family: var(--font-title);
+    font-size: 1.4rem; letter-spacing: 3px;
+    text-transform: uppercase;
+    border: var(--outline-thick); cursor: pointer;
+    box-shadow: var(--shadow-offset);
+    border-radius: 8px;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
+}
+#btn-play:hover {
+    background: var(--crimson);
+    box-shadow: 6px 6px 0 #1a1209;
+}
+#btn-play:active {
     transform: translate(4px, 4px);
     box-shadow: none;
 }

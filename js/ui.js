@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const permMeterEl   = document.getElementById('permanent-meter');
     const cardsEl       = document.getElementById('cards-container');
     const gameScreen    = document.getElementById('game-screen');
+    const startScreen   = document.getElementById('start-screen');
+    const btnPlay       = document.getElementById('btn-play');
+    const charImg       = document.getElementById('role-character');
 
     // Periódico
     const overlay       = document.getElementById('newspaper-overlay');
@@ -29,6 +32,24 @@ document.addEventListener('DOMContentLoaded', () => {
         senador:    '🏛️',
         presidente: '👑'
     };
+
+    const ROLE_CHARACTERS = {
+        candidato:  'img/char_candidato.png.jpg',
+        alcalde:    'img/char_alcalde.png.jpg',
+        diputado:   'img/char_diputado.png.jpg',
+        senador:    'img/char_senador.png.jpg',
+        presidente: 'img/char_presidente.png.jpg'
+    };
+
+    // ── Pantalla de inicio ──────────────────────────────
+    btnPlay.addEventListener('click', () => {
+        startScreen.style.animation = 'fade-out 0.4s ease forwards';
+        setTimeout(() => {
+            startScreen.style.display = 'none';
+            gameScreen.classList.remove('hidden');
+            GameState.startNewRun();
+        }, 400);
+    });
 
     // ── Escuchar eventos del Engine ──────────────────────
     document.addEventListener('gameStateUpdate', ({ detail }) => {
@@ -76,9 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ── Arrancar el juego ──
-    GameState.startNewRun();
-
     // ────────────────────────────────────────────────────
     //   FEEDBACK VISUAL
     // ────────────────────────────────────────────────────
@@ -124,6 +142,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const cfg = state.getCurrentRoleConfig();
         roleEl.textContent      = cfg.name;
         roleIconEl.textContent  = ROLE_ICONS[cfg.id] || '🏛️';
+
+        // Actualizar personaje
+        if (charImg && ROLE_CHARACTERS[cfg.id]) {
+            charImg.src = ROLE_CHARACTERS[cfg.id];
+        }
 
         // Mostrar umbral mínimo
         const thresholdEl = document.getElementById('threshold-label');

@@ -11,8 +11,20 @@
 </head>
 <body>
 
+<!-- ═══════════════════════════════════════════
+     PANTALLA DE INICIO
+     ═══════════════════════════════════════════ -->
+<div id="start-screen">
+    <div id="start-content">
+        <div id="start-logo">🏛️</div>
+        <h1 id="start-title">CARRERA<br>PRESIDENCIAL</h1>
+        <p id="start-subtitle">De candidato anónimo a Presidente de la Nación</p>
+        <button id="btn-play">⚡ JUGAR</button>
+    </div>
+</div>
+
 <!-- PANTALLA PRINCIPAL DEL JUEGO -->
-<div id="game-screen">
+<div id="game-screen" class="hidden">
 
     <!-- ENCABEZADO: CARGO + RONDA -->
     <header id="top-bar">
@@ -28,6 +40,9 @@
             <div id="round-pips"></div>
         </div>
     </header>
+
+    <!-- PERSONAJE DINÁMICO -->
+    <img id="role-character" src="img/char_candidato.png.jpg" alt="Personaje">
 
     <!-- ZONA CENTRAL: MEDIDORES -->
     <section id="meters-area">
