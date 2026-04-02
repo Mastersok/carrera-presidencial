@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=4.1">
+    <link rel="stylesheet" href="css/style.css?v=4.2">
 </head>
 <body>
 
@@ -26,13 +26,18 @@
 <!-- PANTALLA PRINCIPAL DEL JUEGO -->
 <div id="game-screen" class="hidden">
 
-    <!-- ENCABEZADO: CARGO + RONDA -->
+    <!-- ENCABEZADO: CARGO + PERSONAJE + RONDA -->
     <header id="top-bar">
-        <div id="role-badge">
-            <span id="role-icon">🏛️</span>
-            <div>
-                <h1 id="current-role">Candidato a Alcalde</h1>
-                <span id="threshold-label" class="threshold-tag">Mínimo: 40%</span>
+        <div id="role-section">
+            <div id="role-badge">
+                <span id="role-icon">🏛️</span>
+                <div>
+                    <h1 id="current-role">Candidato a Alcalde</h1>
+                    <span id="threshold-label" class="threshold-tag">Mínimo: 40%</span>
+                </div>
+            </div>
+            <div id="character-box">
+                <img id="role-character" src="img/char_candidato.png.jpg" alt="Personaje">
             </div>
         </div>
         <div id="round-display">
@@ -41,17 +46,15 @@
         </div>
     </header>
 
-    <!-- ZONA CENTRAL: MEDIDORES -->
+    <!-- ZONA CENTRAL: MEDIDORES (todos en columna, permanente primero) -->
     <section id="meters-area">
+        <div id="perm-meter-area">
+            <p class="section-label">★ LEGADO PERMANENTE</p>
+            <div id="permanent-meter"></div>
+        </div>
         <div id="temp-meters">
             <p class="section-label">▴ MEDIDORES ACTIVOS</p>
             <div id="active-meters"></div>
-        </div>
-        <div id="perm-meter-area">
-            <p class="section-label">★ LEGADO</p>
-            <div id="permanent-meter"></div>
-            <!-- PERSONAJE DINÁMICO — dentro del panel de legado -->
-            <img id="role-character" src="img/char_candidato.png.jpg" alt="Personaje">
         </div>
     </section>
 
@@ -95,7 +98,6 @@
 
         <!-- ── CONTENIDO PRINCIPAL ── -->
         <div class="paper-content">
-            <!-- Columna principal -->
             <div class="paper-main">
                 <h2 id="news-headline" class="paper-headline">VICTORIA CONTUNDENTE</h2>
                 <p id="news-subhead" class="paper-subhead">Candidato a Alcalde — Ronda 8 de 8 — Umbral mínimo: 40%</p>
@@ -103,8 +105,6 @@
                 <p id="news-text" class="paper-article">El apoyo popular fue indiscutible...</p>
                 <blockquote id="news-quote" class="paper-quote">«Demostramos que se puede gobernar con responsabilidad.»</blockquote>
             </div>
-
-            <!-- Columna lateral -->
             <aside class="paper-sidebar">
                 <h4 class="sidebar-title">OTROS TITULARES</h4>
                 <div id="news-sidebar" class="sidebar-list">
