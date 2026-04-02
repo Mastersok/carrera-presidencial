@@ -30,6 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnAscend     = document.getElementById('btn-ascend-continue');
     let   pendingState  = null;
 
+    // Tracking de medidores en zona crítica (para no repetir alarma)
+    const prevCritical = new Set();
+
     const ROLE_ICONS = {
         candidato:  '🗳️',
         alcalde:    '🏙️',
@@ -48,6 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Pantalla de inicio ──────────────────────────────
     btnPlay.addEventListener('click', () => {
+        AudioManager.init();
+        AudioManager.startGame();
         startScreen.style.animation = 'fade-out 0.4s ease forwards';
         setTimeout(() => {
             startScreen.style.display = 'none';
@@ -67,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderCards(state);
                 break;
             case 'next_round':
+                AudioManager.newRound();
                 renderHeader(state);
                 renderMeters(state);
                 if (state.runStatus === 'active') renderCards(state);
@@ -78,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (state.runStatus === 'active') renderCards(state);
                 break;
             case 'game_over':
+                AudioManager.gameOver();
                 renderHeader(state);
                 renderMeters(state);
                 shakeScreen();
@@ -87,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showAscendScreen(state);
                 break;
             case 'victory':
+                AudioManager.victory();
                 showNewspaper(state, true, '¡Has completado la Carrera Presidencial! Pasaste de candidato anónimo a Presidente de la nación. La historia te juzgará.');
                 break;
         }
@@ -94,12 +102,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Botón de la pantalla de ascenso ─────────────────
     btnAscend.addEventListener('click', () => {
+        AudioManager.uiClick();
         ascendOverlay.classList.add('hidden');
         showNewspaper(pendingState, true, null);
     });
 
     // ── Botón Continuar del periódico ───────────────────
     btnContinue.addEventListener('click', () => {
+        AudioManager.uiClick();
         overlay.classList.add('hidden');
         if (GameState.runStatus === 'game_over' || GameState.runStatus === 'victory') {
             GameState.startNewRun();
@@ -213,15 +223,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderMeters(state) {
+        const nowCritical = new Set();
+
         metersEl.innerHTML = '';
         state.activeMeters.forEach(m => {
+            const status = getMeterStatus(Math.round(m.value), false);
+            if (status === 'crit') nowCritical.add(m.id);
             metersEl.appendChild(buildMeterCard(m, false));
         });
 
         permMeterEl.innerHTML = '';
         if (state.permanentMeter) {
+            const ps = getMeterStatus(Math.round(state.permanentMeter.value), true);
+            if (ps === 'crit') nowCritical.add(state.permanentMeter.id);
             permMeterEl.appendChild(buildMeterCard(state.permanentMeter, true));
         }
+
+        // Tocar alarma solo cuando un medidor ENTRA por primera vez en crítico
+        for (const id of nowCritical) {
+            if (!prevCritical.has(id)) { AudioManager.meterCritical(); break; }
+        }
+        prevCritical.clear();
+        nowCritical.forEach(id => prevCritical.add(id));
     }
 
     function buildMeterCard(meter, isPerm) {
@@ -296,10 +319,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="card-effects">${effectsHTML}</div>
             `;
 
+            el.addEventListener('mouseenter', () => AudioManager.cardHover());
+
             el.addEventListener('click', () => {
                 // Impedir doble click
                 if (cardsEl.dataset.locked === 'true') return;
                 cardsEl.dataset.locked = 'true';
+
+                AudioManager.cardClick();
 
                 // Animación de selección LENTA
                 el.classList.add('selected');
