@@ -103,11 +103,12 @@ body::before {
     display: flex; align-items: flex-start;
     justify-content: space-between;
     border-bottom: var(--outline-thick);
-    padding-bottom: 12px;
+    padding-bottom: 10px;
 }
 #role-section {
     display: flex; flex-direction: column;
-    gap: 8px;
+    gap: 6px;
+    position: relative;
 }
 #role-badge {
     display: flex; align-items: center; gap: 12px;
@@ -119,8 +120,8 @@ body::before {
 }
 /* Caja del personaje — debajo del badge */
 #character-box {
-    width: 160px; height: 160px;
-    background: #11174a;
+    width: 160px; height: 120px;
+    background: #fdf6e3;
     border: var(--outline-thick);
     box-shadow: var(--shadow-offset);
     border-radius: 10px;
@@ -153,7 +154,11 @@ body::before {
     margin-top: 2px;
 }
 
-#round-display { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+#round-display {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 5px;
+    position: relative; cursor: help;
+}
+#round-display:hover .header-tooltip { opacity: 1; transform: translateY(0); pointer-events: auto; }
 #round-label {
     font-size: 0.6rem; font-weight: 700;
     letter-spacing: 0.2em; color: #fdf6e3; text-transform: uppercase;
@@ -174,6 +179,41 @@ body::before {
     box-shadow: var(--shadow-offset);
     transform: scale(1.5);
 }
+
+/* Tooltips del header (aparecen hacia abajo) */
+.header-tooltip {
+    position: absolute;
+    top: calc(100% + 10px);
+    background: #fdf6e3; color: #1a1209;
+    font-family: var(--font-ui);
+    font-size: 0.72rem; font-weight: 500; line-height: 1.5;
+    padding: 8px 12px; border-radius: 8px;
+    border: var(--outline);
+    box-shadow: var(--shadow-offset);
+    white-space: nowrap;
+    opacity: 0; transform: translateY(-5px);
+    transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none; z-index: 50;
+}
+.header-tooltip::before {
+    content: ''; position: absolute;
+    bottom: 100%; left: 20px;
+    border: 8px solid transparent; border-bottom-color: #1a1209;
+}
+.header-tooltip::after {
+    content: ''; position: absolute;
+    bottom: 100%; left: 22px;
+    border: 6px solid transparent; border-bottom-color: #fdf6e3;
+}
+/* Tooltip de ronda: alineado a la derecha */
+#round-display .header-tooltip {
+    right: 0; left: auto;
+}
+#round-display .header-tooltip::before { left: auto; right: 20px; }
+#round-display .header-tooltip::after  { left: auto; right: 22px; }
+/* Tooltip del cargo: activado desde role-section */
+#role-section:hover .header-tooltip { opacity: 1; transform: translateY(0); pointer-events: auto; }
+#role-section .header-tooltip { left: 0; top: calc(100% + 10px); }
 
 /* ===========================
    MEDIDORES
@@ -406,10 +446,9 @@ body::before {
    =========================== */
 #role-character {
     display: block;
-    width: 100%; height: 100%;
+    width: 100%; height: 130%;
     object-fit: contain;
-    object-position: bottom;
-    mix-blend-mode: multiply;
+    object-position: bottom center;
     pointer-events: none;
     animation: charFloat 4s ease-in-out infinite;
 }

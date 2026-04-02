@@ -152,6 +152,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const thresholdEl = document.getElementById('threshold-label');
         if (thresholdEl) thresholdEl.textContent = `Mínimo: ${cfg.minThreshold}%`;
 
+        // Tooltips dinámicos del header
+        const roleTooltip  = document.getElementById('role-tooltip');
+        const roundTooltip = document.getElementById('round-tooltip');
+        if (roleTooltip)  roleTooltip.textContent  = `Eres ${cfg.name} — supera el ${cfg.minThreshold}% en todos los medidores para avanzar al siguiente cargo`;
+        if (roundTooltip) roundTooltip.textContent = `Ronda ${state.currentRound} de ${cfg.totalRounds} — completa todas las rondas manteniendo tus medidores por encima del mínimo`;
+
         roundPipsEl.innerHTML = '';
         for (let i = 1; i <= cfg.totalRounds; i++) {
             const pip = document.createElement('div');
