@@ -25,6 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const statsEl       = document.getElementById('news-stats');
     const btnContinue   = document.getElementById('btn-continue');
 
+    // Pantalla de ascenso
+    const ascendOverlay = document.getElementById('ascend-overlay');
+    const btnAscend     = document.getElementById('btn-ascend-continue');
+    let   pendingState  = null;
+
     const ROLE_ICONS = {
         candidato:  '🗳️',
         alcalde:    '🏙️',
@@ -79,12 +84,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => showNewspaper(state, false, message), 800);
                 break;
             case 'won_role':
-                showNewspaper(state, true, null);
+                showAscendScreen(state);
                 break;
             case 'victory':
                 showNewspaper(state, true, '¡Has completado la Carrera Presidencial! Pasaste de candidato anónimo a Presidente de la nación. La historia te juzgará.');
                 break;
         }
+    });
+
+    // ── Botón de la pantalla de ascenso ─────────────────
+    btnAscend.addEventListener('click', () => {
+        ascendOverlay.classList.add('hidden');
+        showNewspaper(pendingState, true, null);
     });
 
     // ── Botón Continuar del periódico ───────────────────
@@ -96,6 +107,39 @@ document.addEventListener('DOMContentLoaded', () => {
             GameState.advanceToNextRole();
         }
     });
+
+    // ────────────────────────────────────────────────────
+    //   PANTALLA DE ASCENSO
+    // ────────────────────────────────────────────────────
+    function showAscendScreen(state) {
+        pendingState = state;
+        const currentCfg = state.getCurrentRoleConfig();
+        const nextRole   = ROLES[state.roleIndex + 1];
+
+        document.getElementById('ascend-from-role').textContent = currentCfg.name.toUpperCase();
+        document.getElementById('ascend-new-role').textContent  = nextRole.name.toUpperCase();
+
+        const ascendChar = document.getElementById('ascend-character');
+        ascendChar.src = ROLE_CHARACTERS[nextRole.id] || '';
+
+        // Generar confetti
+        const confettiEl = document.getElementById('ascend-confetti');
+        confettiEl.innerHTML = '';
+        const colors = ['#f5c518','#e63946','#2dc653','#ff9f1c','#fdf6e3'];
+        for (let i = 0; i < 40; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            piece.style.left     = Math.random() * 100 + 'vw';
+            piece.style.width    = (8 + Math.random() * 8) + 'px';
+            piece.style.height   = (10 + Math.random() * 10) + 'px';
+            piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+            piece.style.animationDuration  = (1.5 + Math.random() * 2) + 's';
+            piece.style.animationDelay     = (Math.random() * 1.5) + 's';
+            confettiEl.appendChild(piece);
+        }
+
+        ascendOverlay.classList.remove('hidden');
+    }
 
     // ────────────────────────────────────────────────────
     //   FEEDBACK VISUAL
