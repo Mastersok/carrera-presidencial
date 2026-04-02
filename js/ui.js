@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => showNewspaper(state, false, message), 800);
                 break;
             case 'won_role':
+                AudioManager.ascend();
                 showAscendScreen(state);
                 break;
             case 'victory':
@@ -331,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Animación de selección LENTA
                 el.classList.add('selected');
                 cardsEl.querySelectorAll('.decision-card').forEach(c => {
-                    if (c !== el) c.classList.add('rejected');
+                    if (c !== el) { c.classList.add('rejected'); AudioManager.cardReject(); }
                 });
 
                 // Esperar 900ms para que se vea la animación
