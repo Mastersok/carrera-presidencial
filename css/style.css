@@ -687,7 +687,7 @@ body::before {
 
 #start-screen {
     position: fixed; inset: 0;
-    background: url('img/bg_inicio.png.jpg') center center / cover no-repeat;
+    background: url('../img/bg_inicio.png.jpg') center center / cover no-repeat;
     display: flex; align-items: center; justify-content: center;
     z-index: 200;
 }
