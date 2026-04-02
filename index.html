@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=4.2">
+    <link rel="stylesheet" href="css/style.css?v=4.3">
 </head>
 <body>
 
@@ -26,7 +26,7 @@
 <!-- PANTALLA PRINCIPAL DEL JUEGO -->
 <div id="game-screen" class="hidden">
 
-    <!-- ENCABEZADO: CARGO + PERSONAJE + RONDA -->
+    <!-- ENCABEZADO: CARGO + PERSONAJE + MEDIDOR PERMANENTE + RONDA -->
     <header id="top-bar">
         <div id="role-section" style="cursor:help;">
             <div class="header-tooltip" id="role-tooltip">Eres Candidato a Alcalde — supera el 40% para avanzar</div>
@@ -37,8 +37,15 @@
                     <span id="threshold-label" class="threshold-tag">Mínimo: 40%</span>
                 </div>
             </div>
-            <div id="character-box">
-                <img id="role-character" src="img/char_candidato.png.jpg" alt="Personaje">
+            <!-- FILA: personaje + medidor permanente -->
+            <div id="char-meter-row">
+                <div id="character-box">
+                    <img id="role-character" src="img/char_candidato.png.jpg" alt="Personaje">
+                </div>
+                <div id="perm-meter-area">
+                    <p class="section-label">★ LEGADO</p>
+                    <div id="permanent-meter"></div>
+                </div>
             </div>
         </div>
         <div id="round-display">
@@ -48,15 +55,11 @@
         </div>
     </header>
 
-    <!-- ZONA CENTRAL: MEDIDORES -->
+    <!-- ZONA CENTRAL: SOLO MEDIDORES ACTIVOS -->
     <section id="meters-area">
         <div id="temp-meters">
             <p class="section-label">▴ MEDIDORES ACTIVOS</p>
             <div id="active-meters"></div>
-        </div>
-        <div id="perm-meter-area">
-            <p class="section-label">★ LEGADO</p>
-            <div id="permanent-meter"></div>
         </div>
     </section>
 
@@ -74,12 +77,10 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════
-     OVERLAY DEL PERIÓDICO — Diseño de diario real
+     OVERLAY DEL PERIÓDICO
      ═══════════════════════════════════════════════════ -->
 <div id="newspaper-overlay" class="hidden">
     <div id="newspaper-paper">
-
-        <!-- ── MASTHEAD (Cabecera del Diario) ── -->
         <div class="paper-masthead">
             <div class="masthead-rule thick"></div>
             <div class="masthead-row-top">
@@ -97,8 +98,6 @@
             </div>
             <div class="masthead-rule thick"></div>
         </div>
-
-        <!-- ── CONTENIDO PRINCIPAL ── -->
         <div class="paper-content">
             <div class="paper-main">
                 <h2 id="news-headline" class="paper-headline">VICTORIA CONTUNDENTE</h2>
@@ -116,18 +115,13 @@
                 </div>
             </aside>
         </div>
-
-        <!-- ── ESTADÍSTICAS ── -->
         <div class="paper-stats-section">
             <h3 class="stats-title">BALANCE FINAL DEL MANDATO</h3>
             <ul id="news-stats"></ul>
         </div>
-
-        <!-- ── BOTÓN ── -->
         <div class="paper-footer">
             <button id="btn-continue">🗳️ NUEVA CARRERA</button>
         </div>
-
     </div>
 </div>
 

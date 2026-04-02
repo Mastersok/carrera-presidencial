@@ -218,25 +218,27 @@ body::before {
 /* ===========================
    MEDIDORES
    =========================== */
-#meters-area {
-    grid-area: meters;
-    display: grid;
-    grid-template-columns: 1fr 190px;
-    gap: 12px;
-    align-items: stretch;
+/* Fila horizontal: personaje + medidor permanente */
+#char-meter-row {
+    display: flex; flex-direction: row;
+    gap: 10px; align-items: stretch;
 }
-#temp-meters { display: flex; flex-direction: column; gap: 7px; }
 #perm-meter-area {
+    flex: 1;
     display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 10px; text-align: center;
+    justify-content: center; gap: 8px;
     background: rgba(245,197,24,0.12);
     border: 2px solid var(--gold);
     box-shadow: var(--shadow-offset-sm);
-    border-radius: 10px; padding: 12px;
+    border-radius: 10px; padding: 10px;
 }
-/* El meter-card dentro del panel permanente ocupa todo el ancho */
-#perm-meter-area .meter-card { width: 100%; }
+
+/* Medidores activos — columna única */
+#meters-area {
+    grid-area: meters;
+    display: flex; flex-direction: column; gap: 7px;
+}
+#temp-meters { display: flex; flex-direction: column; gap: 7px; }
 
 .section-label {
     font-family: var(--font-title);
