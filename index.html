@@ -26,7 +26,7 @@
 <!-- PANTALLA PRINCIPAL DEL JUEGO -->
 <div id="game-screen" class="hidden">
 
-    <!-- ENCABEZADO: CARGO + PERSONAJE + MEDIDOR PERMANENTE + RONDA -->
+    <!-- ENCABEZADO: CARGO + RONDA -->
     <header id="top-bar">
         <div id="role-section" style="cursor:help;">
             <div class="header-tooltip" id="role-tooltip">Eres Candidato a Alcalde — supera el 40% para avanzar</div>
@@ -37,16 +37,6 @@
                     <span id="threshold-label" class="threshold-tag">Mínimo: 40%</span>
                 </div>
             </div>
-            <!-- FILA: personaje + medidor permanente -->
-            <div id="char-meter-row">
-                <div id="character-box">
-                    <img id="role-character" src="img/char_candidato.png.jpg" alt="Personaje">
-                </div>
-                <div id="perm-meter-area">
-                    <p class="section-label">★ LEGADO</p>
-                    <div id="permanent-meter"></div>
-                </div>
-            </div>
         </div>
         <div id="round-display">
             <span id="round-label">RONDA</span>
@@ -54,6 +44,17 @@
             <div class="header-tooltip" id="round-tooltip">Ronda 1 de 8</div>
         </div>
     </header>
+
+    <!-- FILA COMPLETA: personaje (izq) + medidor permanente (der) -->
+    <div id="char-meter-row">
+        <div id="character-box">
+            <img id="role-character" src="img/char_candidato.png.jpg" alt="Personaje">
+        </div>
+        <div id="perm-meter-area">
+            <p class="section-label">★ LEGADO</p>
+            <div id="permanent-meter"></div>
+        </div>
+    </div>
 
     <!-- ZONA CENTRAL: SOLO MEDIDORES ACTIVOS -->
     <section id="meters-area">

@@ -69,8 +69,8 @@ body::before {
     position: relative; z-index: 1;
     width: 100vw; height: 100vh;
     display: grid;
-    grid-template-rows: auto auto 1fr auto;
-    grid-template-areas: "topbar" "meters" "cards" "events";
+    grid-template-rows: auto auto auto 1fr auto;
+    grid-template-areas: "topbar" "charrow" "meters" "cards" "events";
     padding: 20px 28px 12px;
     gap: 14px;
     max-width: 880px;
@@ -218,8 +218,9 @@ body::before {
 /* ===========================
    MEDIDORES
    =========================== */
-/* Fila horizontal: personaje + medidor permanente */
+/* Fila completa: personaje (izq) + medidor permanente (der) */
 #char-meter-row {
+    grid-area: charrow;
     display: flex; flex-direction: row;
     gap: 10px; align-items: stretch;
 }
@@ -233,7 +234,7 @@ body::before {
     border-radius: 10px; padding: 10px;
 }
 
-/* Medidores activos — columna única */
+/* Medidores activos — columna única, ancho completo */
 #meters-area {
     grid-area: meters;
     display: flex; flex-direction: column; gap: 7px;
