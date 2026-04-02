@@ -69,7 +69,7 @@ body::before {
     position: relative; z-index: 1;
     width: 100vw; height: 100vh;
     display: grid;
-    grid-template-rows: auto 1fr auto auto;
+    grid-template-rows: auto auto 1fr auto;
     grid-template-areas: "topbar" "meters" "cards" "events";
     padding: 20px 28px 12px;
     gap: 14px;
@@ -176,6 +176,7 @@ body::before {
     border: var(--outline);
     box-shadow: var(--shadow-offset-sm);
     border-radius: 14px; padding: 12px;
+    overflow: hidden;
 }
 
 .section-label {
@@ -391,15 +392,15 @@ body::before {
    PERSONAJE DINÁMICO
    =========================== */
 #role-character {
-    position: absolute;
-    right: -10px; bottom: 60px;
-    width: 180px; height: auto;
+    display: block;
+    width: 100%;
+    max-width: 160px;
+    height: auto;
+    margin: auto auto 0;
     mix-blend-mode: multiply;
     pointer-events: none;
-    z-index: 2;
-    filter: drop-shadow(-3px 3px 0 rgba(0,0,0,0.3));
+    filter: drop-shadow(-2px 2px 0 rgba(0,0,0,0.3));
     animation: charFloat 4s ease-in-out infinite;
-    transition: src 0.3s;
 }
 @keyframes charFloat {
     0%, 100% { transform: translateY(0) rotate(0deg); }
