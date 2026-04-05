@@ -34,6 +34,10 @@ const AudioManager = (() => {
     // ── Inicialización ────────────────────────────────────────────────────────
     async function boot() {
         if (ready) return;
+        if (typeof Tone === 'undefined') {
+            console.error('[Audio] Tone.js no se cargó — sin sonido.');
+            return;
+        }
         await Tone.start();
 
         // Compresor maestro
@@ -43,7 +47,7 @@ const AudioManager = (() => {
         // Reverb: sala pequeña
         reverbBus = new Tone.Reverb({ decay: 0.9, wet: 0.22 });
         reverbBus.connect(masterComp);
-        reverbBus.generate();
+        await reverbBus.generate();
 
         // ── cardHover: Synth triangle, muy corto ─────────────────────────────
         // Tone.Synth da control total de duración — PluckSynth es impredecible
