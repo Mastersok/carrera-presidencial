@@ -50,8 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ── Pantalla de inicio ──────────────────────────────
-    btnPlay.addEventListener('click', () => {
-        AudioManager.init();
+    btnPlay.addEventListener('click', async () => {
+        await AudioManager.init();
         AudioManager.startGame();
         startScreen.style.animation = 'fade-out 0.4s ease forwards';
         setTimeout(() => {

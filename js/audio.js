@@ -1,345 +1,330 @@
 /**
- * AUDIO.JS v5.0 — Motor de Sonido ZzFX
+ * AUDIO.JS v6.0 — Motor de Sonido Tone.js (Modelado Físico)
  *
- * Implementa el algoritmo ZzFX Micro de Frank Force (MIT License)
- * https://github.com/KilledByAPixel/ZzFX
+ * Usa sintetizadores de Tone.js que son IMPOSIBLES de replicar
+ * con OscillatorNode crudo:
  *
- * La diferencia clave vs v1-v4:
- *   - v1-v4 usaban OscillatorNode en vivo → siempre sonarán "electrónicos"
- *   - v5 pre-renderiza todo el audio en un Float32Array sample-por-sample
- *   - Esto permite: envelopes ADSR exactos, noise mezclado en el oscilador,
- *     pitchJump (salto brusco de tono), slide acelerado, tremolo real, filtro biquad
+ *  PluckSynth   → Karplus-Strong: xilófono, marimba, cuerdas pulsadas
+ *                 Modela físicamente la vibración en un material resonante.
+ *                 NO suena a NES — suena a objeto REAL.
  *
- * Sonidos del juego diseñados específicamente para juego cartoon político.
+ *  MembraneSynth → Modelo físico de membrana: kick drum, golpes, toms
+ *                  Pitch sweep descendente + envolvente de percusión.
+ *
+ *  MetalSynth   → FM inarmónico: campanas, platillos, chispas metálicas
+ *                 Múltiples osciladores desafinados = shimmer real.
+ *
+ *  FMSynth      → Síntesis FM completa: trompetas, órganos, "wah"
+ *
+ * Tone.js CDN: https://unpkg.com/tone@15/build/Tone.js
  */
 
 const AudioManager = (() => {
 
-    let ctx = null;
-    let compressor = null;
-    let reverbNode = null;
+    let ready = false;
 
-    // ── Inicialización ────────────────────────────────────────────────────────
-    function boot() {
-        if (ctx) return;
-        ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // Sintetizadores (creados en boot())
+    let plucks   = [];   // pool de 6 PluckSynth para polifonía
+    let pluckIdx = 0;
+    let membrane, metal1, metal2, fmSynth;
 
-        compressor = ctx.createDynamicsCompressor();
-        compressor.threshold.value = -14;
-        compressor.knee.value      =  8;
-        compressor.ratio.value     =  4;
-        compressor.attack.value    =  0.003;
-        compressor.release.value   =  0.15;
-        compressor.connect(ctx.destination);
+    // Efectos
+    let masterComp, reverbBus;
 
-        // Reverb corto tipo "sala pequeña"
-        reverbNode = buildReverb(0.9, 3.5);
-        reverbNode.connect(compressor);
-    }
+    // ── Inicialización (async — Tone.js lo requiere) ─────────────────────────
+    async function boot() {
+        if (ready) return;
 
-    function getCtx() {
-        if (!ctx) boot();
-        if (ctx.state === 'suspended') ctx.resume();
-        return ctx;
-    }
+        // Tone.js necesita que el AudioContext sea iniciado desde gesto del usuario
+        await Tone.start();
 
-    function buildReverb(duration, decay) {
-        const len = ctx.sampleRate * duration;
-        const buf = ctx.createBuffer(2, len, ctx.sampleRate);
-        for (let ch = 0; ch < 2; ch++) {
-            const d = buf.getChannelData(ch);
-            for (let i = 0; i < len; i++)
-                d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
-        }
-        const node = ctx.createConvolver();
-        node.buffer = buf;
-        return node;
-    }
+        // ── Compresor maestro ─────────────────────────────────────────────
+        masterComp = new Tone.Compressor({
+            threshold : -14,
+            ratio     :  4,
+            attack    :  0.003,
+            release   :  0.15
+        }).toDestination();
 
-    // ════════════════════════════════════════════════════════════════════════
-    //   ZzFX MICRO — algoritmo portado de ZzFXMicro.js por Frank Force (MIT)
-    //   github.com/KilledByAPixel/ZzFX
-    // ════════════════════════════════════════════════════════════════════════
-    //
-    // Parámetros (en orden):
-    //  [0]  volume        – volumen total
-    //  [1]  randomness    – variación aleatoria de freq (0 = exacto)
-    //  [2]  frequency     – frecuencia base en Hz
-    //  [3]  attack        – tiempo de ataque (s)
-    //  [4]  sustain       – tiempo de sustain (s)
-    //  [5]  release       – tiempo de release (s)
-    //  [6]  shape         – forma de onda: 0=sine 1=triangle 2=saw 3=tan 4=sin³ 5=pulse
-    //  [7]  shapeCurve    – curvatura (1=normal, <1=suave, >1=afilado)
-    //  [8]  slide         – slide de frecuencia
-    //  [9]  deltaSlide    – aceleración del slide
-    //  [10] pitchJump     – salto de pitch (Hz*PI2/sr) en pitchJumpTime
-    //  [11] pitchJumpTime – tiempo del salto (s)
-    //  [12] repeatTime    – período de reinicio de frecuencia (s), 0=sin repetir
-    //  [13] noise         – cantidad de ruido mezclado en la fase
-    //  [14] modulation    – modulación de frecuencia (FM)
-    //  [15] bitCrush      – sample-hold (lo-fi), 0=desactivado
-    //  [16] delay         – eco (s)
-    //  [17] sustainVolume – nivel durante sustain (0–1)
-    //  [18] decay         – tiempo de decay (s)
-    //  [19] tremolo       – profundidad de tremolo (0–1)
-    //  [20] filter        – filtro biquad: + = LP, – = HP (Hz)
+        // ── Bus de reverb (sala pequeña, cartoon) ─────────────────────────
+        reverbBus = new Tone.Reverb({ decay: 1.0, wet: 0.25 });
+        reverbBus.connect(masterComp);
+        reverbBus.generate(); // async en background, funciona al iniciar
 
-    function zzfxBuild(
-        volume=1, randomness=.05, frequency=220, attack=0, sustain=0,
-        release=.1, shape=0, shapeCurve=1, slide=0, deltaSlide=0,
-        pitchJump=0, pitchJumpTime=0, repeatTime=0, noise=0, modulation=0,
-        bitCrush=0, delay=0, sustainVolume=1, decay=0, tremolo=0, filter=0
-    ) {
-        const SR = 44100;
-        const PI2 = Math.PI * 2;
-        const abs  = Math.abs;
-        const sign = v => v < 0 ? -1 : 1;
-
-        // Escalar parámetros a samples/radianes
-        let startSlide = slide *= 500 * PI2 / SR / SR;
-        let startFreq  = frequency *= (1 + randomness * 2 * Math.random() - randomness)
-                                      * PI2 / SR;
-        let modOffset = 0, repeat = 0, crush = 0, jump = 1;
-        let b = [], t = 0, i = 0, s = 0, f;
-
-        attack        = attack   * SR || 9;   // mínimo 9 samples (evita clic)
-        decay         *= SR;
-        sustain       *= SR;
-        release       *= SR;
-        delay         *= SR;
-        deltaSlide    *= 500 * PI2 / SR ** 3;
-        modulation    *= PI2 / SR;
-        pitchJump     *= PI2 / SR;
-        pitchJumpTime *= SR;
-        repeatTime     = repeatTime * SR | 0;
-
-        // Filtro biquad LP/HP (igual que en ZzFXMicro.js)
-        const quality = 2;
-        const w  = PI2 * abs(filter) * 2 / SR;
-        const co = Math.cos(w), alpha = Math.sin(w) / 2 / quality;
-        const a0 = 1 + alpha, a1 = -2 * co / a0, a2 = (1 - alpha) / a0;
-        const b0 = (1 + sign(filter) * co) / 2 / a0;
-        const b1 = -(sign(filter) + co) / a0, b2 = b0;
-        let x2 = 0, x1 = 0, y2 = 0, y1 = 0;
-
-        const length = attack + decay + sustain + release + delay | 0;
-
-        for (; i < length; b[i++] = s * volume * 0.3) {
-
-            // Sample-hold para bit crush
-            if (!(++crush % (bitCrush * 100 | 0))) {
-
-                // ── Generación de forma de onda ──
-                s = shape > 0
-                    ? shape > 1
-                        ? shape > 2
-                            ? shape > 3
-                                ? shape > 4
-                                    // 5: pulse/square
-                                    ? (t / PI2 % 1 < shapeCurve / 2) * 2 - 1
-                                    // 4: sin³ (más "gordito" que sine)
-                                    : Math.sin(t ** 3)
-                                // 3: tan clamped
-                                : Math.max(Math.min(Math.tan(t), 1), -1)
-                            // 2: sawtooth
-                            : 1 - (2 * t / PI2 % 2 + 2) % 2
-                        // 1: triangle
-                        : 1 - 4 * abs(Math.round(t / PI2) - t / PI2)
-                    // 0: sine
-                    : Math.sin(t);
-
-                // ── Aplicar tremolo y shapeCurve ──
-                s = (repeatTime
-                        ? 1 - tremolo + tremolo * Math.sin(PI2 * i / repeatTime)
-                        : 1)
-                    * (shape > 4 ? s : sign(s) * abs(s) ** shapeCurve);
-
-                // ── Aplicar envelope ADSR ──
-                s *= i < attack
-                    ? i / attack
-                    : i < attack + decay
-                        ? 1 - ((i - attack) / decay) * (1 - sustainVolume)
-                        : i < attack + decay + sustain
-                            ? sustainVolume
-                            : i < length - delay
-                                ? (length - i - delay) / release * sustainVolume
-                                : 0;
-
-                // ── Eco (delay) ──
-                s = delay
-                    ? s / 2 + (delay > i ? 0
-                        : (i < length - delay ? 1 : (length - i) / delay)
-                        * b[i - delay | 0] / 2 / volume)
-                    : s;
-
-                // ── Filtro biquad ──
-                if (filter)
-                    s = y1 = b2 * x2 + b1 * (x2 = x1) + b0 * (x1 = s) - a2 * y2 - a1 * (y2 = y1);
-            }
-
-            // ── Avanzar fase (con FM y noise) ──
-            f  = (frequency += slide += deltaSlide) * Math.cos(modulation * modOffset++);
-            t += f + f * noise * Math.sin(i ** 5);
-
-            // ── Pitch jump ──
-            if (jump && ++jump > pitchJumpTime) {
-                frequency     += pitchJump;
-                startFreq     += pitchJump;
-                jump           = 0;
-            }
-
-            // ── Repeat (reinicia frecuencia) ──
-            if (repeatTime && !(++repeat % repeatTime)) {
-                frequency = startFreq;
-                slide     = startSlide;
-                jump    ||= 1;
-            }
+        // ── PluckSynth pool — Karplus-Strong ──────────────────────────────
+        // Cada instancia es monofónica; el pool de 6 da polifonía real.
+        // Parámetros clave:
+        //   attackNoise  : cantidad de ruido inicial (0.1=suave → 20=muy percusivo)
+        //   dampening    : frecuencia del lowpass en el feedback (Hz)
+        //                  bajo = oscuro/cálido, alto = brillante/claro
+        //   resonance    : cuánto tiempo sustenta (0.9=corto → 0.999=largo)
+        for (let i = 0; i < 6; i++) {
+            const p = new Tone.PluckSynth({
+                attackNoise : 1.5,
+                dampening   : 4800,
+                resonance   : 0.987
+            });
+            p.connect(masterComp);
+            p.connect(reverbBus);
+            plucks.push(p);
         }
 
-        return b;
+        // ── MembraneSynth — modelo físico de membrana/percusión ──────────
+        // pitchDecay: tiempo del sweep de pitch descendente
+        // octaves   : cuántas octavas baja el pitch en el ataque
+        membrane = new Tone.MembraneSynth({
+            pitchDecay : 0.04,
+            octaves    : 5,
+            envelope   : { attack: 0.001, decay: 0.12, sustain: 0, release: 0.1 },
+            oscillator : { type: 'sine' }
+        }).connect(masterComp);
+
+        // ── MetalSynth — FM inarmónico (campanas, shimmer) ───────────────
+        // harmonicity   : ratio entre portadora y moduladora
+        // modulationIndex: profundidad de la modulación FM
+        // octaves       : barrido del highpass en el envelope
+        metal1 = new Tone.MetalSynth({
+            frequency      : 400,
+            envelope       : { attack: 0.001, decay: 0.15, release: 0.12 },
+            harmonicity    : 5.1,
+            modulationIndex: 32,
+            resonance      : 3800,
+            octaves        : 1.5
+        });
+        metal1.connect(reverbBus);
+
+        metal2 = new Tone.MetalSynth({
+            frequency      : 600,
+            envelope       : { attack: 0.001, decay: 0.08, release: 0.06 },
+            harmonicity    : 8.5,
+            modulationIndex: 48,
+            resonance      : 5000,
+            octaves        : 1.0
+        });
+        metal2.connect(reverbBus);
+
+        // ── FMSynth — síntesis FM para tonos musicales expresivos ─────────
+        // harmonicity    : relación de frecuencia moduladora/portadora
+        // modulationIndex: cuánto "brillo" / riqueza armónica
+        fmSynth = new Tone.FMSynth({
+            harmonicity         : 1.5,
+            modulationIndex     : 8,
+            oscillator          : { type: 'sine' },
+            envelope            : { attack: 0.02, decay: 0.1, sustain: 0.5, release: 0.4 },
+            modulation          : { type: 'triangle' },
+            modulationEnvelope  : { attack: 0.1, decay: 0.1, sustain: 1, release: 0.5 }
+        });
+        fmSynth.connect(masterComp);
+        fmSynth.connect(reverbBus);
+
+        ready = true;
     }
 
-    // Reproduce un sonido ZzFX. `delayS` = tiempo de inicio en segundos.
-    // `wet` = true para pasar por reverb.
-    function play(params, delayS = 0, wet = false) {
-        const c       = getCtx();
-        const samples = zzfxBuild(...params);
-        if (!samples.length) return;
-
-        const buf = c.createBuffer(1, samples.length, 44100);
-        buf.getChannelData(0).set(samples);
-
-        const src = c.createBufferSource();
-        src.buffer = buf;
-
-        const gain = c.createGain();
-        gain.gain.value = 1;
-
-        src.connect(gain);
-        gain.connect(compressor);
-        if (wet) gain.connect(reverbNode);
-
-        src.start(c.currentTime + delayS);
-        return src;
+    // Toca la siguiente voz del pool de PluckSynth (round-robin)
+    function pluck(note, time) {
+        const p = plucks[pluckIdx % plucks.length];
+        pluckIdx++;
+        p.triggerAttack(note, time ?? Tone.now());
     }
 
     // ════════════════════════════════════════════════════════════════════════
-    //   SONIDOS DEL JUEGO — diseñados para juego cartoon político
+    //   SONIDOS — diseñados para juego cartoon político, siglo 21
     // ════════════════════════════════════════════════════════════════════════
 
     return {
 
-        init() { boot(); },
-
-        // ── Hover sobre carta ──────────────────────────────────────────────
-        // "Pip!" — blip suave ascendente, como carta que se levanta
-        // triangle 830Hz, pitchJump sube +200Hz a los 5ms
-        cardHover() {
-            play([0.28, 0, 830, 0, .01, .05, 1, 1.2, 0, 0, 200, .005]);
+        async init() {
+            try { await boot(); }
+            catch (e) { console.warn('[AudioManager] init error:', e); }
         },
 
-        // ── Selección de carta (el sonido más importante) ──────────────────
-        // "STAMP!" — como sello de goma / decisión política
-        // Dos capas: impacto + resonancia
+        // ── Hover sobre carta ──────────────────────────────────────────────
+        // Toque suave de xilófono — como levantar una ficha de cartón
+        cardHover() {
+            if (!ready) return;
+            plucks[0].attackNoise = 0.5;
+            plucks[0].dampening   = 6000;
+            plucks[0].resonance   = 0.96;
+            plucks[0].triggerAttack('C6', Tone.now());
+        },
+
+        // ── Selección de carta — el sonido más importante ──────────────────
+        // "STAMP!" político: golpe de sello de goma con resonancia de madera
+        // Tres capas: thud de membrana + snap Karplus-Strong + shimmer metálico
         cardClick() {
-            // Capa 1: Impacto (triangle noisy, slide hacia abajo rápido)
-            play([0.95, 0, 290, 0, .015, .12, 1, 2.5, -4, 0, 0, 0, 0, 2.5]);
-            // Capa 2: Ping brillante (sine, muy corto, pitchJump para dar "snap")
-            play([0.45, 0, 1050, 0, 0, .07, 0, 1, -8, 0, 0, 0, 0, .1]);
+            if (!ready) return;
+            const t = Tone.now();
+            // Capa 1: impacto grave (MembraneSynth — kick suave)
+            membrane.triggerAttackRelease('C2', '16n', t);
+            // Capa 2: snap Karplus-Strong (el "crack" del sello)
+            plucks[1].attackNoise = 12;
+            plucks[1].dampening   = 2200;
+            plucks[1].resonance   = 0.93;
+            plucks[1].triggerAttack('A3', t + 0.005);
+            // Capa 3: shimmer metálico breve (calidad de decisión oficial)
+            metal2.triggerAttackRelease('32n', t + 0.01);
         },
 
         // ── Carta rechazada ────────────────────────────────────────────────
-        // "bwop" — descenso suave, negativo pero no dramático
-        // triangle 400Hz, slide descendente, pitchJump a frecuencia menor
+        // Dos plucks descendentes — como deslizar cartas de vuelta
         cardReject() {
-            play([0.32, 0, 400, 0, .02, .15, 1, 1, -2.5, 0, -100, .04]);
+            if (!ready) return;
+            const t = Tone.now();
+            plucks[2].attackNoise = 0.8;
+            plucks[2].dampening   = 3500;
+            plucks[2].resonance   = 0.97;
+            plucks[2].triggerAttack('E4', t);
+            plucks[2].triggerAttack('B3', t + 0.09);
         },
 
         // ── Medidor en zona crítica ────────────────────────────────────────
-        // Alarma con repeatTime + tremolo — como teléfono de cartoon
-        // triangle 950Hz, repeats cada 200ms, tremolo 85%
+        // Cuatro golpes metálicos urgentes — campana de alarma cartoon
         meterCritical() {
-            play([0.55, 0, 950, 0, .85, .1, 1, 1, 0, 0, 0, 0, .2, 0, 0, 0, 0, 1, 0, .85]);
+            if (!ready) return;
+            const t = Tone.now();
+            for (let i = 0; i < 4; i++) {
+                metal1.triggerAttackRelease('16n', t + i * 0.28);
+                // Acento alternando con metal2 (diálogo entre dos tonos)
+                if (i % 2 === 1) metal2.triggerAttackRelease('32n', t + i * 0.28 + 0.02);
+            }
         },
 
         // ── Nueva ronda ────────────────────────────────────────────────────
-        // Arpegio de xilófono: C5-E5-G5 con slide ligero
-        // Triangle, cada nota corta, volumen ascendente
+        // Arpegio de xilófono C5-E5-G5 — Karplus-Strong puro
+        // Suena como un xilófono de verdad (no a NES)
         newRound() {
-            play([0.38, 0, 523, 0, .04, .10, 1, 1.3, 1.5],  0.00);
-            play([0.43, 0, 659, 0, .04, .11, 1, 1.3, 1.5],  0.12);
-            play([0.50, 0, 784, 0, .05, .16, 1, 1.3, 1.5],  0.25);
+            if (!ready) return;
+            const t = Tone.now();
+            plucks[3].attackNoise = 1.5;
+            plucks[3].dampening   = 5000;
+            plucks[3].resonance   = 0.988;
+            ['C5', 'E5', 'G5'].forEach((note, i) => {
+                plucks[3].triggerAttack(note, t + i * 0.11);
+            });
         },
 
         // ── Ascenso de cargo ───────────────────────────────────────────────
-        // Level-up: arpegio rápido C5→E5→G5→B5→C6, nota larga con tremolo
+        // Escala de xilófono ascendente (5 notas) + lluvia metálica
+        // Como recibir una medalla en una ceremonia cartoon
         ascend() {
-            const scale = [523, 659, 784, 988, 1047];
-            scale.forEach((f, i) =>
-                play([0.42, 0, f, 0, .04, .09, 1, 1.2, 2], i * .09, i > 2)
-            );
-            // Nota final sostenida con vibrato (tremolo + repeatTime)
-            play([0.65, 0, 1047, .01, .5, .25, 1, 1, 0, 0, 0, 0, .14, 0, 0, 0, 0, .8, 0, .35], .47, true);
-            // Chispas (sine, muy agudas, muy cortas)
-            [2093, 2637, 3136, 2093, 3520].forEach((f, i) =>
-                play([0.18, 0, f, 0, 0, .06, 0, 1], .52 + i * .055, true)
-            );
+            if (!ready) return;
+            const t = Tone.now();
+
+            // Escala Karplus-Strong (marimba presidencial)
+            const scale = ['C5', 'E5', 'G5', 'B5', 'C6'];
+            scale.forEach((note, i) => {
+                plucks[i % plucks.length].attackNoise = 2;
+                plucks[i % plucks.length].dampening   = 5200;
+                plucks[i % plucks.length].resonance   = 0.990;
+                plucks[i % plucks.length].triggerAttack(note, t + i * 0.1);
+            });
+
+            // Acorde final sostenido con FM (cuerpo musical)
+            fmSynth.triggerAttackRelease('C5', '2n', t + 0.55);
+
+            // Lluvia de destellos metálicos (5 hits, frecuencias variadas)
+            [350, 500, 650, 450, 700].forEach((freq, i) => {
+                metal1.frequency.value = freq;
+                metal1.triggerAttackRelease('32n', t + 0.58 + i * 0.07);
+            });
         },
 
         // ── Game Over ──────────────────────────────────────────────────────
-        // Trompeta triste cartoon: "wah-wah-wah-waaah"
-        // Basado en el preset "game over" oficial de ZzFX (Frank Force)
-        // Parámetros: triangle 925Hz, deltaSlide=6.27, pitchJump=-184, repeat=170ms
+        // Trombón triste FM: "wah-wah-wah-waaah"
+        // Bb4→A4→Ab4→G3 (cromático descendente, último nota cae octava)
         gameOver() {
-            // Trombon cartoon (preset ZzFX oficial adaptado)
-            play([1.0, 0, 925, .04, .3, .6, 1, .3, 0, 6.27, -184, .09, .17], 0, true);
-            // Bajo sordo de impacto
-            play([0.65, 0, 110, 0, 0, .35, 1, 3, -2.5, 0, 0, 0, 0, 3], 0);
+            if (!ready) return;
+            const t = Tone.now();
+
+            // Boom de apertura (MembraneSynth muy grave)
+            membrane.pitchDecay = 0.08;
+            membrane.octaves    = 8;
+            membrane.triggerAttackRelease('C1', '8n', t);
+
+            // Trombón FM descendente
+            const sad = [
+                ['Bb4', 0.00],
+                ['A4',  0.38],
+                ['Ab4', 0.76],
+                ['G3',  1.14]   // salta una octava abajo — el "waaaaah" final
+            ];
+            sad.forEach(([note, delay]) => {
+                fmSynth.triggerAttackRelease(note, '4n', t + delay);
+            });
         },
 
         // ── Victoria final ─────────────────────────────────────────────────
-        // Fanfarria presidencial: motivo C5-C5-C5-E5 / G5 / C6 + acorde final
+        // Fanfarria presidencial: motivo + acorde final + lluvia metálica
+        // Melodía en Karplus-Strong (marimba) + bass FM
         victory() {
-            // Motivo rítmico (triangle, staccato)
-            const melody  = [523, 523, 523, 659, 523, 659, 784, 1047];
-            const timings = [0, .12, .24, .38, .58, .70, .83, .97];
-            melody.forEach((f, i) => {
-                const isLast = i === melody.length - 1;
-                const dur    = isLast ? .55 : .10;
-                const rel    = isLast ? .30 : .07;
-                play([0.48, 0, f, 0, dur, rel, 1, 1.3, 1], timings[i], true);
+            if (!ready) return;
+            const t = Tone.now();
+
+            // Motivo rítmico en xilófono (Karplus-Strong — NO suena a NES)
+            const melody  = ['C5','C5','C5','E5','C5','E5','G5','C6'];
+            const timings = [0, .12, .24, .38, .58, .70, .84, .98];
+            melody.forEach((note, i) => {
+                const voice = plucks[i % plucks.length];
+                voice.attackNoise = 2.5;
+                voice.dampening   = 4500;
+                voice.resonance   = 0.985;
+                voice.triggerAttack(note, t + timings[i]);
             });
 
-            // Acorde de cierre (4 notas simultáneas, con tremolo y reverb)
-            [523, 659, 784, 1047].forEach(f =>
-                play([0.32, 0, f, .01, .6, .35, 1, 1, 0, 0, 0, 0, .18, 0, 0, 0, 0, .8, 0, .25], 1.02, true)
-            );
+            // Acorde final con FMSynth (cuerpo y calidez)
+            ['C4', 'G4', 'E5'].forEach((note, i) => {
+                fmSynth.triggerAttackRelease(note, '1n', t + 1.12 + i * 0.025);
+            });
 
-            // Sub-bajo para dar peso
-            play([0.6, 0, 130, 0, .5, .4, 1, 2, 0], 1.02);
+            // Golpe de membrana final
+            membrane.pitchDecay = 0.04;
+            membrane.octaves    = 5;
+            membrane.triggerAttackRelease('C2', '8n', t + 1.12);
 
-            // Estrellitas finales
-            [2093, 2637, 3136, 2637, 3520, 3136].forEach((f, i) =>
-                play([0.15, 0, f, 0, 0, .055, 0, 1], 1.06 + i * .06, true)
-            );
+            // Lluvia de campanitas metálicas
+            [400, 600, 800, 500, 700, 450, 650].forEach((freq, i) => {
+                metal1.frequency.value = freq;
+                metal1.triggerAttackRelease('32n', t + 1.15 + i * 0.065);
+            });
         },
 
         // ── Botones de UI ──────────────────────────────────────────────────
-        // Blip positivo clásico: sine/triangle, corto, pitchJump leve arriba
+        // Pluck suave tipo "tick" de reloj de pared cartoon
         uiClick() {
-            play([0.30, 0, 540, 0, 0, .07, 1, 1, 2, 0, 90, .015]);
+            if (!ready) return;
+            plucks[4].attackNoise = 1;
+            plucks[4].dampening   = 4000;
+            plucks[4].resonance   = 0.960;
+            plucks[4].triggerAttack('G4', Tone.now());
         },
 
         // ── Inicio del juego ───────────────────────────────────────────────
-        // Jingle de campaña: G4→C5→E5 + punch final con pitchJump
+        // Jingle de campaña: G4→C5→E5 (marimba) + punch de membrana
         startGame() {
-            play([0.38, 0, 392, 0, .04, .12, 1, 1.2, 1.5],  0.00);
-            play([0.43, 0, 523, 0, .04, .12, 1, 1.2, 1.5],  0.14);
-            play([0.50, 0, 659, 0, .05, .15, 1, 1.2, 2.0],  0.28);
-            // Golpe final con pitchJump
-            play([0.72, 0, 523, 0, .05, .28, 1, 1.8, 0, 0, 400, .04], 0.46, true);
-            // Campana de bienvenida
-            play([0.35, 0, 1047, .01, .2, .25, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, .7], 0.50, true);
+            if (!ready) return;
+            const t = Tone.now();
+
+            ['G4', 'C5', 'E5'].forEach((note, i) => {
+                plucks[5].attackNoise = 2;
+                plucks[5].dampening   = 5000;
+                plucks[5].resonance   = 0.988;
+                plucks[5].triggerAttack(note, t + i * 0.14);
+            });
+
+            // Nota final sostenida (marimba resonante)
+            plucks[0].attackNoise = 3;
+            plucks[0].dampening   = 4000;
+            plucks[0].resonance   = 0.992;
+            plucks[0].triggerAttack('C6', t + 0.50);
+
+            // Punch de membrana en el acento
+            membrane.pitchDecay = 0.05;
+            membrane.octaves    = 5;
+            membrane.triggerAttackRelease('C2', '16n', t + 0.50);
+
+            // Dos shimmer metálicos
+            metal2.triggerAttackRelease('32n', t + 0.52);
+            metal1.triggerAttackRelease('32n', t + 0.58);
         }
     };
 
