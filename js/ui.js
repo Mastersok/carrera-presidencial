@@ -327,12 +327,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (cardsEl.dataset.locked === 'true') return;
                 cardsEl.dataset.locked = 'true';
 
-                AudioManager.cardClick();
+                try { AudioManager.cardClick(); } catch(e) {}
 
                 // Animación de selección LENTA
                 el.classList.add('selected');
                 cardsEl.querySelectorAll('.decision-card').forEach(c => {
-                    if (c !== el) { c.classList.add('rejected'); AudioManager.cardReject(); }
+                    if (c !== el) {
+                        c.classList.add('rejected');
+                        try { AudioManager.cardReject(); } catch(e) {}
+                    }
                 });
 
                 // Esperar 900ms para que se vea la animación

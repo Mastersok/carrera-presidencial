@@ -24,9 +24,13 @@ const AudioManager = (() => {
     let ready = false;
 
     // Sintetizadores (creados en boot())
-    let plucks   = [];   // pool de 6 PluckSynth para polifonía
+    // PluckSynths especializados (NO mutar propiedades mid-game)
+    let pluckHover;          // suave — hover
+    let pluckClick;          // percusivo — cardClick snap
+    let pluckReject;         // medio — cardReject
+    let pluckMelody = [];    // pool melodía — newRound, ascend, victory, startGame, uiClick
     let pluckIdx = 0;
-    let membrane, metal1, metal2, fmSynth;
+    let membrane, membrane2, metal1, metal2, fmSynth;
 
     // Efectos
     let masterComp, reverbBus;
@@ -51,31 +55,43 @@ const AudioManager = (() => {
         reverbBus.connect(masterComp);
         reverbBus.generate(); // async en background, funciona al iniciar
 
-        // ── PluckSynth pool — Karplus-Strong ──────────────────────────────
-        // Cada instancia es monofónica; el pool de 6 da polifonía real.
-        // Parámetros clave:
-        //   attackNoise  : cantidad de ruido inicial (0.1=suave → 20=muy percusivo)
-        //   dampening    : frecuencia del lowpass en el feedback (Hz)
-        //                  bajo = oscuro/cálido, alto = brillante/claro
-        //   resonance    : cuánto tiempo sustenta (0.9=corto → 0.999=largo)
+        // ── PluckSynth especializados — Karplus-Strong ────────────────────
+        // Instancias separadas con settings fijos (NO mutar mid-game).
+
+        // Hover: muy suave, dampening alto = brillante y ligero
+        pluckHover = new Tone.PluckSynth({ attackNoise: 0.4, dampening: 6500, resonance: 0.960 });
+        pluckHover.connect(masterComp);
+
+        // Click: muy percusivo, dampening bajo = oscuro y "snap"
+        pluckClick = new Tone.PluckSynth({ attackNoise: 15, dampening: 1800, resonance: 0.920 });
+        pluckClick.connect(masterComp);
+
+        // Reject: medio, suave
+        pluckReject = new Tone.PluckSynth({ attackNoise: 0.8, dampening: 3500, resonance: 0.970 });
+        pluckReject.connect(masterComp);
+        pluckReject.connect(reverbBus);
+
+        // Pool de melodía: 6 voces para polifonía (newRound, ascend, victory…)
         for (let i = 0; i < 6; i++) {
-            const p = new Tone.PluckSynth({
-                attackNoise : 1.5,
-                dampening   : 4800,
-                resonance   : 0.987
-            });
+            const p = new Tone.PluckSynth({ attackNoise: 2, dampening: 5000, resonance: 0.988 });
             p.connect(masterComp);
             p.connect(reverbBus);
-            plucks.push(p);
+            pluckMelody.push(p);
         }
 
         // ── MembraneSynth — modelo físico de membrana/percusión ──────────
-        // pitchDecay: tiempo del sweep de pitch descendente
-        // octaves   : cuántas octavas baja el pitch en el ataque
         membrane = new Tone.MembraneSynth({
             pitchDecay : 0.04,
             octaves    : 5,
             envelope   : { attack: 0.001, decay: 0.12, sustain: 0, release: 0.1 },
+            oscillator : { type: 'sine' }
+        }).connect(masterComp);
+
+        // Segundo membrane para gameOver (más grave y lento)
+        membrane2 = new Tone.MembraneSynth({
+            pitchDecay : 0.08,
+            octaves    : 8,
+            envelope   : { attack: 0.001, decay: 0.25, sustain: 0, release: 0.2 },
             oscillator : { type: 'sine' }
         }).connect(masterComp);
 
@@ -120,9 +136,9 @@ const AudioManager = (() => {
         ready = true;
     }
 
-    // Toca la siguiente voz del pool de PluckSynth (round-robin)
-    function pluck(note, time) {
-        const p = plucks[pluckIdx % plucks.length];
+    // Toca la siguiente voz del pool de melodía (round-robin)
+    function melody(note, time) {
+        const p = pluckMelody[pluckIdx % pluckMelody.length];
         pluckIdx++;
         p.triggerAttack(note, time ?? Tone.now());
     }
@@ -139,190 +155,95 @@ const AudioManager = (() => {
         },
 
         // ── Hover sobre carta ──────────────────────────────────────────────
-        // Toque suave de xilófono — como levantar una ficha de cartón
         cardHover() {
             if (!ready) return;
-            plucks[0].attackNoise = 0.5;
-            plucks[0].dampening   = 6000;
-            plucks[0].resonance   = 0.96;
-            plucks[0].triggerAttack('C6', Tone.now());
+            pluckHover.triggerAttack('C6', Tone.now());
         },
 
-        // ── Selección de carta — el sonido más importante ──────────────────
-        // "STAMP!" político: golpe de sello de goma con resonancia de madera
-        // Tres capas: thud de membrana + snap Karplus-Strong + shimmer metálico
+        // ── Selección de carta ─────────────────────────────────────────────
         cardClick() {
             if (!ready) return;
             const t = Tone.now();
-            // Capa 1: impacto grave (MembraneSynth — kick suave)
             membrane.triggerAttackRelease('C2', '16n', t);
-            // Capa 2: snap Karplus-Strong (el "crack" del sello)
-            plucks[1].attackNoise = 12;
-            plucks[1].dampening   = 2200;
-            plucks[1].resonance   = 0.93;
-            plucks[1].triggerAttack('A3', t + 0.005);
-            // Capa 3: shimmer metálico breve (calidad de decisión oficial)
+            pluckClick.triggerAttack('A3', t + 0.005);
             metal2.triggerAttackRelease('32n', t + 0.01);
         },
 
         // ── Carta rechazada ────────────────────────────────────────────────
-        // Dos plucks descendentes — como deslizar cartas de vuelta
         cardReject() {
             if (!ready) return;
             const t = Tone.now();
-            plucks[2].attackNoise = 0.8;
-            plucks[2].dampening   = 3500;
-            plucks[2].resonance   = 0.97;
-            plucks[2].triggerAttack('E4', t);
-            plucks[2].triggerAttack('B3', t + 0.09);
+            pluckReject.triggerAttack('E4', t);
+            pluckReject.triggerAttack('B3', t + 0.09);
         },
 
         // ── Medidor en zona crítica ────────────────────────────────────────
-        // Cuatro golpes metálicos urgentes — campana de alarma cartoon
         meterCritical() {
             if (!ready) return;
             const t = Tone.now();
             for (let i = 0; i < 4; i++) {
                 metal1.triggerAttackRelease('16n', t + i * 0.28);
-                // Acento alternando con metal2 (diálogo entre dos tonos)
                 if (i % 2 === 1) metal2.triggerAttackRelease('32n', t + i * 0.28 + 0.02);
             }
         },
 
         // ── Nueva ronda ────────────────────────────────────────────────────
-        // Arpegio de xilófono C5-E5-G5 — Karplus-Strong puro
-        // Suena como un xilófono de verdad (no a NES)
         newRound() {
             if (!ready) return;
             const t = Tone.now();
-            plucks[3].attackNoise = 1.5;
-            plucks[3].dampening   = 5000;
-            plucks[3].resonance   = 0.988;
-            ['C5', 'E5', 'G5'].forEach((note, i) => {
-                plucks[3].triggerAttack(note, t + i * 0.11);
-            });
+            ['C5', 'E5', 'G5'].forEach((note, i) => melody(note, t + i * 0.11));
         },
 
         // ── Ascenso de cargo ───────────────────────────────────────────────
-        // Escala de xilófono ascendente (5 notas) + lluvia metálica
-        // Como recibir una medalla en una ceremonia cartoon
         ascend() {
             if (!ready) return;
             const t = Tone.now();
-
-            // Escala Karplus-Strong (marimba presidencial)
-            const scale = ['C5', 'E5', 'G5', 'B5', 'C6'];
-            scale.forEach((note, i) => {
-                plucks[i % plucks.length].attackNoise = 2;
-                plucks[i % plucks.length].dampening   = 5200;
-                plucks[i % plucks.length].resonance   = 0.990;
-                plucks[i % plucks.length].triggerAttack(note, t + i * 0.1);
-            });
-
-            // Acorde final sostenido con FM (cuerpo musical)
+            ['C5', 'E5', 'G5', 'B5', 'C6'].forEach((note, i) => melody(note, t + i * 0.1));
             fmSynth.triggerAttackRelease('C5', '2n', t + 0.55);
-
-            // Lluvia de destellos metálicos (5 hits, frecuencias variadas)
             [350, 500, 650, 450, 700].forEach((freq, i) => {
-                metal1.frequency.value = freq;
                 metal1.triggerAttackRelease('32n', t + 0.58 + i * 0.07);
             });
         },
 
         // ── Game Over ──────────────────────────────────────────────────────
-        // Trombón triste FM: "wah-wah-wah-waaah"
-        // Bb4→A4→Ab4→G3 (cromático descendente, último nota cae octava)
         gameOver() {
             if (!ready) return;
             const t = Tone.now();
-
-            // Boom de apertura (MembraneSynth muy grave)
-            membrane.pitchDecay = 0.08;
-            membrane.octaves    = 8;
-            membrane.triggerAttackRelease('C1', '8n', t);
-
-            // Trombón FM descendente
-            const sad = [
-                ['Bb4', 0.00],
-                ['A4',  0.38],
-                ['Ab4', 0.76],
-                ['G3',  1.14]   // salta una octava abajo — el "waaaaah" final
-            ];
-            sad.forEach(([note, delay]) => {
-                fmSynth.triggerAttackRelease(note, '4n', t + delay);
+            membrane2.triggerAttackRelease('C1', '8n', t);
+            [['Bb4', 0.00], ['A4', 0.38], ['Ab4', 0.76], ['G3', 1.14]].forEach(([note, d]) => {
+                fmSynth.triggerAttackRelease(note, '4n', t + d);
             });
         },
 
         // ── Victoria final ─────────────────────────────────────────────────
-        // Fanfarria presidencial: motivo + acorde final + lluvia metálica
-        // Melodía en Karplus-Strong (marimba) + bass FM
         victory() {
             if (!ready) return;
             const t = Tone.now();
-
-            // Motivo rítmico en xilófono (Karplus-Strong — NO suena a NES)
-            const melody  = ['C5','C5','C5','E5','C5','E5','G5','C6'];
+            const notes   = ['C5','C5','C5','E5','C5','E5','G5','C6'];
             const timings = [0, .12, .24, .38, .58, .70, .84, .98];
-            melody.forEach((note, i) => {
-                const voice = plucks[i % plucks.length];
-                voice.attackNoise = 2.5;
-                voice.dampening   = 4500;
-                voice.resonance   = 0.985;
-                voice.triggerAttack(note, t + timings[i]);
-            });
-
-            // Acorde final con FMSynth (cuerpo y calidez)
-            ['C4', 'G4', 'E5'].forEach((note, i) => {
-                fmSynth.triggerAttackRelease(note, '1n', t + 1.12 + i * 0.025);
-            });
-
-            // Golpe de membrana final
-            membrane.pitchDecay = 0.04;
-            membrane.octaves    = 5;
+            notes.forEach((note, i) => melody(note, t + timings[i]));
+            ['C4', 'G4', 'E5'].forEach((note, i) =>
+                fmSynth.triggerAttackRelease(note, '1n', t + 1.12 + i * 0.025)
+            );
             membrane.triggerAttackRelease('C2', '8n', t + 1.12);
-
-            // Lluvia de campanitas metálicas
             [400, 600, 800, 500, 700, 450, 650].forEach((freq, i) => {
-                metal1.frequency.value = freq;
                 metal1.triggerAttackRelease('32n', t + 1.15 + i * 0.065);
             });
         },
 
         // ── Botones de UI ──────────────────────────────────────────────────
-        // Pluck suave tipo "tick" de reloj de pared cartoon
         uiClick() {
             if (!ready) return;
-            plucks[4].attackNoise = 1;
-            plucks[4].dampening   = 4000;
-            plucks[4].resonance   = 0.960;
-            plucks[4].triggerAttack('G4', Tone.now());
+            melody('G4', Tone.now());
         },
 
         // ── Inicio del juego ───────────────────────────────────────────────
-        // Jingle de campaña: G4→C5→E5 (marimba) + punch de membrana
         startGame() {
             if (!ready) return;
             const t = Tone.now();
-
-            ['G4', 'C5', 'E5'].forEach((note, i) => {
-                plucks[5].attackNoise = 2;
-                plucks[5].dampening   = 5000;
-                plucks[5].resonance   = 0.988;
-                plucks[5].triggerAttack(note, t + i * 0.14);
-            });
-
-            // Nota final sostenida (marimba resonante)
-            plucks[0].attackNoise = 3;
-            plucks[0].dampening   = 4000;
-            plucks[0].resonance   = 0.992;
-            plucks[0].triggerAttack('C6', t + 0.50);
-
-            // Punch de membrana en el acento
-            membrane.pitchDecay = 0.05;
-            membrane.octaves    = 5;
+            ['G4', 'C5', 'E5'].forEach((note, i) => melody(note, t + i * 0.14));
+            melody('C6', t + 0.50);
             membrane.triggerAttackRelease('C2', '16n', t + 0.50);
-
-            // Dos shimmer metálicos
             metal2.triggerAttackRelease('32n', t + 0.52);
             metal1.triggerAttackRelease('32n', t + 0.58);
         }
