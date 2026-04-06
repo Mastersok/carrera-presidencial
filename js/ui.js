@@ -391,6 +391,15 @@ document.addEventListener('DOMContentLoaded', () => {
         '«El pueblo ha decidido, y respeto su veredicto.»',
     ];
 
+    // Datos por cargo: foto, etiqueta de sección, caption de la foto
+    const ROLE_NEWSPAPER = {
+        candidato:  { img: 'img/char_candidato.png.jpg',  section: 'CAMPAÑA ELECTORAL',            caption: 'El candidato durante la campaña en terreno' },
+        alcalde:    { img: 'img/char_alcalde.png.jpg',    section: 'GOBIERNO LOCAL',               caption: 'El alcalde en su despacho municipal' },
+        diputado:   { img: 'img/char_diputado.png.jpg',   section: 'PODER LEGISLATIVO',            caption: 'El diputado en la Cámara de Representantes' },
+        senador:    { img: 'img/char_senador.png.jpg',    section: 'CÁMARA ALTA',                  caption: 'El senador durante la sesión plenaria' },
+        presidente: { img: 'img/char_presidente.png.jpg', section: 'PRESIDENCIA DE LA REPÚBLICA',  caption: 'El mandatario en el Palacio de Gobierno' },
+    };
+
     function showNewspaper(state, isWin, customMessage) {
         overlay.classList.remove('hidden');
         const cfg = state.getCurrentRoleConfig();
@@ -400,6 +409,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Resultado visual
         const paperEl = document.getElementById('newspaper-paper');
         paperEl.className = isWin ? 'paper-win' : 'paper-loss';
+
+        // Foto, sección y caption según cargo
+        const roleMeta = ROLE_NEWSPAPER[cfg.id] || ROLE_NEWSPAPER.candidato;
+        const photoEl = document.getElementById('paper-photo');
+        if (photoEl) photoEl.src = roleMeta.img;
+        const captionEl = document.getElementById('paper-caption');
+        if (captionEl) captionEl.textContent = roleMeta.caption;
+        const sectionEl = document.getElementById('paper-section-label');
+        if (sectionEl) sectionEl.textContent = isWin ? roleMeta.section : '⚠ ' + roleMeta.section;
 
         // Fecha y edición
         document.getElementById('paper-date').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
@@ -424,13 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const subtextPool = isWin ? WIN_SUBTEXTS : LOSS_SUBTEXTS;
         const quotePool   = isWin ? WIN_QUOTES : LOSS_QUOTES;
 
-        let articleBody = '';
-        if (customMessage) {
-            articleBody = customMessage;
-        } else {
-            articleBody = subtextPool[Math.floor(Math.random() * subtextPool.length)];
-        }
-        textEl.textContent = articleBody;
+        textEl.textContent = customMessage || subtextPool[Math.floor(Math.random() * subtextPool.length)];
 
         // Cita
         const quoteEl = document.getElementById('news-quote');
@@ -438,42 +450,43 @@ document.addEventListener('DOMContentLoaded', () => {
             quoteEl.textContent = quotePool[Math.floor(Math.random() * quotePool.length)];
         }
 
-        // Columna lateral
+        // Columna lateral — titulares aleatorios más variados
         const sidebarEl = document.getElementById('news-sidebar');
         if (sidebarEl) {
             const sideHeadlines = [
-                'Mercados reaccionan con volatilidad ante cambio de liderazgo',
+                'Mercados reaccionan con volatilidad ante el cambio',
                 'Organizaciones civiles exigen mayor transparencia',
                 'Encuestas muestran división en la opinión pública',
                 'El congreso prepara sesión extraordinaria',
                 'Analistas debaten el futuro del proyecto político',
                 'Protestas programadas para el fin de semana',
+                'Gremios empresariales solicitan reunión urgente',
+                'ONG denuncia irregularidades en licitación pública',
+                'Oposición anuncia moción de censura en el congreso',
+                'Cumbre regional: acuerdos sobre seguridad fronteriza',
             ];
-            // Elegir 3 titulares aleatorios
             const shuffled = [...sideHeadlines].sort(() => 0.5 - Math.random());
-            sidebarEl.innerHTML = shuffled.slice(0, 3).map(h => `<div class="sidebar-item">${h}</div>`).join('');
+            sidebarEl.innerHTML = shuffled.slice(0, 4).map(h => `<div class="sidebar-item">${h}</div>`).join('');
         }
 
-        // Stats con semáforo basado en umbral
+        // Stats — nuevo layout: nombre arriba, barra+valor abajo
         statsEl.innerHTML = '';
         const allMeters = [...state.activeMeters];
         if (state.permanentMeter) allMeters.push(state.permanentMeter);
 
-        allMeters.forEach((m, idx) => {
+        allMeters.forEach(m => {
             const val = Math.round(m.value);
             const isPerm = state.permanentMeter && m.id === state.permanentMeter.id;
             const status = getMeterStatus(val, isPerm);
 
-            let statusClass = 'stat-' + status;
-
             const li = document.createElement('li');
-            li.className = statusClass;
+            li.className = 'stat-' + status;
             li.innerHTML = `
                 <span class="stat-name">${m.icon || '📊'} ${m.name}</span>
-                <span class="stat-bar-wrap">
-                    <span class="stat-bar" style="width:${val}%"></span>
+                <span class="stat-row">
+                    <span class="stat-bar-wrap"><span class="stat-bar" style="width:${val}%"></span></span>
+                    <span class="stat-val">${val}%</span>
                 </span>
-                <span class="stat-val">${val}%</span>
             `;
             statsEl.appendChild(li);
         });

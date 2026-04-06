@@ -98,47 +98,88 @@
      ═══════════════════════════════════════════════════ -->
 <div id="newspaper-overlay" class="hidden">
     <div id="newspaper-paper">
-        <div class="paper-masthead">
-            <div class="masthead-rule thick"></div>
+
+        <!-- ══ CABECERA ══ -->
+        <header class="paper-masthead">
+            <div class="mast-top-stripe"></div>
             <div class="masthead-row-top">
                 <span id="paper-date" class="masthead-meta">Domingo, 22 de marzo de 2026</span>
+                <span class="masthead-meta masthead-founded">Fundado en 1952 &bull; Circulación Nacional</span>
                 <span id="paper-price" class="masthead-meta">$2.50</span>
             </div>
+            <div class="mast-rule-thin"></div>
             <div class="masthead-title-row">
-                <div class="masthead-ornament">❦</div>
-                <h1 id="paper-title" class="masthead-title">El Diario Democrático</h1>
-                <div class="masthead-ornament">❦</div>
+                <div class="masthead-ornament">❧</div>
+                <h1 class="masthead-title">El Diario Democrático</h1>
+                <div class="masthead-ornament">❧</div>
             </div>
             <div class="masthead-row-bot">
                 <span class="masthead-motto">"La voz que no se calla"</span>
                 <span id="paper-edition" class="masthead-meta">Edición Nº 4521</span>
             </div>
-            <div class="masthead-rule thick"></div>
+            <div class="mast-rule-double"></div>
+        </header>
+
+        <!-- ══ FRANJA DE SECCIÓN ══ -->
+        <div class="paper-section-flag">
+            <span id="paper-section-label">POLÍTICA NACIONAL</span>
         </div>
-        <div class="paper-content">
-            <div class="paper-main">
+
+        <!-- ══ CUERPO: 3 COLUMNAS ══ -->
+        <div class="paper-body">
+
+            <!-- COL IZQUIERDA: foto + estadísticas -->
+            <div class="paper-col paper-col-left">
+                <figure class="paper-photo-figure">
+                    <img id="paper-photo" src="img/char_candidato.png.jpg" alt="Foto del político" class="paper-photo">
+                    <figcaption id="paper-caption" class="paper-photo-caption">El político durante su mandato</figcaption>
+                </figure>
+                <div class="paper-col-rule"></div>
+                <div class="paper-stats-block">
+                    <h4 class="paper-stats-title">&#9644; BALANCE DEL MANDATO &#9644;</h4>
+                    <ul id="news-stats"></ul>
+                </div>
+            </div>
+
+            <!-- COL CENTRAL: titular + artículo + cita -->
+            <div class="paper-col paper-col-main">
                 <h2 id="news-headline" class="paper-headline">VICTORIA CONTUNDENTE</h2>
                 <p id="news-subhead" class="paper-subhead">Candidato a Alcalde — Ronda 8 de 8 — Umbral mínimo: 40%</p>
-                <div class="paper-rule thin"></div>
+                <div class="mast-rule-thin" style="margin:8px 0 6px"></div>
+                <p class="paper-byline">Por nuestro <em>corresponsal político</em> &mdash; Ciudad Capital</p>
+                <div class="mast-rule-thin" style="margin:6px 0 10px"></div>
                 <p id="news-text" class="paper-article">El apoyo popular fue indiscutible...</p>
                 <blockquote id="news-quote" class="paper-quote">«Demostramos que se puede gobernar con responsabilidad.»</blockquote>
             </div>
-            <aside class="paper-sidebar">
+
+            <!-- COL DERECHA: otros titulares + avisos -->
+            <div class="paper-col paper-col-right">
                 <h4 class="sidebar-title">OTROS TITULARES</h4>
-                <div id="news-sidebar" class="sidebar-list">
-                    <div class="sidebar-item">Mercados reaccionan con volatilidad</div>
-                    <div class="sidebar-item">Organizaciones civiles exigen transparencia</div>
-                    <div class="sidebar-item">El congreso prepara sesión extraordinaria</div>
+                <div id="news-sidebar" class="sidebar-list"></div>
+                <div class="mast-rule-thin" style="margin:12px 0"></div>
+                <div class="paper-ad">
+                    <div class="ad-header">AVISO OFICIAL</div>
+                    <div class="ad-body"><strong>BANCO DE LA REPÚBLICA</strong><br><em>"Su dinero, en buenas manos"</em></div>
                 </div>
-            </aside>
+                <div class="paper-ad" style="margin-top:10px">
+                    <div class="ad-header">SE BUSCA</div>
+                    <div class="ad-body">Funcionario honesto,<br>experiencia no requerida.<br><em>Tel: 555-DEMO</em></div>
+                </div>
+            </div>
+
+        </div><!-- /paper-body -->
+
+        <!-- ══ BARRA INFERIOR ══ -->
+        <div class="paper-bottom-bar">
+            <span>EL DIARIO DEMOCRÁTICO &bull; EDICIÓN NACIONAL</span>
+            <span>PÁGINA 1</span>
         </div>
-        <div class="paper-stats-section">
-            <h3 class="stats-title">BALANCE FINAL DEL MANDATO</h3>
-            <ul id="news-stats"></ul>
-        </div>
+
+        <!-- ══ BOTÓN ══ -->
         <div class="paper-footer">
             <button id="btn-continue">🗳️ NUEVA CARRERA</button>
         </div>
+
     </div>
 </div>
 
