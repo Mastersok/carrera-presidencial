@@ -369,26 +369,30 @@ document.addEventListener('DOMContentLoaded', () => {
         'RENUNCIA FORZADA',
     ];
     const WIN_SUBTEXTS = [
-        'Los analistas coinciden: la gestión fue sólida y el pueblo premió la constancia.',
-        'Fuentes cercanas al gobierno afirman que el ascenso era "cuestión de tiempo".',
-        'La oposición reconoce a regañadientes una victoria limpia.',
-        '"Era el candidato que necesitábamos", declaró un portavoz del partido oficialista.',
+        'Los analistas políticos coinciden en que la gestión fue sólida, coherente y orientada al bien común. Rara vez se observa en la arena política un desempeño tan consistente a lo largo de todas las etapas del mandato. El ciudadano de a pie, consultado en las afueras del palacio municipal, resumió el sentir general: "Por fin alguien que cumple lo que promete". Las encuestas de satisfacción cerraron en niveles históricos, y los indicadores sociales reflejan una mejora tangible en la calidad de vida de la población.',
+        'Fuentes cercanas al gobierno afirman que el ascenso era "cuestión de tiempo". La combinación de decisiones estratégicas, alianzas bien construidas y una comunicación honesta con la ciudadanía creó las condiciones para un resultado que muy pocos se atrevieron a cuestionar. El partido oficialista celebró con mesura, consciente de que los desafíos del próximo cargo serán aún mayores. La oposición, por su parte, reconoció a regañadientes que la victoria fue limpia y merecida.',
+        'La oposición reconoce, aunque con dificultad, una victoria que no deja lugar a dudas. Los números finales del mandato hablan por sí solos: medidores saneados, estabilidad institucional y una ciudadanía que recuperó la confianza en sus representantes. Varios líderes de partidos contrarios llamaron a la reflexión interna y plantearon la necesidad de renovar sus propias propuestas ante una figura que demostró que gobernar bien es posible.',
+        '"Era el candidato que necesitábamos en este momento de la historia", declaró en primicia un portavoz del partido oficialista ante los medios reunidos en la sede central. La jornada concluyó con aplausos espontáneos en la Plaza Mayor, donde cientos de ciudadanos se congregaron para celebrar un resultado que marca un antes y un después en la carrera política nacional. Los corresponsales extranjeros destacaron la madurez del proceso democrático.',
+        'Tras meses de decisiones difíciles y presiones constantes, los resultados finales confirman que la apuesta por la transparencia y el trabajo silencioso rindió sus frutos. Los organismos de fiscalización destacaron la ausencia de irregularidades durante todo el período, un dato que contrasta favorablemente con administraciones anteriores. "Este es el tipo de liderazgo que el país necesita para avanzar", publicó en su editorial el prestigioso semanario político.',
     ];
     const LOSS_SUBTEXTS = [
-        'Observadores internacionales calificaron la gestión como "un ejemplo de lo que no se debe hacer".',
-        'El partido ya busca sucesor tras lo que denominaron "un fracaso sin precedentes".',
-        '"Los números no mienten", sentenció el editorial del día siguiente.',
-        'Analistas políticos coinciden: las señales de alarma fueron ignoradas hasta el colapso.',
+        'Observadores internacionales calificaron la gestión como "un ejemplo de lo que no se debe hacer en política pública". Los indicadores colapsaron semana a semana, y las advertencias tempranas fueron ignoradas sistemáticamente. El partido ya busca un sucesor tras lo que denominaron internamente "un fracaso sin precedentes en la historia reciente de la institución". Fuentes anónimas dentro del gobierno admitieron que los errores de cálculo comenzaron mucho antes de que fueran visibles para la opinión pública.',
+        'El partido ya busca sucesor tras lo que denominaron "un fracaso sin precedentes". Las actas internas revelan que hubo múltiples instancias en que se pudo corregir el rumbo, pero la falta de voluntad política y la soberbia institucional impidieron cualquier rectificación a tiempo. Analistas de reconocido prestigio señalaron que la caída fue predecible desde el primer trimestre del mandato. El daño a la imagen institucional tardará años en repararse, según advierten los expertos.',
+        '"Los números no mienten", sentenció el editorial del día siguiente, publicado en primera plana con letras de cuerpo 72. El balance final del mandato muestra medidores en rojo, ciudadanía desencantada y una institucionalidad debilitada que deberá ser reconstruida desde los cimientos. Varios funcionarios presentaron su renuncia antes del cierre oficial, distanciándose de una administración que no supo leer las señales del entorno ni responder a las necesidades reales de la población.',
+        'Analistas políticos coinciden: las señales de alarma fueron ignoradas hasta el colapso final. Desde los primeros meses del mandato, los indicadores mostraban una tendencia preocupante que nadie en el círculo íntimo quiso reconocer públicamente. La negación sistemática de la realidad, combinada con decisiones que priorizaron intereses sectoriales por sobre el bien común, llevó a un desenlace que muchos ciudadanos vivieron con una mezcla de tristeza e indignación. La historia juzgará con dureza este período.',
+        'Lo que comenzó con promesas de cambio terminó en una gestión que defraudó a propios y extraños. Los archivos del período muestran una sucesión de oportunidades perdidas, negociaciones fallidas y recursos mal administrados. La ciudadanía, cansada de justificaciones y excusas, expresó su veredicto con claridad. "No es que las circunstancias fueran difíciles", escribió un conocido columnista político, "es que nunca hubo un plan real para enfrentarlas".',
     ];
     const WIN_QUOTES = [
-        '«Demostramos que se puede gobernar con responsabilidad y obtener resultados.»',
-        '«Este ascenso es del pueblo, yo solo fui el instrumento.»',
-        '«La democracia funciona cuando los ciudadanos premian la buena gestión.»',
+        '«Demostramos que se puede gobernar con responsabilidad y obtener resultados concretos para la gente.»',
+        '«Este ascenso es del pueblo, yo solo fui el instrumento de una voluntad colectiva que siempre supo hacia dónde ir.»',
+        '«La democracia funciona cuando los ciudadanos premian la buena gestión y exigen cuentas claras.»',
+        '«Trabajamos sin descanso, tomamos las decisiones difíciles y hoy los resultados nos dan la razón.»',
     ];
     const LOSS_QUOTES = [
-        '«Asumo toda la responsabilidad por los errores cometidos.»',
-        '«Las circunstancias fueron adversas, pero reconozco mi derrota.»',
-        '«El pueblo ha decidido, y respeto su veredicto.»',
+        '«Asumo toda la responsabilidad por los errores cometidos. No buscaré excusas donde solo hubo malas decisiones.»',
+        '«Las circunstancias fueron adversas, pero reconozco que tampoco estuve a la altura de lo que el momento requería.»',
+        '«El pueblo ha decidido, y respeto su veredicto. La democracia es más grande que cualquier ambición personal.»',
+        '«Me voy con la conciencia de haber intentado lo que creí correcto, aunque los resultados demuestren que me equivoqué.»',
     ];
 
     // Datos por cargo: foto, etiqueta de sección, caption de la foto
