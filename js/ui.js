@@ -353,35 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //   PERIÓDICO
     // ────────────────────────────────────────────────────
 
-    const WIN_HEADLINES = [
-        '¡VICTORIA CONTUNDENTE!',
-        'ASCENSO CONFIRMADO',
-        'EL PUEBLO HA HABLADO',
-        'TRIUNFO POLÍTICO ROTUNDO',
-        'OVACIÓN POPULAR',
-    ];
-    const LOSS_HEADLINES = [
-        'ESCÁNDALO Y CAÍDA',
-        'DERROTA APLASTANTE',
-        'FIN DE UNA ERA',
-        'CRISIS TERMINAL',
-        'DESASTRE POLÍTICO',
-        'RENUNCIA FORZADA',
-    ];
-    const WIN_SUBTEXTS = [
-        'Los analistas políticos coinciden en que la gestión fue sólida, coherente y orientada al bien común. Rara vez se observa en la arena política un desempeño tan consistente a lo largo de todas las etapas del mandato. El ciudadano de a pie, consultado en las afueras del palacio municipal, resumió el sentir general: "Por fin alguien que cumple lo que promete". Las encuestas de satisfacción cerraron en niveles históricos, y los indicadores sociales reflejan una mejora tangible en la calidad de vida de la población.',
-        'Fuentes cercanas al gobierno afirman que el ascenso era "cuestión de tiempo". La combinación de decisiones estratégicas, alianzas bien construidas y una comunicación honesta con la ciudadanía creó las condiciones para un resultado que muy pocos se atrevieron a cuestionar. El partido oficialista celebró con mesura, consciente de que los desafíos del próximo cargo serán aún mayores. La oposición, por su parte, reconoció a regañadientes que la victoria fue limpia y merecida.',
-        'La oposición reconoce, aunque con dificultad, una victoria que no deja lugar a dudas. Los números finales del mandato hablan por sí solos: medidores saneados, estabilidad institucional y una ciudadanía que recuperó la confianza en sus representantes. Varios líderes de partidos contrarios llamaron a la reflexión interna y plantearon la necesidad de renovar sus propias propuestas ante una figura que demostró que gobernar bien es posible.',
-        '"Era el candidato que necesitábamos en este momento de la historia", declaró en primicia un portavoz del partido oficialista ante los medios reunidos en la sede central. La jornada concluyó con aplausos espontáneos en la Plaza Mayor, donde cientos de ciudadanos se congregaron para celebrar un resultado que marca un antes y un después en la carrera política nacional. Los corresponsales extranjeros destacaron la madurez del proceso democrático.',
-        'Tras meses de decisiones difíciles y presiones constantes, los resultados finales confirman que la apuesta por la transparencia y el trabajo silencioso rindió sus frutos. Los organismos de fiscalización destacaron la ausencia de irregularidades durante todo el período, un dato que contrasta favorablemente con administraciones anteriores. "Este es el tipo de liderazgo que el país necesita para avanzar", publicó en su editorial el prestigioso semanario político.',
-    ];
-    const LOSS_SUBTEXTS = [
-        'Observadores internacionales calificaron la gestión como "un ejemplo de lo que no se debe hacer en política pública". Los indicadores colapsaron semana a semana, y las advertencias tempranas fueron ignoradas sistemáticamente. El partido ya busca un sucesor tras lo que denominaron internamente "un fracaso sin precedentes en la historia reciente de la institución". Fuentes anónimas dentro del gobierno admitieron que los errores de cálculo comenzaron mucho antes de que fueran visibles para la opinión pública.',
-        'El partido ya busca sucesor tras lo que denominaron "un fracaso sin precedentes". Las actas internas revelan que hubo múltiples instancias en que se pudo corregir el rumbo, pero la falta de voluntad política y la soberbia institucional impidieron cualquier rectificación a tiempo. Analistas de reconocido prestigio señalaron que la caída fue predecible desde el primer trimestre del mandato. El daño a la imagen institucional tardará años en repararse, según advierten los expertos.',
-        '"Los números no mienten", sentenció el editorial del día siguiente, publicado en primera plana con letras de cuerpo 72. El balance final del mandato muestra medidores en rojo, ciudadanía desencantada y una institucionalidad debilitada que deberá ser reconstruida desde los cimientos. Varios funcionarios presentaron su renuncia antes del cierre oficial, distanciándose de una administración que no supo leer las señales del entorno ni responder a las necesidades reales de la población.',
-        'Analistas políticos coinciden: las señales de alarma fueron ignoradas hasta el colapso final. Desde los primeros meses del mandato, los indicadores mostraban una tendencia preocupante que nadie en el círculo íntimo quiso reconocer públicamente. La negación sistemática de la realidad, combinada con decisiones que priorizaron intereses sectoriales por sobre el bien común, llevó a un desenlace que muchos ciudadanos vivieron con una mezcla de tristeza e indignación. La historia juzgará con dureza este período.',
-        'Lo que comenzó con promesas de cambio terminó en una gestión que defraudó a propios y extraños. Los archivos del período muestran una sucesión de oportunidades perdidas, negociaciones fallidas y recursos mal administrados. La ciudadanía, cansada de justificaciones y excusas, expresó su veredicto con claridad. "No es que las circunstancias fueran difíciles", escribió un conocido columnista político, "es que nunca hubo un plan real para enfrentarlas".',
-    ];
+
     const WIN_QUOTES = [
         '«Demostramos que se puede gobernar con responsabilidad y obtener resultados concretos para la gente.»',
         '«Este ascenso es del pueblo, yo solo fui el instrumento de una voluntad colectiva que siempre supo hacia dónde ir.»',
@@ -432,21 +404,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (priceEl) priceEl.textContent = `$${(Math.random() * 3 + 1).toFixed(2)}`;
 
         // Titular
+        const roleData = NEWSPAPER[cfg.id] || NEWSPAPER['candidato'];
+        const headlinesPool = isWin ? roleData.win.headlines : roleData.loss.headlines;
+
         if (state.runStatus === 'victory') {
             headlineEl.textContent = '¡PRESIDENTE ELECTO!';
         } else {
-            const pool = isWin ? WIN_HEADLINES : LOSS_HEADLINES;
-            headlineEl.textContent = pool[Math.floor(Math.random() * pool.length)];
+            headlineEl.textContent = headlinesPool[Math.floor(Math.random() * headlinesPool.length)];
         }
 
         // Subtítulo del cargo
         subheadEl.textContent = `${cfg.name} — Ronda ${state.currentRound} de ${cfg.totalRounds} — Umbral mínimo: ${cfg.minThreshold}%`;
 
         // Cuerpo del artículo principal
-        const subtextPool = isWin ? WIN_SUBTEXTS : LOSS_SUBTEXTS;
-        const quotePool   = isWin ? WIN_QUOTES : LOSS_QUOTES;
+        const articlesPool = isWin ? roleData.win.articles : roleData.loss.articles;
+        const quotePool    = isWin ? WIN_QUOTES : LOSS_QUOTES;
 
-        textEl.textContent = customMessage || subtextPool[Math.floor(Math.random() * subtextPool.length)];
+        textEl.textContent = customMessage || articlesPool[Math.floor(Math.random() * articlesPool.length)];
 
         // Cita
         const quoteEl = document.getElementById('news-quote');
@@ -457,20 +431,26 @@ document.addEventListener('DOMContentLoaded', () => {
         // Columna lateral — titulares aleatorios más variados
         const sidebarEl = document.getElementById('news-sidebar');
         if (sidebarEl) {
-            const sideHeadlines = [
-                'Mercados reaccionan con volatilidad ante el cambio',
-                'Organizaciones civiles exigen mayor transparencia',
-                'Encuestas muestran división en la opinión pública',
-                'El congreso prepara sesión extraordinaria',
-                'Analistas debaten el futuro del proyecto político',
-                'Protestas programadas para el fin de semana',
-                'Gremios empresariales solicitan reunión urgente',
-                'ONG denuncia irregularidades en licitación pública',
-                'Oposición anuncia moción de censura en el congreso',
-                'Cumbre regional: acuerdos sobre seguridad fronteriza',
-            ];
-            const shuffled = [...sideHeadlines].sort(() => 0.5 - Math.random());
-            sidebarEl.innerHTML = shuffled.slice(0, 4).map(h => `<div class="sidebar-item">${h}</div>`).join('');
+            const shuffledSide = [...OTROS_TITULARES].sort(() => 0.5 - Math.random());
+            sidebarEl.innerHTML = shuffledSide.slice(0, 4).map(h => `<div class="sidebar-item">${h}</div>`).join('');
+        }
+
+        // Avisos Clasificados
+        const rightCol = document.querySelector('.paper-col-right');
+        if (rightCol) {
+            const existingAds = rightCol.querySelectorAll('.paper-ad');
+            existingAds.forEach(ad => ad.remove());
+
+            const shuffledAds = [...AVISOS_CLASIFICADOS].sort(() => 0.5 - Math.random());
+            const selectedAds = shuffledAds.slice(0, 2);
+            
+            selectedAds.forEach((ad, i) => {
+                const adEl = document.createElement('div');
+                adEl.className = 'paper-ad';
+                if (i > 0) adEl.style.marginTop = '10px';
+                adEl.innerHTML = `<div class="ad-header">${ad.header}</div><div class="ad-body">${ad.body}</div>`;
+                rightCol.appendChild(adEl);
+            });
         }
 
         // Stats — nuevo layout: nombre arriba, barra+valor abajo
