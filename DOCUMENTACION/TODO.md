@@ -29,6 +29,7 @@ Esta es la 'biblia' del estado del proyecto para la carpeta de documentación.
 - [x] Renderizar las 3 cartas opciones inyectando los datos de texto de las plantillas generadas.
 - [x] Controlar eventos OnClick reales de la carta (aplicar efectos -> pasar turno -> re-render).
 - [x] Programar Lógica del Periódico (evaluar si es Win/Loss y seleccionar Titular en base a medidores).
+- [x] Mover textos a archivo independiente y expandir narrativa (párrafos de estilo noticia por cargo y avisos satíricos).
 
 ## FASE 6: Polish (Pulido y Sonido) [EN PROCESO]
 - [ ] Añadir SFX base para Interacción de Cartas y Alarmas de medidor crítico.

@@ -24,6 +24,13 @@ Todas las novedades, implementaciones tecnológicas y decisiones arquitecturales
 - **Fix:** Medidor permanente ahora puede ser modificado por cartas (35% de probabilidad).
 - **Fix:** Periódico ilegible reemplazado por diseño puro CSS sin textura.
 
+## [v0.4.0] - Expansión Narrativa del Periódico
+- **Mejora:** Transformación de las noticias de una sola frase a verdaderos párrafos descriptivos y humorísticos de 2 a 3 oraciones.
+- **Añadido:** Nuevo archivo independiente `js/newspaper-content.js` para separar los datos (textos) de la lógica de interfaz.
+- **Añadido:** 10 titulares y 10 artículos únicos por cargo para escenario de victoria, y 10 para derrota (100 textos robustos en total).
+- **Añadido:** 30 "Otros Titulares" aleatorios y 20 Avisos Clasificados satíricos para rellenar la columna lateral del diario.
+- **Refactor:** `ui.js` lee e inyecta dinámicamente este contenido masivo basándose en el cargo correspondiente.
+
 ## [v0.3.1] - Semáforo Dinámico + Periódico Premium
 - **Mejora:** Semáforo de medidores ahora es dinámico basado en el umbral mínimo de cada cargo.
   - Candidato: umbral 40%, Alcalde: 50%, Diputado: 60%, Senador: 65%, Presidente: 70%.
