@@ -6,55 +6,85 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // ── Referencias al DOM ──────────────────────────────
-    const roleEl        = document.getElementById('current-role');
-    const roleIconEl    = document.getElementById('role-icon');
-    const roundPipsEl   = document.getElementById('round-pips');
-    const metersEl      = document.getElementById('active-meters');
-    const permMeterEl   = document.getElementById('permanent-meter');
-    const cardsEl       = document.getElementById('cards-container');
-    const gameScreen    = document.getElementById('game-screen');
-    const startScreen   = document.getElementById('start-screen');
-    const btnPlay       = document.getElementById('btn-play');
-    const charImg       = document.getElementById('role-character');
+    const roleEl = document.getElementById('current-role');
+    const roleIconEl = document.getElementById('role-icon');
+    const roundPipsEl = document.getElementById('round-pips');
+    const metersEl = document.getElementById('active-meters');
+    const permMeterEl = document.getElementById('permanent-meter');
+    const cardsEl = document.getElementById('cards-container');
+    const gameScreen = document.getElementById('game-screen');
+    const startScreen = document.getElementById('start-screen');
+    const btnPlay = document.getElementById('btn-play');
+    const charImg = document.getElementById('role-character');
 
     // Periódico
-    const overlay       = document.getElementById('newspaper-overlay');
-    const headlineEl    = document.getElementById('news-headline');
-    const subheadEl     = document.getElementById('news-subhead');
-    const textEl        = document.getElementById('news-text');
-    const statsEl       = document.getElementById('news-stats');
-    const btnContinue   = document.getElementById('btn-continue');
+    const overlay = document.getElementById('newspaper-overlay');
+    const headlineEl = document.getElementById('news-headline');
+    const subheadEl = document.getElementById('news-subhead');
+    const textEl = document.getElementById('news-text');
+    const statsEl = document.getElementById('news-stats');
+    const btnContinue = document.getElementById('btn-continue');
 
     // Pantalla de ascenso
     const ascendOverlay = document.getElementById('ascend-overlay');
-    const btnAscend     = document.getElementById('btn-ascend-continue');
-    let   pendingState  = null;
+    const btnAscend = document.getElementById('btn-ascend-continue');
+    let pendingState = null;
 
     // Pantalla de intro / misión
-    const introOverlay  = document.getElementById('intro-overlay');
+    const introOverlay = document.getElementById('intro-overlay');
     const btnIntroReady = document.getElementById('btn-intro-ready');
 
     // Tracking de medidores en zona crítica (para no repetir alarma)
     const prevCritical = new Set();
 
     const ROLE_ICONS = {
-        candidato:  '🗳️',
-        alcalde:    '🏙️',
-        diputado:   '📜',
-        senador:    '🏛️',
+        candidato: '🗳️',
+        alcalde: '🏙️',
+        diputado: '📜',
+        senador: '🏛️',
         presidente: '👑'
     };
 
     const ROLE_CHARACTERS = {
-        candidato:  'img/char_candidato.png.jpg',
-        alcalde:    'img/char_alcalde.png.jpg',
-        diputado:   'img/char_diputado.png.jpg',
-        senador:    'img/char_senador.png.jpg',
+        candidato: 'img/char_candidato.png.jpg',
+        alcalde: 'img/char_alcalde.png.jpg',
+        diputado: 'img/char_diputado.png.jpg',
+        senador: 'img/char_senador.png.jpg',
         presidente: 'img/char_presidente.png.jpg'
     };
 
     // ── Pantalla de inicio ──────────────────────────────
+    const tutorialOverlay = document.getElementById('tutorial-overlay');
+    const btnTutorial = document.getElementById('btn-tutorial');
+    const btnTutorialClose = document.getElementById('btn-tutorial-close');
+    const btnTutorialPlay = document.getElementById('btn-tutorial-play');
+
     btnPlay.addEventListener('click', async () => {
+        await AudioManager.init();
+        AudioManager.startGame();
+        startScreen.style.animation = 'fade-out 0.4s ease forwards';
+        setTimeout(() => {
+            startScreen.style.display = 'none';
+            gameScreen.classList.remove('hidden');
+            GameState.startNewRun();
+        }, 400);
+    });
+
+    // ── Botón de Tutorial ──────────────────────────────
+    btnTutorial.addEventListener('click', () => {
+        try { AudioManager.uiClick(); } catch (e) { }
+        tutorialOverlay.classList.remove('hidden');
+    });
+
+    btnTutorialClose.addEventListener('click', () => {
+        try { AudioManager.uiClick(); } catch (e) { }
+        tutorialOverlay.classList.add('hidden');
+    });
+
+    btnTutorialPlay.addEventListener('click', async () => {
+        try { AudioManager.uiClick(); } catch (e) { }
+        tutorialOverlay.classList.add('hidden');
+        // Iniciar el juego después de cerrar el tutorial
         await AudioManager.init();
         AudioManager.startGame();
         startScreen.style.animation = 'fade-out 0.4s ease forwards';
@@ -115,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Botón de Introducción a Cargo ───────────────────
     btnIntroReady.addEventListener('click', () => {
-        try { AudioManager.uiClick(); } catch(e) {}
+        try { AudioManager.uiClick(); } catch (e) { }
         introOverlay.classList.add('hidden');
     });
 
@@ -135,17 +165,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // ────────────────────────────────────────────────────
     function showIntroScreen(state) {
         const cfg = state.getCurrentRoleConfig();
-        
+
         document.getElementById('intro-role').textContent = cfg.name.toUpperCase();
-        
+
         const introChar = document.getElementById('intro-character');
         if (ROLE_CHARACTERS[cfg.id]) {
             introChar.src = ROLE_CHARACTERS[cfg.id];
         }
-        
+
         document.getElementById('intro-rounds').textContent = `${cfg.totalRounds} rondas`;
         document.getElementById('intro-threshold').textContent = `${cfg.minThreshold}%`;
-        
+
         const listEl = document.getElementById('intro-meters-list');
         listEl.innerHTML = '';
         state.activeMeters.forEach(m => {
@@ -158,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
             li.innerHTML = `<strong>${state.permanentMeter.icon || '★'} ${state.permanentMeter.name} (Permanente)</strong>`;
             listEl.appendChild(li);
         }
-        
+
         introOverlay.classList.remove('hidden');
     }
 
@@ -168,10 +198,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function showAscendScreen(state) {
         pendingState = state;
         const currentCfg = state.getCurrentRoleConfig();
-        const nextRole   = ROLES[state.roleIndex + 1];
+        const nextRole = ROLES[state.roleIndex + 1];
 
         document.getElementById('ascend-from-role').textContent = currentCfg.name.toUpperCase();
-        document.getElementById('ascend-new-role').textContent  = nextRole.name.toUpperCase();
+        document.getElementById('ascend-new-role').textContent = nextRole.name.toUpperCase();
 
         const ascendChar = document.getElementById('ascend-character');
         ascendChar.src = ROLE_CHARACTERS[nextRole.id] || '';
@@ -179,16 +209,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // Generar confetti
         const confettiEl = document.getElementById('ascend-confetti');
         confettiEl.innerHTML = '';
-        const colors = ['#f5c518','#e63946','#2dc653','#ff9f1c','#fdf6e3'];
+        const colors = ['#f5c518', '#e63946', '#2dc653', '#ff9f1c', '#fdf6e3'];
         for (let i = 0; i < 40; i++) {
             const piece = document.createElement('div');
             piece.className = 'confetti-piece';
-            piece.style.left     = Math.random() * 100 + 'vw';
-            piece.style.width    = (8 + Math.random() * 8) + 'px';
-            piece.style.height   = (10 + Math.random() * 10) + 'px';
+            piece.style.left = Math.random() * 100 + 'vw';
+            piece.style.width = (8 + Math.random() * 8) + 'px';
+            piece.style.height = (10 + Math.random() * 10) + 'px';
             piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-            piece.style.animationDuration  = (1.5 + Math.random() * 2) + 's';
-            piece.style.animationDelay     = (Math.random() * 1.5) + 's';
+            piece.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+            piece.style.animationDelay = (Math.random() * 1.5) + 's';
             confettiEl.appendChild(piece);
         }
 
@@ -227,8 +257,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return 'safe';
         }
 
-        if (val < dangerZone)  return 'crit';
-        if (val < threshold)   return 'warn';
+        if (val < dangerZone) return 'crit';
+        if (val < threshold) return 'warn';
         return 'safe';
     }
 
@@ -238,8 +268,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderHeader(state) {
         const cfg = state.getCurrentRoleConfig();
-        roleEl.textContent      = cfg.name;
-        roleIconEl.textContent  = ROLE_ICONS[cfg.id] || '🏛️';
+        roleEl.textContent = cfg.name;
+        roleIconEl.textContent = ROLE_ICONS[cfg.id] || '🏛️';
 
         // Actualizar personaje
         if (charImg && ROLE_CHARACTERS[cfg.id]) {
@@ -251,16 +281,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (thresholdEl) thresholdEl.textContent = `Mínimo: ${cfg.minThreshold}%`;
 
         // Tooltips dinámicos del header
-        const roleTooltip  = document.getElementById('role-tooltip');
+        const roleTooltip = document.getElementById('role-tooltip');
         const roundTooltip = document.getElementById('round-tooltip');
-        if (roleTooltip)  roleTooltip.textContent  = `Eres ${cfg.name} — supera el ${cfg.minThreshold}% en todos los medidores para avanzar al siguiente cargo`;
+        if (roleTooltip) roleTooltip.textContent = `Eres ${cfg.name} — supera el ${cfg.minThreshold}% en todos los medidores para avanzar al siguiente cargo`;
         if (roundTooltip) roundTooltip.textContent = `Ronda ${state.currentRound} de ${cfg.totalRounds} — completa todas las rondas manteniendo tus medidores por encima del mínimo`;
 
         roundPipsEl.innerHTML = '';
         for (let i = 1; i <= cfg.totalRounds; i++) {
             const pip = document.createElement('div');
             pip.className = 'round-pip';
-            if (i < state.currentRound)  pip.classList.add('done');
+            if (i < state.currentRound) pip.classList.add('done');
             if (i === state.currentRound) pip.classList.add('current');
             roundPipsEl.appendChild(pip);
         }
@@ -303,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const icon = meter.icon || '📊';
 
         let fillClass = isPerm ? 'meter-fill perm' : `meter-fill ${status}`;
-        let valClass  = isPerm ? 'meter-value perm' : `meter-value ${status}`;
+        let valClass = isPerm ? 'meter-value perm' : `meter-value ${status}`;
 
         const tooltipText = meter.desc || '';
 
@@ -339,8 +369,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const el = document.createElement('div');
 
             // Determinar el tipo visual de la carta según los efectos
-            const totalPos = card.effects.filter(e => e.amount > 0).reduce((s,e) => s + e.amount, 0);
-            const totalNeg = card.effects.filter(e => e.amount < 0).reduce((s,e) => s + Math.abs(e.amount), 0);
+            const totalPos = card.effects.filter(e => e.amount > 0).reduce((s, e) => s + e.amount, 0);
+            const totalNeg = card.effects.filter(e => e.amount < 0).reduce((s, e) => s + Math.abs(e.amount), 0);
             let cardType = 'neutral';
             if (totalPos > totalNeg * 1.3) cardType = 'profit';
             else if (totalNeg > totalPos * 1.3) cardType = 'risk';
@@ -348,8 +378,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Icono del banner según tipo
             const bannerIcons = {
                 neutral: '⚖️',
-                profit:  '📈',
-                risk:    '🎲'
+                profit: '📈',
+                risk: '🎲'
             };
 
             el.className = `decision-card card-type-${cardType}`;
@@ -358,9 +388,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Efectos como pastillas (pills)
             let effectsHTML = '';
             card.effects.forEach(eff => {
-                const pos   = eff.amount >= 0;
-                const cls   = pos ? 'effect-pos' : 'effect-neg';
-                const sign  = pos ? '+' : '';
+                const pos = eff.amount >= 0;
+                const cls = pos ? 'effect-pos' : 'effect-neg';
+                const sign = pos ? '+' : '';
                 const arrow = pos ? '▲' : '▼';
                 effectsHTML += `
                     <div class="effect-row ${cls}">
@@ -389,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (cardsEl.dataset.locked === 'true') return;
                 cardsEl.dataset.locked = 'true';
 
-                try { AudioManager.cardClick(); } catch(e) {}
+                try { AudioManager.cardClick(); } catch (e) { }
 
                 el.classList.add('selected');
                 cardsEl.querySelectorAll('.decision-card').forEach(c => {
@@ -438,11 +468,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Datos por cargo: foto, etiqueta de sección, caption de la foto
     const ROLE_NEWSPAPER = {
-        candidato:  { img: 'img/char_candidato.png.jpg',  section: 'CAMPAÑA ELECTORAL',            caption: 'El candidato durante la campaña en terreno' },
-        alcalde:    { img: 'img/char_alcalde.png.jpg',    section: 'GOBIERNO LOCAL',               caption: 'El alcalde en su despacho municipal' },
-        diputado:   { img: 'img/char_diputado.png.jpg',   section: 'PODER LEGISLATIVO',            caption: 'El diputado en la Cámara de Representantes' },
-        senador:    { img: 'img/char_senador.png.jpg',    section: 'CÁMARA ALTA',                  caption: 'El senador durante la sesión plenaria' },
-        presidente: { img: 'img/char_presidente.png.jpg', section: 'PRESIDENCIA DE LA REPÚBLICA',  caption: 'El mandatario en el Palacio de Gobierno' },
+        candidato: { img: 'img/char_candidato.png.jpg', section: 'CAMPAÑA ELECTORAL', caption: 'El candidato durante la campaña en terreno' },
+        alcalde: { img: 'img/char_alcalde.png.jpg', section: 'GOBIERNO LOCAL', caption: 'El alcalde en su despacho municipal' },
+        diputado: { img: 'img/char_diputado.png.jpg', section: 'PODER LEGISLATIVO', caption: 'El diputado en la Cámara de Representantes' },
+        senador: { img: 'img/char_senador.png.jpg', section: 'CÁMARA ALTA', caption: 'El senador durante la sesión plenaria' },
+        presidente: { img: 'img/char_presidente.png.jpg', section: 'PRESIDENCIA DE LA REPÚBLICA', caption: 'El mandatario en el Palacio de Gobierno' },
     };
 
     function showNewspaper(state, isWin, customMessage) {
@@ -492,7 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Cuerpo del artículo principal
         const articlesPool = isWin ? roleData.win.articles : roleData.loss.articles;
-        const quotePool    = isWin ? WIN_QUOTES : LOSS_QUOTES;
+        const quotePool = isWin ? WIN_QUOTES : LOSS_QUOTES;
 
         textEl.textContent = articlesPool[Math.floor(Math.random() * articlesPool.length)];
 
@@ -517,7 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const shuffledAds = [...AVISOS_CLASIFICADOS].sort(() => 0.5 - Math.random());
             const selectedAds = shuffledAds.slice(0, 2);
-            
+
             selectedAds.forEach((ad, i) => {
                 const adEl = document.createElement('div');
                 adEl.className = 'paper-ad';

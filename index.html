@@ -1,218 +1,319 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrera Presidencial</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=UnifrakturMaguntia&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=4.3">
 </head>
+
 <body>
 
-<!-- ═══════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════
      PANTALLA DE INICIO
      ═══════════════════════════════════════════ -->
-<div id="start-screen">
-    <div id="start-content">
-        <div id="start-logo">🏛️</div>
-        <h1 id="start-title">CARRERA<br>PRESIDENCIAL</h1>
-        <p id="start-subtitle">De candidato anónimo a Presidente de la Nación</p>
-        <button id="btn-play">⚡ JUGAR</button>
+    <div id="start-screen">
+        <div id="start-content">
+            <div id="start-logo">🏛️</div>
+            <h1 id="start-title">CARRERA<br>PRESIDENCIAL</h1>
+            <p id="start-subtitle">De candidato anónimo a Presidente de la Nación</p>
+            <button id="btn-play">⚡ JUGAR</button>
+            <button id="btn-tutorial">📖 ¿CÓMO JUGAR?</button>
+        </div>
     </div>
-</div>
 
-<!-- PANTALLA PRINCIPAL DEL JUEGO -->
-<div id="game-screen" class="hidden">
+    <!-- PANTALLA PRINCIPAL DEL JUEGO -->
+    <div id="game-screen" class="hidden">
 
-    <!-- ENCABEZADO: CARGO + RONDA -->
-    <header id="top-bar">
-        <div id="role-section" style="cursor:help;">
-            <div class="header-tooltip" id="role-tooltip">Eres Candidato a Alcalde — supera el 40% para avanzar</div>
-            <div id="role-badge">
-                <span id="role-icon">🏛️</span>
-                <div>
-                    <h1 id="current-role">Candidato a Alcalde</h1>
-                    <span id="threshold-label" class="threshold-tag">Mínimo: 40%</span>
+        <!-- ENCABEZADO: CARGO + RONDA -->
+        <header id="top-bar">
+            <div id="role-section" style="cursor:help;">
+                <div class="header-tooltip" id="role-tooltip">Eres Candidato a Alcalde — supera el 40% para avanzar
+                </div>
+                <div id="role-badge">
+                    <span id="role-icon">🏛️</span>
+                    <div>
+                        <h1 id="current-role">Candidato a Alcalde</h1>
+                        <span id="threshold-label" class="threshold-tag">Mínimo: 40%</span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div id="round-display">
-            <span id="round-label">RONDA</span>
-            <div id="round-pips"></div>
-            <div class="header-tooltip" id="round-tooltip">Ronda 1 de 8</div>
-        </div>
-    </header>
-
-    <!-- FILA COMPLETA: personaje (izq) + medidor permanente (der) -->
-    <div id="char-meter-row">
-        <div id="character-box">
-            <img id="role-character" src="img/char_candidato.png.jpg" alt="Personaje">
-        </div>
-        <div id="perm-meter-area">
-            <p class="section-label">★ LEGADO</p>
-            <div id="permanent-meter"></div>
-        </div>
-    </div>
-
-    <!-- ZONA CENTRAL: SOLO MEDIDORES ACTIVOS -->
-    <section id="meters-area">
-        <div id="temp-meters">
-            <p class="section-label">▴ MEDIDORES ACTIVOS</p>
-            <div id="active-meters"></div>
-        </div>
-    </section>
-
-    <!-- ZONA INFERIOR: CARTAS -->
-    <section id="cards-area">
-        <p class="section-label">⚡ ELIGE TU DECISIÓN</p>
-        <div id="cards-container"></div>
-    </section>
-
-    <!-- BARRA DE EVENTOS -->
-    <div id="events-bar">
-        <div id="active-promises"></div>
-    </div>
-
-</div>
-
-<!-- ═══════════════════════════════════════════════════
-     PANTALLA DE ASCENSO
-     ═══════════════════════════════════════════════════ -->
-<div id="ascend-overlay" class="hidden">
-    <div id="ascend-confetti"></div>
-    <div id="ascend-content">
-        <p id="ascend-from-label">COMPLETASTE TU ETAPA COMO</p>
-        <p id="ascend-from-role">CANDIDATO A ALCALDE</p>
-        <h1 id="ascend-title">¡ASCENDISTE!</h1>
-        <img id="ascend-character" src="" alt="Nuevo cargo">
-        <p id="ascend-to-label">TU NUEVO CARGO ES</p>
-        <h2 id="ascend-new-role">ALCALDE</h2>
-        <button id="btn-ascend-continue">📰 VER INFORME DE GESTIÓN</button>
-    </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════
-     PANTALLA DE INTRO / MISIÓN
-     ═══════════════════════════════════════════════════ -->
-<div id="intro-overlay" class="hidden">
-    <div id="intro-content">
-        <h2 id="intro-headline">PREPARACIÓN PARA EL CARGO</h2>
-        <div id="intro-character-box">
-             <img id="intro-character" src="" alt="Cargo Actual">
-        </div>
-        <h1 id="intro-role">CANDIDATO A ALCALDE</h1>
-        <div class="intro-instructions">
-            <p>¡Atención! Tu objetivo en este cargo es sobrevivir durante <strong id="intro-rounds" class="highlight-amber">8 rondas</strong> tomando decisiones estratégicas.</p>
-            <p>En este escenario, debes mantener en alto los siguientes medidores al final de tu mandato:</p>
-            <ul id="intro-meters-list"></ul>
-            <div class="intro-warning">
-                ⚠️ REGLA DE ORO:<br>
-                Debes superar el <strong id="intro-threshold" class="highlight-green">40%</strong> en todos los medidores para ser ascendido.<br>
-                <span>¡Si tan solo un medidor llega a 0%, tu carrera política termina inmediatamente!</span>
+            <div id="round-display">
+                <span id="round-label">RONDA</span>
+                <div id="round-pips"></div>
+                <div class="header-tooltip" id="round-tooltip">Ronda 1 de 8</div>
             </div>
-        </div>
-        <button id="btn-intro-ready">¡ENTENDIDO, A TRABAJAR! 💼</button>
-    </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════
-     OVERLAY DEL PERIÓDICO
-     ═══════════════════════════════════════════════════ -->
-<div id="newspaper-overlay" class="hidden">
-    <div id="newspaper-paper">
-
-        <!-- ══ CABECERA ══ -->
-        <header class="paper-masthead">
-            <div class="mast-top-stripe"></div>
-            <div class="masthead-row-top">
-                <span id="paper-date" class="masthead-meta">Domingo, 22 de marzo de 2026</span>
-                <span class="masthead-meta masthead-founded">Fundado en 1952 &bull; Circulación Nacional</span>
-                <span id="paper-price" class="masthead-meta">$2.50</span>
-            </div>
-            <div class="mast-rule-thin"></div>
-            <div class="masthead-title-row">
-                <div class="masthead-ornament">❧</div>
-                <h1 class="masthead-title">El Diario Democrático</h1>
-                <div class="masthead-ornament">❧</div>
-            </div>
-            <div class="masthead-row-bot">
-                <span class="masthead-motto">"La voz que no se calla"</span>
-                <span id="paper-edition" class="masthead-meta">Edición Nº 4521</span>
-            </div>
-            <div class="mast-rule-double"></div>
         </header>
 
-        <!-- ══ FRANJA DE SECCIÓN ══ -->
-        <div class="paper-section-flag">
-            <span id="paper-section-label">POLÍTICA NACIONAL</span>
+        <!-- FILA COMPLETA: personaje (izq) + medidor permanente (der) -->
+        <div id="char-meter-row">
+            <div id="character-box">
+                <img id="role-character" src="img/char_candidato.png.jpg" alt="Personaje">
+            </div>
+            <div id="perm-meter-area">
+                <p class="section-label">★ LEGADO</p>
+                <div id="permanent-meter"></div>
+            </div>
         </div>
 
-        <!-- ══ CUERPO: 3 COLUMNAS ══ -->
-        <div class="paper-body">
-
-            <!-- COL IZQUIERDA: foto + estadísticas -->
-            <div class="paper-col paper-col-left">
-                <figure class="paper-photo-figure">
-                    <img id="paper-photo" src="img/char_candidato.png.jpg" alt="Foto del político" class="paper-photo">
-                    <figcaption id="paper-caption" class="paper-photo-caption">El político durante su mandato</figcaption>
-                </figure>
-                <div class="paper-col-rule"></div>
-                <div class="paper-stats-block">
-                    <h4 class="paper-stats-title">&#9644; BALANCE DEL MANDATO &#9644;</h4>
-                    <ul id="news-stats"></ul>
-                </div>
+        <!-- ZONA CENTRAL: SOLO MEDIDORES ACTIVOS -->
+        <section id="meters-area">
+            <div id="temp-meters">
+                <p class="section-label">▴ MEDIDORES ACTIVOS</p>
+                <div id="active-meters"></div>
             </div>
+        </section>
 
-            <!-- COL CENTRAL: titular + artículo + cita -->
-            <div class="paper-col paper-col-main">
-                <h2 id="news-headline" class="paper-headline">VICTORIA CONTUNDENTE</h2>
-                <p id="news-subhead" class="paper-subhead">Candidato a Alcalde — Ronda 8 de 8 — Umbral mínimo: 40%</p>
-                <div class="mast-rule-thin" style="margin:8px 0 6px"></div>
-                <p class="paper-byline">Por nuestro <em>corresponsal político</em> &mdash; Ciudad Capital</p>
-                <div class="mast-rule-thin" style="margin:6px 0 10px"></div>
-                <p id="news-text" class="paper-article">El apoyo popular fue indiscutible...</p>
-                <blockquote id="news-quote" class="paper-quote">«Demostramos que se puede gobernar con responsabilidad.»</blockquote>
-            </div>
+        <!-- ZONA INFERIOR: CARTAS -->
+        <section id="cards-area">
+            <p class="section-label">⚡ ELIGE TU DECISIÓN</p>
+            <div id="cards-container"></div>
+        </section>
 
-            <!-- COL DERECHA: otros titulares + avisos -->
-            <div class="paper-col paper-col-right">
-                <h4 class="sidebar-title">OTROS TITULARES</h4>
-                <div id="news-sidebar" class="sidebar-list"></div>
-                <div class="mast-rule-thin" style="margin:12px 0"></div>
-                <div class="paper-ad">
-                    <div class="ad-header">AVISO OFICIAL</div>
-                    <div class="ad-body"><strong>BANCO DE LA REPÚBLICA</strong><br><em>"Su dinero, en buenas manos"</em></div>
-                </div>
-                <div class="paper-ad" style="margin-top:10px">
-                    <div class="ad-header">SE BUSCA</div>
-                    <div class="ad-body">Funcionario honesto,<br>experiencia no requerida.<br><em>Tel: 555-DEMO</em></div>
-                </div>
-            </div>
-
-        </div><!-- /paper-body -->
-
-        <!-- ══ BARRA INFERIOR ══ -->
-        <div class="paper-bottom-bar">
-            <span>EL DIARIO DEMOCRÁTICO &bull; EDICIÓN NACIONAL</span>
-            <span>PÁGINA 1</span>
-        </div>
-
-        <!-- ══ BOTÓN ══ -->
-        <div class="paper-footer">
-            <button id="btn-continue">🗳️ NUEVA CARRERA</button>
+        <!-- BARRA DE EVENTOS -->
+        <div id="events-bar">
+            <div id="active-promises"></div>
         </div>
 
     </div>
-</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
-<script src="js/engine.js"></script>
-<script src="js/cards.js"></script>
-<script src="js/audio.js"></script>
-<script src="js/newspaper-content.js"></script>
-<script src="js/ui.js"></script>
+    <!-- ═══════════════════════════════════════════════════
+     PANTALLA DE ASCENSO
+     ═══════════════════════════════════════════════════ -->
+    <div id="ascend-overlay" class="hidden">
+        <div id="ascend-confetti"></div>
+        <div id="ascend-content">
+            <p id="ascend-from-label">COMPLETASTE TU ETAPA COMO</p>
+            <p id="ascend-from-role">CANDIDATO A ALCALDE</p>
+            <h1 id="ascend-title">¡ASCENDISTE!</h1>
+            <img id="ascend-character" src="" alt="Nuevo cargo">
+            <p id="ascend-to-label">TU NUEVO CARGO ES</p>
+            <h2 id="ascend-new-role">ALCALDE</h2>
+            <button id="btn-ascend-continue">📰 VER INFORME DE GESTIÓN</button>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+     PANTALLA DE TUTORIAL / CÓMO JUGAR
+     ═══════════════════════════════════════════════════ -->
+    <div id="tutorial-overlay" class="hidden">
+        <div id="tutorial-content">
+            <button id="btn-tutorial-close" class="tutorial-close-btn">✕ CERRAR</button>
+
+            <h1 id="tutorial-title">📖 ¿CÓMO JUGAR?</h1>
+            <p id="tutorial-subtitle">Todo lo que necesitas saber para tu Carrera Presidencial</p>
+
+            <div class="tutorial-section">
+                <h2 class="tutorial-section-title">🎯 OBJETIVO DEL JUEGO</h2>
+                <p>Comienza como <strong>Candidato a Alcalde</strong> y asciende cargo tras cargo hasta convertirte en
+                    <strong>Presidente de la Nación</strong>. En cada cargo, debes tomar decisiones estratégicas
+                    manteniendo tus medidores por encima del umbral mínimo requerido.</p>
+            </div>
+
+            <div class="tutorial-section">
+                <h2 class="tutorial-section-title">📊 SISTEMA DE MEDIDORES</h2>
+                <p>Cada cargo tiene <strong>3 medidores temporales</strong> (que cambian en cada partida) y <strong>1
+                        medidor permanente</strong> (activo durante toda la run):</p>
+                <ul class="tutorial-list">
+                    <li><strong>Medidores Temporales:</strong> Se seleccionan aleatoriamente al inicio de cada cargo.
+                        Cada uno comienza en 50%.</li>
+                    <li><strong>Medidor Permanente:</strong> Te acompaña durante toda la partida. Su umbral es más bajo
+                        (30%), pero igualmente peligroso si lo descuidas.</li>
+                    <li><strong>Regla de Oro:</strong> Si <strong>cualquier medidor llega a 0%</strong>, ¡tu carrera
+                        política termina inmediatamente!</li>
+                </ul>
+            </div>
+
+            <div class="tutorial-section">
+                <h2 class="tutorial-section-title">🃏 SISTEMA DE CARTAS</h2>
+                <p>En cada ronda se te presentan <strong>3 cartas de decisión</strong>. Debes elegir UNA de ellas:</p>
+                <ul class="tutorial-list">
+                    <li><strong>⚖️ Neutral:</strong> Decisiones balanceadas con efectos moderados.</li>
+                    <li><strong>📈 Beneficiosa:</strong> Grandes ganancias, pero con riesgos menores.</li>
+                    <li><strong>🎲 Arriesgada:</strong> Puede ser desastrosa o muy beneficiosa.</li>
+                </ul>
+                <p class="tutorial-tip">💡 <strong>Consejo:</strong> Cada carta tiene efectos positivos y negativos.
+                    ¡Evalúa cuidadosamente qué medidores puedes permitirte sacrificar!</p>
+            </div>
+
+            <div class="tutorial-section">
+                <h2 class="tutorial-section-title">🏆 CÓMO GANAR Y PERDER</h2>
+                <div class="tutorial-win-condition">
+                    <h3>✅ PARA ASCENDER:</h3>
+                    <p>Al completar todas las rondas de un cargo, <strong>todos tus medidores deben estar por encima del
+                            umbral mínimo</strong> de ese cargo. Los umbrales aumentan con cada ascenso:</p>
+                    <ul class="tutorial-list">
+                        <li><strong>Alcalde:</strong> 40% mínimo</li>
+                        <li><strong>Diputado:</strong> 50% mínimo</li>
+                        <li><strong>Senador:</strong> 60% mínimo</li>
+                        <li><strong>Presidente:</strong> 65% mínimo</li>
+                    </ul>
+                </div>
+                <div class="tutorial-loss-condition">
+                    <h3>❌ CAUSAS DE DERROTA:</h3>
+                    <ul class="tutorial-list">
+                        <li><strong>Cualquier medidor llega a 0%:</strong> Derrota inmediata, sin importar las rondas
+                            restantes.</li>
+                        <li><strong>No superar el umbral al final del cargo:</strong> Si completas las rondas pero algún
+                            medidor está bajo el mínimo, no asciendes.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tutorial-section">
+                <h2 class="tutorial-section-title">⚡ PROMESAS DE CAMPAÑA</h2>
+                <p>Algunas cartas activan <strong>promesas</strong> que tienen efectos retardados. Estas promesas
+                    expirarán después de ciertas rondas y pueden afectar tus medidores positiva o negativamente.
+                    ¡Gestiónalas con cuidado!</p>
+            </div>
+
+            <div class="tutorial-section">
+                <h2 class="tutorial-section-title">📰 EL PERIÓDICO</h2>
+                <p>Al final de cada cargo, un <strong>periódico</strong> resume tu gestión con titulares, estadísticas y
+                    citas. Es el reflejo de tus decisiones y te cuenta la historia de tu mandato.</p>
+            </div>
+
+            <div class="tutorial-footer">
+                <button id="btn-tutorial-play" class="tutorial-play-btn">⚡ ¡ENTENDIDO, A JUGAR!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+     PANTALLA DE INTRO / MISIÓN
+     ═══════════════════════════════════════════════════ -->
+    <div id="intro-overlay" class="hidden">
+        <div id="intro-content">
+            <h2 id="intro-headline">PREPARACIÓN PARA EL CARGO</h2>
+            <div id="intro-character-box">
+                <img id="intro-character" src="" alt="Cargo Actual">
+            </div>
+            <h1 id="intro-role">CANDIDATO A ALCALDE</h1>
+            <div class="intro-instructions">
+                <p>¡Atención! Tu objetivo en este cargo es sobrevivir durante <strong id="intro-rounds"
+                        class="highlight-amber">8 rondas</strong> tomando decisiones estratégicas.</p>
+                <p>En este escenario, debes mantener en alto los siguientes medidores al final de tu mandato:</p>
+                <ul id="intro-meters-list"></ul>
+                <div class="intro-warning">
+                    ⚠️ REGLA DE ORO:<br>
+                    Debes superar el <strong id="intro-threshold" class="highlight-green">40%</strong> en todos los
+                    medidores para ser ascendido.<br>
+                    <span>¡Si tan solo un medidor llega a 0%, tu carrera política termina inmediatamente!</span>
+                </div>
+            </div>
+            <button id="btn-intro-ready">¡ENTENDIDO, A TRABAJAR! 💼</button>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+     OVERLAY DEL PERIÓDICO
+     ═══════════════════════════════════════════════════ -->
+    <div id="newspaper-overlay" class="hidden">
+        <div id="newspaper-paper">
+
+            <!-- ══ CABECERA ══ -->
+            <header class="paper-masthead">
+                <div class="mast-top-stripe"></div>
+                <div class="masthead-row-top">
+                    <span id="paper-date" class="masthead-meta">Domingo, 22 de marzo de 2026</span>
+                    <span class="masthead-meta masthead-founded">Fundado en 1952 &bull; Circulación Nacional</span>
+                    <span id="paper-price" class="masthead-meta">$2.50</span>
+                </div>
+                <div class="mast-rule-thin"></div>
+                <div class="masthead-title-row">
+                    <div class="masthead-ornament">❧</div>
+                    <h1 class="masthead-title">El Diario Democrático</h1>
+                    <div class="masthead-ornament">❧</div>
+                </div>
+                <div class="masthead-row-bot">
+                    <span class="masthead-motto">"La voz que no se calla"</span>
+                    <span id="paper-edition" class="masthead-meta">Edición Nº 4521</span>
+                </div>
+                <div class="mast-rule-double"></div>
+            </header>
+
+            <!-- ══ FRANJA DE SECCIÓN ══ -->
+            <div class="paper-section-flag">
+                <span id="paper-section-label">POLÍTICA NACIONAL</span>
+            </div>
+
+            <!-- ══ CUERPO: 3 COLUMNAS ══ -->
+            <div class="paper-body">
+
+                <!-- COL IZQUIERDA: foto + estadísticas -->
+                <div class="paper-col paper-col-left">
+                    <figure class="paper-photo-figure">
+                        <img id="paper-photo" src="img/char_candidato.png.jpg" alt="Foto del político"
+                            class="paper-photo">
+                        <figcaption id="paper-caption" class="paper-photo-caption">El político durante su mandato
+                        </figcaption>
+                    </figure>
+                    <div class="paper-col-rule"></div>
+                    <div class="paper-stats-block">
+                        <h4 class="paper-stats-title">&#9644; BALANCE DEL MANDATO &#9644;</h4>
+                        <ul id="news-stats"></ul>
+                    </div>
+                </div>
+
+                <!-- COL CENTRAL: titular + artículo + cita -->
+                <div class="paper-col paper-col-main">
+                    <h2 id="news-headline" class="paper-headline">VICTORIA CONTUNDENTE</h2>
+                    <p id="news-subhead" class="paper-subhead">Candidato a Alcalde — Ronda 8 de 8 — Umbral mínimo: 40%
+                    </p>
+                    <div class="mast-rule-thin" style="margin:8px 0 6px"></div>
+                    <p class="paper-byline">Por nuestro <em>corresponsal político</em> &mdash; Ciudad Capital</p>
+                    <div class="mast-rule-thin" style="margin:6px 0 10px"></div>
+                    <p id="news-text" class="paper-article">El apoyo popular fue indiscutible...</p>
+                    <blockquote id="news-quote" class="paper-quote">«Demostramos que se puede gobernar con
+                        responsabilidad.»</blockquote>
+                </div>
+
+                <!-- COL DERECHA: otros titulares + avisos -->
+                <div class="paper-col paper-col-right">
+                    <h4 class="sidebar-title">OTROS TITULARES</h4>
+                    <div id="news-sidebar" class="sidebar-list"></div>
+                    <div class="mast-rule-thin" style="margin:12px 0"></div>
+                    <div class="paper-ad">
+                        <div class="ad-header">AVISO OFICIAL</div>
+                        <div class="ad-body"><strong>BANCO DE LA REPÚBLICA</strong><br><em>"Su dinero, en buenas
+                                manos"</em></div>
+                    </div>
+                    <div class="paper-ad" style="margin-top:10px">
+                        <div class="ad-header">SE BUSCA</div>
+                        <div class="ad-body">Funcionario honesto,<br>experiencia no requerida.<br><em>Tel: 555-DEMO</em>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /paper-body -->
+
+            <!-- ══ BARRA INFERIOR ══ -->
+            <div class="paper-bottom-bar">
+                <span>EL DIARIO DEMOCRÁTICO &bull; EDICIÓN NACIONAL</span>
+                <span>PÁGINA 1</span>
+            </div>
+
+            <!-- ══ BOTÓN ══ -->
+            <div class="paper-footer">
+                <button id="btn-continue">🗳️ NUEVA CARRERA</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/cards.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/newspaper-content.js"></script>
+    <script src="js/ui.js"></script>
 </body>
+
 </html>
