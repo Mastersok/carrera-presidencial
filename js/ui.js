@@ -413,14 +413,19 @@ document.addEventListener('DOMContentLoaded', () => {
             headlineEl.textContent = headlinesPool[Math.floor(Math.random() * headlinesPool.length)];
         }
 
-        // Subtítulo del cargo
-        subheadEl.textContent = `${cfg.name} — Ronda ${state.currentRound} de ${cfg.totalRounds} — Umbral mínimo: ${cfg.minThreshold}%`;
+        // Subtítulo del cargo (Y motivo de derrota si aplica)
+        if (customMessage) {
+            const prefix = isWin ? 'NOTICIA DE ÚLTIMA HORA' : 'MOTIVO DE LA CAÍDA';
+            subheadEl.innerHTML = `<strong>${prefix}: ${customMessage}</strong><br>${cfg.name} — Ronda ${state.currentRound} de ${cfg.totalRounds}`;
+        } else {
+            subheadEl.textContent = `${cfg.name} — Ronda ${state.currentRound} de ${cfg.totalRounds} — Umbral mínimo: ${cfg.minThreshold}%`;
+        }
 
         // Cuerpo del artículo principal
         const articlesPool = isWin ? roleData.win.articles : roleData.loss.articles;
         const quotePool    = isWin ? WIN_QUOTES : LOSS_QUOTES;
 
-        textEl.textContent = customMessage || articlesPool[Math.floor(Math.random() * articlesPool.length)];
+        textEl.textContent = articlesPool[Math.floor(Math.random() * articlesPool.length)];
 
         // Cita
         const quoteEl = document.getElementById('news-quote');
