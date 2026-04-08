@@ -30,6 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnAscend     = document.getElementById('btn-ascend-continue');
     let   pendingState  = null;
 
+    // Pantalla de intro / misión
+    const introOverlay  = document.getElementById('intro-overlay');
+    const btnIntroReady = document.getElementById('btn-intro-ready');
+
     // Tracking de medidores en zona crítica (para no repetir alarma)
     const prevCritical = new Set();
 
@@ -70,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderHeader(state);
                 renderMeters(state);
                 renderCards(state);
+                showIntroScreen(state);
                 break;
             case 'next_round':
                 AudioManager.newRound();
@@ -108,6 +113,12 @@ document.addEventListener('DOMContentLoaded', () => {
         showNewspaper(pendingState, true, null);
     });
 
+    // ── Botón de Introducción a Cargo ───────────────────
+    btnIntroReady.addEventListener('click', () => {
+        try { AudioManager.uiClick(); } catch(e) {}
+        introOverlay.classList.add('hidden');
+    });
+
     // ── Botón Continuar del periódico ───────────────────
     btnContinue.addEventListener('click', () => {
         AudioManager.uiClick();
@@ -118,6 +129,38 @@ document.addEventListener('DOMContentLoaded', () => {
             GameState.advanceToNextRole();
         }
     });
+
+    // ────────────────────────────────────────────────────
+    //   PANTALLA DE INTRO / MISIÓN
+    // ────────────────────────────────────────────────────
+    function showIntroScreen(state) {
+        const cfg = state.getCurrentRoleConfig();
+        
+        document.getElementById('intro-role').textContent = cfg.name.toUpperCase();
+        
+        const introChar = document.getElementById('intro-character');
+        if (ROLE_CHARACTERS[cfg.id]) {
+            introChar.src = ROLE_CHARACTERS[cfg.id];
+        }
+        
+        document.getElementById('intro-rounds').textContent = `${cfg.totalRounds} rondas`;
+        document.getElementById('intro-threshold').textContent = `${cfg.minThreshold}%`;
+        
+        const listEl = document.getElementById('intro-meters-list');
+        listEl.innerHTML = '';
+        state.activeMeters.forEach(m => {
+            const li = document.createElement('li');
+            li.innerHTML = `${m.icon || '📊'} ${m.name}`;
+            listEl.appendChild(li);
+        });
+        if (state.permanentMeter) {
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>${state.permanentMeter.icon || '★'} ${state.permanentMeter.name} (Permanente)</strong>`;
+            listEl.appendChild(li);
+        }
+        
+        introOverlay.classList.remove('hidden');
+    }
 
     // ────────────────────────────────────────────────────
     //   PANTALLA DE ASCENSO

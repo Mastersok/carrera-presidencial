@@ -649,7 +649,6 @@ body::before {
 }
 
 /* ── ESTADÍSTICAS (columna izquierda) ── */
-.paper-stats-block { }
 .paper-stats-title {
     font-family: var(--font-ui);
     font-size: 0.5rem; font-weight: 800;
@@ -998,17 +997,126 @@ body::before {
     font-family: var(--font-title);
     font-size: 1rem; letter-spacing: 2px;
     text-transform: uppercase;
-    border: var(--outline-thick); cursor: pointer;
-    box-shadow: var(--shadow-offset);
+    border: var(--outline-thick);    cursor: pointer;
+    box-shadow: 4px 4px 0 #1a1209;
     border-radius: 8px;
     transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
     width: 100%;
 }
 #btn-ascend-continue:hover {
-    background: var(--crimson);
+    background: var(--amber);
     box-shadow: 6px 6px 0 #1a1209;
 }
 #btn-ascend-continue:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+}
+
+/* ═══════════════════════════════════════════════════
+   PANTALLA DE INTRO / MISIÓN
+   ═══════════════════════════════════════════════════ */
+#intro-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10,12,50,0.95);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 150; /* Misma jerarquía que ascend */
+    animation: fade-in 0.3s ease;
+    overflow: hidden;
+}
+
+#intro-content {
+    position: relative; z-index: 1;
+    background: var(--bg-card);
+    border: var(--outline-thick);
+    box-shadow: var(--shadow-offset);
+    border-radius: 16px;
+    padding: 28px 36px;
+    text-align: center;
+    max-width: 480px; width: 90%;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 8px;
+    animation: slideDownIn 0.5s var(--ease-bounce);
+}
+@keyframes slideDownIn {
+    from { transform: translateY(-30px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+}
+
+#intro-headline {
+    font-family: var(--font-title);
+    font-size: 1.6rem; color: var(--gold-dark);
+    letter-spacing: 0.05em; margin-bottom: 4px;
+}
+#intro-character-box {
+    width: 120px; height: 120px;
+    margin: 0 auto;
+    object-fit: contain;
+    border: var(--outline-thick);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: var(--shadow-offset);
+    overflow: hidden;
+    position: relative;
+}
+#intro-character {
+    width: 100%; height: 130%;
+    object-fit: contain; object-position: bottom center;
+}
+#intro-role {
+    font-family: var(--font-title);
+    font-size: 2.2rem; color: #1a1209;
+    letter-spacing: 0.04em;
+    background: var(--gold);
+    padding: 2px 14px; border-radius: 6px;
+    border: var(--outline);
+    margin: 4px 0 8px 0;
+    transform: rotate(-1deg);
+}
+
+.intro-instructions {
+    text-align: left;
+    font-family: var(--font-ui);
+    font-size: 0.75rem; color: #1a1209;
+    background: rgba(0,0,0,0.03);
+    padding: 12px; border-radius: 8px;
+    border: 1px dashed #1a1209;
+}
+.intro-instructions p { margin-bottom: 6px; line-height: 1.4; }
+.highlight-amber { color: var(--amber); font-weight: 800; }
+.highlight-green { color: var(--emerald); font-weight: 800; font-size: 1.1em;}
+
+#intro-meters-list {
+    margin: 6px 0 10px 20px;
+    font-weight: 600; color: #252b6e;
+}
+#intro-meters-list li { margin-bottom: 3px; }
+
+.intro-warning {
+    background: rgba(230,57,70,0.1);
+    border-left: 4px solid var(--crimson);
+    padding: 8px 12px;
+    color: #8b1a1a; font-weight: 700;
+}
+.intro-warning span { display: block; margin-top: 4px; font-size: 0.65rem; color: #1a1209;}
+
+#btn-intro-ready {
+    margin-top: 12px;
+    padding: 12px 28px;
+    background: #1a1209; color: #fdf6e3;
+    font-family: var(--font-title);
+    font-size: 1.1rem; letter-spacing: 2px;
+    text-transform: uppercase;
+    border: var(--outline);
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #1a1209;
+    border-radius: 8px;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
+}
+#btn-intro-ready:hover {
+    background: var(--emerald);
+    box-shadow: 6px 6px 0 #1a1209;
+}
+#btn-intro-ready:active {
     transform: translate(4px, 4px);
     box-shadow: none;
 }
