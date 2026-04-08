@@ -332,64 +332,90 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderCards(state) {
         cardsEl.innerHTML = '';
+        cardsEl.dataset.locked = 'false';
         const options = CardGenerator.generateCardsForTurn(state.activeMeters, state.permanentMeter, 3);
 
         options.forEach((card, idx) => {
             const el = document.createElement('div');
-            el.className = 'decision-card';
-            el.style.animationDelay = `${idx * 0.15}s`;
 
-            // Efectos HTML
+            // Determinar el tipo visual de la carta según los efectos
+            const totalPos = card.effects.filter(e => e.amount > 0).reduce((s,e) => s + e.amount, 0);
+            const totalNeg = card.effects.filter(e => e.amount < 0).reduce((s,e) => s + Math.abs(e.amount), 0);
+            let cardType = 'neutral';
+            if (totalPos > totalNeg * 1.3) cardType = 'profit';
+            else if (totalNeg > totalPos * 1.3) cardType = 'risk';
+
+            // Icono del banner según tipo
+            const bannerIcons = {
+                neutral: '⚖️',
+                profit:  '📈',
+                risk:    '🎲'
+            };
+
+            el.className = `decision-card card-type-${cardType}`;
+            el.style.animationDelay = `${idx * 0.18}s`;
+
+            // Efectos como pastillas (pills)
             let effectsHTML = '';
             card.effects.forEach(eff => {
                 const pos   = eff.amount >= 0;
                 const cls   = pos ? 'effect-pos' : 'effect-neg';
                 const sign  = pos ? '+' : '';
                 const arrow = pos ? '▲' : '▼';
-                effectsHTML += `<div class="effect-row ${cls}">
-                    <span class="effect-arrow">${arrow}</span>
-                    <span>${sign}${eff.amount}% ${eff.meterName}</span>
-                </div>`;
+                effectsHTML += `
+                    <div class="effect-row ${cls}">
+                        <span class="effect-pill">
+                            <span class="effect-arrow-icon">${arrow}</span>
+                            ${sign}${eff.amount}% ${eff.meterName}
+                        </span>
+                    </div>`;
             });
 
             el.innerHTML = `
-                <div class="card-header">
-                    <span class="card-number">${idx + 1}</span>
+                <div class="card-banner">
+                    <span class="card-banner-icon">${bannerIcons[cardType]}</span>
+                    <span class="card-banner-number">${idx + 1}</span>
                 </div>
-                <div class="card-body">
+                <div class="card-title-zone">
                     <div class="card-title">${card.title}</div>
+                </div>
+                <div class="card-desc-zone">
                     <div class="card-desc">${card.desc}</div>
                 </div>
-                <div class="card-effects">${effectsHTML}</div>
+                <div class="card-effects-zone">${effectsHTML}</div>
             `;
 
-            el.addEventListener('mouseenter', () => AudioManager.cardHover());
-
             el.addEventListener('click', () => {
-                // Impedir doble click
                 if (cardsEl.dataset.locked === 'true') return;
                 cardsEl.dataset.locked = 'true';
 
                 try { AudioManager.cardClick(); } catch(e) {}
 
-                // Animación de selección LENTA
                 el.classList.add('selected');
                 cardsEl.querySelectorAll('.decision-card').forEach(c => {
-                    if (c !== el) {
-                        c.classList.add('rejected');
-                        try { AudioManager.cardReject(); } catch(e) {}
-                    }
+                    if (c !== el) c.classList.add('rejected');
                 });
 
-                // Esperar 900ms para que se vea la animación
                 setTimeout(() => {
-                    cardsEl.dataset.locked = 'false';
                     GameState.applyCardEffects(card.effects);
+                    cardsEl.dataset.locked = 'false';
                 }, 900);
             });
 
             cardsEl.appendChild(el);
         });
+
+        // Activar vanilla-tilt en todas las cartas nuevas
+        if (typeof VanillaTilt !== 'undefined') {
+            VanillaTilt.init(cardsEl.querySelectorAll('.decision-card'), {
+                max: 12,
+                speed: 400,
+                glare: true,
+                'max-glare': 0.2,
+                scale: 1.04,
+                perspective: 800,
+            });
+        }
     }
 
     // ────────────────────────────────────────────────────
