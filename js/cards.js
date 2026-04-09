@@ -188,14 +188,48 @@ const CardGenerator = {
 
     resetPool: function() {
         this.usedCardIds.clear();
+        this.lastShuffleCards = new Set();  // cartas de la última mano no se repiten al barajar
+    },
+
+    /**
+     * Si quedan menos cartas elegibles que las necesarias, baraja el mazo.
+     * Marca las cartas del turno ACTUAL como "recientes" para no repetirlas
+     * inmediatamente después del reshuffle.
+     */
+    _reshuffleIfNeeded: function(activeMeters, roleId, needed) {
+        const rolePool      = CARD_POOL[roleId]       || [];
+        const universalPool = CARD_POOL['universal']   || [];
+
+        const eligible = [...rolePool, ...universalPool].filter(c => {
+            if (this.usedCardIds.has(c.id)) return false;
+            if (c.primary === 'any') return true;
+            return activeMeters.some(m => m.id === c.primary);
+        });
+
+        if (eligible.length < needed) {
+            // Guardar las últimas cartas usadas para no repetirlas justo después
+            this.lastShuffleCards = new Set(this.usedCardIds);
+            this.usedCardIds.clear();  // ← Reshuffle del mazo
+            console.log('[Cards] ♻️ Pool agotado — mazo barajado de nuevo');
+        }
     },
 
     /**
      * Genera exactamente `count` cartas garantizando cobertura total de medidores activos.
      */
     generateCardsForTurn: function(activeMeters, permMeter, count = 3, roleId = 'candidato') {
-        const rolePool      = (CARD_POOL[roleId]      || []).filter(c => !this.usedCardIds.has(c.id));
-        const universalPool = (CARD_POOL['universal']  || []).filter(c => !this.usedCardIds.has(c.id));
+        // Verificar y barajar si el pool está casi vacío
+        this._reshuffleIfNeeded(activeMeters, roleId, count);
+
+        // Excluir también las cartas del turno anterior al reshuffle (no repetición inmediata)
+        const recentOff = this.lastShuffleCards || new Set();
+
+        const rolePool      = (CARD_POOL[roleId]      || []).filter(c =>
+            !this.usedCardIds.has(c.id) && !recentOff.has(c.id)
+        );
+        const universalPool = (CARD_POOL['universal']  || []).filter(c =>
+            !this.usedCardIds.has(c.id) && !recentOff.has(c.id)
+        );
 
         const result       = [];
         const usedThisTurn = new Set();  // evitar duplicados dentro del mismo turno
