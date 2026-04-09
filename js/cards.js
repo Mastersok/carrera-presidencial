@@ -39,7 +39,23 @@ const CARD_POOL = {
         { id:"ca17", title:"Firma de Compromisos",    desc:"Firmas una declaración ante notario. Ahora hay testigos de tus promesas.",            primary:"legit",    baseGain:20, baseRisk:12 },
         { id:"ca18", title:"Respaldo Gremial",        desc:"Los sindicatos te anuncian como candidato favorito. No sin condiciones.",              primary:"legit",    baseGain:22, baseRisk:14 },
         { id:"ca19", title:"Charla Universitaria",    desc:"Expones frente a estudiantes. Las preguntas son brutales. Las respondes igual.",       primary:"prof",     baseGain:18, baseRisk:10 },
-        { id:"ca20", title:"Asesoría Técnica",        desc:"Contratas a un experto para mejorar tu propuesta. Él sabe, tú firmas.",               primary:"prof",     baseGain:20, baseRisk:12 }
+        { id:"ca20", title:"Asesoría Técnica",        desc:"Contratas a un experto para mejorar tu propuesta. Él sabe, tú firmas.",               primary:"prof",     baseGain:20, baseRisk:12 },
+        { id:"ca21", title:"Caravana de Vehículos",   desc:"Una fila de autos tocando bocina. Molesta a unos, pero te hace notar.",               primary:"pop",      baseGain:18, baseRisk:12 },
+        { id:"ca22", title:"Baile Viral",             desc:"Haces el ridículo en internet. Pero es un ridículo que suma simpatía.",               primary:"pop",      baseGain:24, baseRisk:16 },
+        { id:"ca23", title:"Cena de Recaudación",     desc:"El plato cuesta fortunas. La comida es mala, pero el cheque es bueno.",               primary:"dinero",   baseGain:22, baseRisk:14 },
+        { id:"ca24", title:"Venta de Merchandising",  desc:"Camisetas, gorras y tazas con tu cara. Alguien las compra.",                          primary:"dinero",   baseGain:16, baseRisk:10 },
+        { id:"ca25", title:"Sesión Fotográfica",      desc:"Contratas al mejor fotógrafo. Logra que parezcas presidenciable... y humano.",        primary:"imagen",   baseGain:18, baseRisk:8 },
+        { id:"ca26", title:"Campaña de Limpieza",     desc:"Tú y tu equipo recogen basura. La prensa llega casualmente al mismo tiempo.",         primary:"imagen",   baseGain:20, baseRisk:12 },
+        { id:"ca27", title:"Olla Común",              desc:"Organizas comida gratis en el barrio más leal. Se come y se jura lealtad.",           primary:"base",     baseGain:18, baseRisk:10 },
+        { id:"ca28", title:"Asamblea de Vecinos",     desc:"Te sientas a escuchar quejas por horas. Tu paciencia refuerza a tus seguidores.",     primary:"base",     baseGain:16, baseRisk:12 },
+        { id:"ca29", title:"Promesa de Transparencia",desc:"Juras mostrar cada boleta de gastos. Un riesgo, pero la gente te cree.",              primary:"cred",     baseGain:22, baseRisk:16 },
+        { id:"ca30", title:"Rechazar Soborno",        desc:"Filtramos que rechazaste dinero sucio. Todos aplauden tu honestidad.",                primary:"cred",     baseGain:24, baseRisk:18 },
+        { id:"ca31", title:"Anuncio de Alto Impacto", desc:"Lanzas un spot de madrugada. Al despertar, todos hablan de ti.",                      primary:"momentum", baseGain:20, baseRisk:14 },
+        { id:"ca32", title:"Volanteo Relámpago",      desc:"Inundas la estación central con afiches. Estás en todas partes.",                     primary:"momentum", baseGain:16, baseRisk:8 },
+        { id:"ca33", title:"Firma ante Notario",      desc:"Recreas una firma pública frente a testigos ilustres.",                               primary:"legit",    baseGain:18, baseRisk:10 },
+        { id:"ca34", title:"Aprobación de Históricos",desc:"Los viejos próceres de tu partido te levantan la mano.",                              primary:"legit",    baseGain:22, baseRisk:16 },
+        { id:"ca35", title:"Cita Académica",          desc:"Usas datos y estudios para apoyar tu plan. Suenas muy inteligente hoy.",              primary:"prof",     baseGain:18, baseRisk:10 },
+        { id:"ca36", title:"Debate Técnico",          desc:"Humillas a tu rival hablando de tasas impositivas. Aburrido pero letal.",             primary:"prof",     baseGain:20, baseRisk:14 }
     ],
 
     /* ════════════════════════════════════════════════════
@@ -66,7 +82,23 @@ const CARD_POOL = {
         { id:"al17", title:"Cierre de Vertedero",      desc:"Clausuras el vertedero ilegal del sector poniente. Los vecinos respiran mejor.",      primary:"medio",  baseGain:20, baseRisk:14 },
         { id:"al18", title:"Bacheo Masivo",            desc:"Tapas baches en toda la ciudad. Los conductores lloran de alegría.",                  primary:"infra",  baseGain:20, baseRisk:12 },
         { id:"al19", title:"Puente Comunitario",       desc:"Construyes el puente que prometiste hace tres años. Solo demoró el triple.",          primary:"infra",  baseGain:28, baseRisk:20 },
-        { id:"al20", title:"Renovación de Alcantarillado", desc:"Modernizas el sistema de aguas. Obra invisible, impacto real.",                   primary:"infra",  baseGain:22, baseRisk:16 }
+        { id:"al20", title:"Renovación de Alcantarillado", desc:"Modernizas el sistema de aguas. Obra invisible, impacto real.",                   primary:"infra",  baseGain:22, baseRisk:16 },
+        { id:"al21", title:"Día del Vecino",          desc:"Un evento en el parque con choripanes. Felices y con el estómago lleno.",             primary:"satis",  baseGain:20, baseRisk:12 },
+        { id:"al22", title:"Bono Municipal",          desc:"Repartes cajas justo en el momento adecuado. Sonrisas garantizadas.",                 primary:"satis",  baseGain:24, baseRisk:18 },
+        { id:"al23", title:"Aumento de Patentes",     desc:"Subes el costo de permisos comerciales. Entra dinero, salen quejas.",                 primary:"presup", baseGain:18, baseRisk:10 },
+        { id:"al24", title:"Subasta de Bienes",       desc:"Vendes vehículos en desuso del municipio a buen precio.",                             primary:"presup", baseGain:22, baseRisk:14 },
+        { id:"al25", title:"Trabajo Barrial",         desc:"Das poder a las juntas de vecinos para obras menores. La paz reina.",                 primary:"estab",  baseGain:16, baseRisk:8 },
+        { id:"al26", title:"Reunión de Conciliación", desc:"Sientas a los dos sindicatos peleados en la misma mesa y no los dejas salir.",        primary:"estab",  baseGain:20, baseRisk:16 },
+        { id:"al27", title:"Rondas Nocturnas",        desc:"Pones serenos a caminar en la noche. Los vecinos duermen más tranquilos.",            primary:"segur",  baseGain:18, baseRisk:14 },
+        { id:"al28", title:"Botón de Pánico",         desc:"Apps para que los vecinos denuncien. Ahora todos vigilan a todos.",                   primary:"segur",  baseGain:20, baseRisk:12 },
+        { id:"al29", title:"Medicamentos Gratuitos",  desc:"Abres una farmacia comunitaria. Larga fila, pero ahorro significativo.",              primary:"salud",  baseGain:24, baseRisk:18 },
+        { id:"al30", title:"Campaña Prevención",      desc:"Fomentas el chequeo médico. Te sacas la foto tomando la presión arterial.",           primary:"salud",  baseGain:16, baseRisk:8 },
+        { id:"al31", title:"Beca Estudiantil Local",  desc:"Premias a los mejores promedios con ayuda directa. Aplausos de las madres.",          primary:"educa",  baseGain:20, baseRisk:14 },
+        { id:"al32", title:"Mejora Bibliotecas",      desc:"Compran libros nuevos y pintan. Sencillo, barato y aplaudido.",                       primary:"educa",  baseGain:16, baseRisk:10 },
+        { id:"al33", title:"Día Sin Autos",           desc:"Prohíbes autos en el centro por un día. El aire y los peatones agradecen.",           primary:"medio",  baseGain:18, baseRisk:14 },
+        { id:"al34", title:"Reciclaje Obligatorio",   desc:"Pones tachos de colores por todas partes. Multiplicas los puntos limpios.",           primary:"medio",  baseGain:22, baseRisk:16 },
+        { id:"al35", title:"Luminarias LED",          desc:"Cambias luces antiguas. La ciudad brilla más (y gasta un poco menos).",               primary:"infra",  baseGain:20, baseRisk:12 },
+        { id:"al36", title:"Pasos Peatonales",        desc:"Pintas cruces seguros y pones lomos de toro donde la gente pedía.",                   primary:"infra",  baseGain:16, baseRisk:10 }
     ],
 
     /* ════════════════════════════════════════════════════
@@ -185,18 +217,19 @@ const CARD_POOL = {
    ══════════════════════════════════════════════════════════════════ */
 const CardGenerator = {
     usedCardIds: new Set(),
+    lastTurnCards: [],
 
     resetPool: function() {
         this.usedCardIds.clear();
-        this.lastShuffleCards = new Set();  // cartas de la última mano no se repiten al barajar
+        this.lastTurnCards = [];
     },
 
     /**
-     * Si quedan menos cartas elegibles que las necesarias, baraja el mazo.
-     * Marca las cartas del turno ACTUAL como "recientes" para no repetirlas
-     * inmediatamente después del reshuffle.
+     * Si quedan menos cartas elegibles que las necesarias o si algún medidor activo
+     * se queda sin cartas específicas (y no hay universales), baraja el mazo.
      */
     _reshuffleIfNeeded: function(activeMeters, roleId, needed) {
+        let needsReshuffle = false;
         const rolePool      = CARD_POOL[roleId]       || [];
         const universalPool = CARD_POOL['universal']   || [];
 
@@ -207,9 +240,26 @@ const CardGenerator = {
         });
 
         if (eligible.length < needed) {
-            // Guardar las últimas cartas usadas para no repetirlas justo después
-            this.lastShuffleCards = new Set(this.usedCardIds);
-            this.usedCardIds.clear();  // ← Reshuffle del mazo
+            needsReshuffle = true;
+        } else {
+            const availUniversals = universalPool.filter(c => !this.usedCardIds.has(c.id));
+            if (availUniversals.length === 0) {
+                // Si no hay universales de reemplazo, exigimos que haya al menos 1 carta
+                // para CADA uno de los medidores activos.
+                for (const meter of activeMeters) {
+                    const specificAvail = rolePool.filter(c => c.primary === meter.id && !this.usedCardIds.has(c.id));
+                    if (specificAvail.length === 0) {
+                        needsReshuffle = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (needsReshuffle) {
+            this.usedCardIds.clear();
+            // Evitar que salgan en el mismo turno inmediato tras barajar
+            this.lastTurnCards.forEach(id => this.usedCardIds.add(id));
             console.log('[Cards] ♻️ Pool agotado — mazo barajado de nuevo');
         }
     },
@@ -218,18 +268,10 @@ const CardGenerator = {
      * Genera exactamente `count` cartas garantizando cobertura total de medidores activos.
      */
     generateCardsForTurn: function(activeMeters, permMeter, count = 3, roleId = 'candidato') {
-        // Verificar y barajar si el pool está casi vacío
         this._reshuffleIfNeeded(activeMeters, roleId, count);
 
-        // Excluir también las cartas del turno anterior al reshuffle (no repetición inmediata)
-        const recentOff = this.lastShuffleCards || new Set();
-
-        const rolePool      = (CARD_POOL[roleId]      || []).filter(c =>
-            !this.usedCardIds.has(c.id) && !recentOff.has(c.id)
-        );
-        const universalPool = (CARD_POOL['universal']  || []).filter(c =>
-            !this.usedCardIds.has(c.id) && !recentOff.has(c.id)
-        );
+        const rolePool      = (CARD_POOL[roleId]      || []).filter(c => !this.usedCardIds.has(c.id));
+        const universalPool = (CARD_POOL['universal']  || []).filter(c => !this.usedCardIds.has(c.id));
 
         const result       = [];
         const usedThisTurn = new Set();  // evitar duplicados dentro del mismo turno
@@ -282,6 +324,7 @@ const CardGenerator = {
 
         // Marcar todas como usadas (anti-repeat para turnos futuros)
         usedThisTurn.forEach(id => this.usedCardIds.add(id));
+        this.lastTurnCards = Array.from(usedThisTurn);
 
         return result.slice(0, count);
     },

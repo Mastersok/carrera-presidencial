@@ -262,6 +262,7 @@ body::before {
     gap: 5px;
     position: relative;
     cursor: help;
+    margin-right: 40px;
 }
 
 #round-display:hover .header-tooltip {
