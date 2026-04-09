@@ -177,111 +177,141 @@ const CARD_POOL = {
 
 /* ══════════════════════════════════════════════════════════════════
    GENERADOR DE CARTAS — Sistema Híbrido con Anti-Repetición
+   ══════════════════════════════════════════════════════════════════
+   REGLAS DURAS:
+   1. Cada turno, cada medidor activo aparece como efecto POSITIVO en AL MENOS 1 carta
+   2. Cada carta tiene SIEMPRE 2 efectos (positivo y negativo en medidores distintos)
+   3. Nunca se repite la misma carta dentro del mismo cargo (anti-repeat)
    ══════════════════════════════════════════════════════════════════ */
 const CardGenerator = {
-    // Registro de cartas ya usadas en este cargo (anti-repeat)
     usedCardIds: new Set(),
 
-    /**
-     * Reinicia el pool de anti-repetición al comenzar un nuevo cargo.
-     */
     resetPool: function() {
         this.usedCardIds.clear();
     },
 
     /**
-     * Genera N cartas coherentes para el turno actual.
-     * @param {Array}  activeMeters  Medidores activos de esta run (objetos con .id)
-     * @param {Object} permMeter     Medidor permanente
-     * @param {number} count         Número de cartas a generar (default 3)
-     * @param {string} roleId        ID del cargo actual
+     * Genera exactamente `count` cartas garantizando cobertura total de medidores activos.
      */
     generateCardsForTurn: function(activeMeters, permMeter, count = 3, roleId = 'candidato') {
-        const activeMeterIds = activeMeters.map(m => m.id);
-        const allMeterIds    = [...activeMeterIds, ...(permMeter ? [permMeter.id] : [])];
+        const rolePool      = (CARD_POOL[roleId]      || []).filter(c => !this.usedCardIds.has(c.id));
+        const universalPool = (CARD_POOL['universal']  || []).filter(c => !this.usedCardIds.has(c.id));
 
-        // 1. Obtener pool específico del cargo + universales
-        const rolePool      = CARD_POOL[roleId]      || [];
-        const universalPool = CARD_POOL['universal']  || [];
+        const result       = [];
+        const usedThisTurn = new Set();  // evitar duplicados dentro del mismo turno
 
-        // 2. Filtrar: solo cartas cuyo primary esté activo (o sean 'any')
-        const eligible = [...rolePool, ...universalPool].filter(card => {
-            if (this.usedCardIds.has(card.id)) return false;  // anti-repeat
-            if (card.primary === 'any') return true;
-            return activeMeterIds.includes(card.primary);
-        });
+        // ── FASE 1: Una carta por medidor activo (garantía de cobertura) ──
+        // Barajamos los medidores para que el orden sea aleatorio
+        const shuffledMeters = [...activeMeters].sort(() => 0.5 - Math.random());
 
-        // 3. Si el pool elegible es menor a las necesarias, se permite reutilizar universales
-        let finalPool = eligible;
-        if (finalPool.length < count) {
-            // Reabrir universales ya usadas como fallback
-            const fallback = universalPool.filter(c => !eligible.includes(c));
-            finalPool = [...eligible, ...fallback];
+        for (const meter of shuffledMeters) {
+            if (result.length >= count) break;
+
+            // Buscar carta del cargo específico para este medidor
+            const roleCards = rolePool.filter(c =>
+                c.primary === meter.id && !usedThisTurn.has(c.id)
+            );
+
+            let picked = null;
+            if (roleCards.length > 0) {
+                picked = roleCards[Math.floor(Math.random() * roleCards.length)];
+            } else {
+                // Fallback: universal disponible
+                const univAvail = universalPool.filter(c => !usedThisTurn.has(c.id));
+                if (univAvail.length > 0) {
+                    picked = univAvail[Math.floor(Math.random() * univAvail.length)];
+                }
+            }
+
+            if (picked) {
+                usedThisTurn.add(picked.id);
+                result.push(this._buildCard(picked, activeMeters, permMeter, meter.id));
+            }
         }
 
-        // 4. Barajar y tomar N cartas
-        const shuffled = [...finalPool].sort(() => 0.5 - Math.random());
-        const chosen   = shuffled.slice(0, count);
+        // ── FASE 2: Rellenar slots restantes con cartas variadas ──
+        while (result.length < count) {
+            const remaining = [
+                ...rolePool.filter(c =>
+                    !usedThisTurn.has(c.id) &&
+                    activeMeters.some(m => m.id === c.primary)
+                ),
+                ...universalPool.filter(c => !usedThisTurn.has(c.id))
+            ];
 
-        // 5. Instanciar cada carta con efectos concretos
-        return chosen.map(template => this._buildCard(template, activeMeters, permMeter, allMeterIds));
+            if (remaining.length === 0) break;
+
+            const picked = remaining[Math.floor(Math.random() * remaining.length)];
+            usedThisTurn.add(picked.id);
+            result.push(this._buildCard(picked, activeMeters, permMeter, null));
+        }
+
+        // Marcar todas como usadas (anti-repeat para turnos futuros)
+        usedThisTurn.forEach(id => this.usedCardIds.add(id));
+
+        return result.slice(0, count);
     },
 
     /**
-     * Construye una instancia de carta con valores randomizados y efectos coherentes.
+     * Construye una instancia de carta con 2 efectos SIEMPRE en medidores DISTINTOS.
+     * @param {Object}  template         Plantilla de la carta
+     * @param {Array}   activeMeters     Medidores activos del turno
+     * @param {Object}  permMeter        Medidor permanente
+     * @param {string}  forcedPrimaryId  Si no es null, este metro es el efecto positivo
      */
-    _buildCard: function(template, activeMeters, permMeter, allMeterIds) {
-        const varPos = 1 + ((Math.random() * 0.5) - 0.25);  // ±25%
+    _buildCard: function(template, activeMeters, permMeter, forcedPrimaryId) {
+        const varPos = 1 + ((Math.random() * 0.5) - 0.25);   // ±25%
         const varNeg = 1 + ((Math.random() * 0.5) - 0.25);
 
-        const finalGain = Math.round(template.baseGain * varPos);
-        const finalRisk = Math.round(template.baseRisk * varNeg);
+        // REGLA: cada carta tiene SIEMPRE mínimo 8 de gain y 8 de risk
+        const gainBase = (template.baseGain > 0) ? template.baseGain : 8;
+        const riskBase = (template.baseRisk > 0) ? template.baseRisk : 8;
+
+        const finalGain = Math.max(5, Math.round(gainBase * varPos));
+        const finalRisk = Math.max(5, Math.round(riskBase * varNeg));
+
+        // ── Determinar el medidor POSITIVO (primary) ──
+        let chosenPrimaryId;
+        if (forcedPrimaryId) {
+            // Fase 1: metro forzado para garantizar cobertura
+            chosenPrimaryId = forcedPrimaryId;
+        } else if (template.primary === 'any') {
+            // Universal sin forzar: escoger al azar entre activos
+            chosenPrimaryId = activeMeters[Math.floor(Math.random() * activeMeters.length)]?.id;
+        } else {
+            chosenPrimaryId = template.primary;
+        }
+
+        const posMeter = activeMeters.find(m => m.id === chosenPrimaryId)
+                      || (permMeter?.id === chosenPrimaryId ? permMeter : null)
+                      || activeMeters[0];
+
+        // ── Determinar el medidor NEGATIVO (diferente al positivo) ──
+        // REGLA: negMeter NUNCA puede ser el mismo que posMeter
+        const negCandidates = activeMeters.filter(m => m.id !== posMeter?.id);
+
+        let negMeter;
+        if (permMeter && permMeter.id !== posMeter?.id && Math.random() < 0.20) {
+            // 20% de chance de que el costo afecte al medidor permanente
+            negMeter = permMeter;
+        } else if (negCandidates.length > 0) {
+            negMeter = negCandidates[Math.floor(Math.random() * negCandidates.length)];
+        } else {
+            // Último recurso: permanente
+            negMeter = permMeter;
+        }
 
         const effects = [];
-
-        // Efecto primario (solo si tiene ganancia real)
-        if (template.baseGain > 0) {
-            let primaryMeterId;
-            if (template.primary === 'any') {
-                // Tarjeta universal: toca el medidor activo al azar
-                primaryMeterId = activeMeters[Math.floor(Math.random() * activeMeters.length)]?.id;
-            } else {
-                primaryMeterId = template.primary;
-            }
-            if (primaryMeterId) {
-                const primaryMeter = activeMeters.find(m => m.id === primaryMeterId)
-                                  || (permMeter?.id === primaryMeterId ? permMeter : null);
-                if (primaryMeter) {
-                    effects.push({ meterId: primaryMeter.id, meterName: primaryMeter.name, amount: finalGain });
-                }
-            }
-        }
-
-        // Efecto secundario negativo: medidor activo diferente al primario
-        if (template.baseRisk > 0) {
-            const candidates = activeMeters.filter(m => m.id !== template.primary);
-            // 25% chance de que el costo caiga sobre el medidor permanente
-            let negMeter;
-            if (permMeter && Math.random() < 0.25 && candidates.length > 0) {
-                negMeter = permMeter;
-            } else {
-                negMeter = candidates[Math.floor(Math.random() * candidates.length)]
-                        || activeMeters[0];
-            }
-            if (negMeter) {
-                effects.push({ meterId: negMeter.id, meterName: negMeter.name, amount: -finalRisk });
-            }
-        }
-
-        // Marcar como usada
-        this.usedCardIds.add(template.id);
+        if (posMeter) effects.push({ meterId: posMeter.id, meterName: posMeter.name, amount:  finalGain });
+        if (negMeter) effects.push({ meterId: negMeter.id, meterName: negMeter.name, amount: -finalRisk });
 
         return {
             id:      template.id + '_' + Date.now(),
             title:   template.title,
             desc:    template.desc,
-            primary: template.primary,
+            primary: posMeter?.id,
             effects
         };
     }
 };
+

@@ -152,14 +152,22 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             e.preventDefault();
+            // Si estamos en tutorial, no hacer nada
+            if (!tutorialOverlay.classList.contains('hidden')) return;
+            // Si estamos en newspaper/ascend/intro, no hacer nada
+            if (!overlay.classList.contains('hidden')) return;
+            if (!ascendOverlay.classList.contains('hidden')) return;
+            if (!introOverlay.classList.contains('hidden')) return;
+            // Si el start screen está visible, no hacer nada
+            if (startScreen.style.display !== 'none') return;
+
             if (pauseOverlay.classList.contains('hidden')) {
                 // Abrir pausa
                 try { AudioManager.uiClick(); } catch (e) { }
                 pauseOverlay.classList.remove('hidden');
                 btnPause.textContent = '▶️';
             } else {
-                // Cerrar pausa (solo si no estamos en otra pantalla)
-                if (!tutorialOverlay.classList.contains('hidden')) return;
+                // Cerrar pausa
                 try { AudioManager.uiClick(); } catch (e) { }
                 pauseOverlay.classList.add('hidden');
                 btnPause.textContent = '⏸️';
@@ -436,7 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderCards(state) {
         cardsEl.innerHTML = '';
         cardsEl.dataset.locked = 'false';
-        const roleId  = state.getCurrentRoleConfig().id;
+        const roleId = state.getCurrentRoleConfig().id;
         const options = CardGenerator.generateCardsForTurn(
             state.activeMeters,
             state.permanentMeter,
