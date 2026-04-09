@@ -34,6 +34,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const introOverlay = document.getElementById('intro-overlay');
     const btnIntroReady = document.getElementById('btn-intro-ready');
 
+    // Menú de pausa
+    const pauseOverlay = document.getElementById('pause-overlay');
+    const btnPause = document.getElementById('btn-pause');
+    const btnResume = document.getElementById('btn-resume');
+    const btnRestart = document.getElementById('btn-restart');
+    const btnMainMenu = document.getElementById('btn-main-menu');
+
     // Tracking de medidores en zona crítica (para no repetir alarma)
     const prevCritical = new Set();
 
@@ -71,17 +78,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ── Botón de Tutorial ──────────────────────────────
-    btnTutorial.addEventListener('click', () => {
+    btnTutorial.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         try { AudioManager.uiClick(); } catch (e) { }
+        console.log('Opening tutorial...');
         tutorialOverlay.classList.remove('hidden');
     });
 
-    btnTutorialClose.addEventListener('click', () => {
+    btnTutorialClose.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         try { AudioManager.uiClick(); } catch (e) { }
         tutorialOverlay.classList.add('hidden');
     });
 
-    btnTutorialPlay.addEventListener('click', async () => {
+    btnTutorialPlay.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         try { AudioManager.uiClick(); } catch (e) { }
         tutorialOverlay.classList.add('hidden');
         // Iniciar el juego después de cerrar el tutorial
@@ -95,12 +109,71 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 400);
     });
 
+    // ── Menú de Pausa ──────────────────────────────────
+    btnPause.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        try { AudioManager.uiClick(); } catch (e) { }
+        pauseOverlay.classList.remove('hidden');
+        // Actualizar texto del botón a "▶️"
+        btnPause.textContent = '▶️';
+    });
+
+    btnResume.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        try { AudioManager.uiClick(); } catch (e) { }
+        pauseOverlay.classList.add('hidden');
+        btnPause.textContent = '⏸️';
+    });
+
+    btnRestart.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        try { AudioManager.uiClick(); } catch (e) { }
+        pauseOverlay.classList.add('hidden');
+        btnPause.textContent = '⏸️';
+        // Reiniciar la partida completamente
+        GameState.startNewRun();
+    });
+
+    btnMainMenu.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        try { AudioManager.uiClick(); } catch (e) { }
+        pauseOverlay.classList.add('hidden');
+        gameScreen.classList.add('hidden');
+        startScreen.style.display = 'flex';
+        startScreen.style.animation = 'fade-in 0.4s ease forwards';
+        btnPause.textContent = '⏸️';
+    });
+
+    // ── Tecla ESC para pausar/reanudar ─────────────────
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            if (pauseOverlay.classList.contains('hidden')) {
+                // Abrir pausa
+                try { AudioManager.uiClick(); } catch (e) { }
+                pauseOverlay.classList.remove('hidden');
+                btnPause.textContent = '▶️';
+            } else {
+                // Cerrar pausa (solo si no estamos en otra pantalla)
+                if (!tutorialOverlay.classList.contains('hidden')) return;
+                try { AudioManager.uiClick(); } catch (e) { }
+                pauseOverlay.classList.add('hidden');
+                btnPause.textContent = '⏸️';
+            }
+        }
+    });
+
     // ── Escuchar eventos del Engine ──────────────────────
     document.addEventListener('gameStateUpdate', ({ detail }) => {
         const { type, state, message } = detail;
 
         switch (type) {
             case 'role_started':
+                CardGenerator.resetPool();   // ← anti-repeat: nuevo cargo, nuevo pool
                 renderHeader(state);
                 renderMeters(state);
                 renderCards(state);
@@ -363,7 +436,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderCards(state) {
         cardsEl.innerHTML = '';
         cardsEl.dataset.locked = 'false';
-        const options = CardGenerator.generateCardsForTurn(state.activeMeters, state.permanentMeter, 3);
+        const roleId  = state.getCurrentRoleConfig().id;
+        const options = CardGenerator.generateCardsForTurn(
+            state.activeMeters,
+            state.permanentMeter,
+            3,
+            roleId
+        );
 
         options.forEach((card, idx) => {
             const el = document.createElement('div');

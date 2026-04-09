@@ -49,6 +49,7 @@
                 <div id="round-pips"></div>
                 <div class="header-tooltip" id="round-tooltip">Ronda 1 de 8</div>
             </div>
+            <button id="btn-pause" class="pause-btn">⏸️</button>
         </header>
 
         <!-- FILA COMPLETA: personaje (izq) + medidor permanente (der) -->
@@ -100,6 +101,20 @@
     </div>
 
     <!-- ═══════════════════════════════════════════════════
+     MENÚ DE PAUSA
+     ═══════════════════════════════════════════════════ -->
+    <div id="pause-overlay" class="hidden">
+        <div id="pause-content">
+            <h1 id="pause-title">⏸️ PARTIDA EN PAUSA</h1>
+            <div class="pause-buttons">
+                <button id="btn-resume" class="pause-btn-option">▶️ CONTINUAR</button>
+                <button id="btn-restart" class="pause-btn-option">🔄 REINICIAR</button>
+                <button id="btn-main-menu" class="pause-btn-option">🏠 MENÚ PRINCIPAL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
      PANTALLA DE TUTORIAL / CÓMO JUGAR
      ═══════════════════════════════════════════════════ -->
     <div id="tutorial-overlay" class="hidden">
@@ -113,7 +128,8 @@
                 <h2 class="tutorial-section-title">🎯 OBJETIVO DEL JUEGO</h2>
                 <p>Comienza como <strong>Candidato a Alcalde</strong> y asciende cargo tras cargo hasta convertirte en
                     <strong>Presidente de la Nación</strong>. En cada cargo, debes tomar decisiones estratégicas
-                    manteniendo tus medidores por encima del umbral mínimo requerido.</p>
+                    manteniendo tus medidores por encima del umbral mínimo requerido.
+                </p>
             </div>
 
             <div class="tutorial-section">
