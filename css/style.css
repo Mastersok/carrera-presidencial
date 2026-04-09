@@ -153,22 +153,22 @@ body::before {
 
 /* ── Botón de Pausa ── */
 .pause-btn {
-    width: 44px;
-    height: 44px;
+    width: 52px;
+    height: 52px;
     background: var(--gold);
     border: var(--outline-thick);
-    border-radius: 10px;
-    box-shadow: var(--shadow-offset-sm);
+    border-radius: 12px;
+    box-shadow: var(--shadow-offset);
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
     flex-shrink: 0;
     position: absolute;
-    top: -2px;
-    right: 0;
+    top: -8px;
+    right: -20px;
 }
 
 .pause-btn:hover {
