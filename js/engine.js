@@ -127,13 +127,14 @@ const PERMANENT_METERS = [
 ];
 
 // ── PERFILES INICIALES ───────────────────────────────────────────────────────
-const PROFILES = [
+// Pool completo de 8 perfiles — cada run muestra 4 elegidos por semilla
+const ALL_PROFILES = [
     {
         id: "millonario",
         name: "Hijo de Millonario",
         icon: "💎",
-        desc: "Partiste con ventaja económica, pero el pueblo desconfía.",
-        tagPos: "+20% Dinero",
+        desc: "Plata heredada, credibilidad no incluida. Gran para el presupuesto, pésimo para la imagen.",
+        tagPos: "+20% Dinero/Presupuesto",
         tagNeg: "−10% Credibilidad",
         meterBonuses:   { dinero: 20, presup: 20, presup_asig: 20, fin_pub: 20 },
         meterPenalties: { cred: 10, transp: 10, resp_inst: 10, legit: 10 },
@@ -143,9 +144,9 @@ const PROFILES = [
         id: "sindical",
         name: "Líder Sindical",
         icon: "✊",
-        desc: "Las bases te adoran, pero los medios te temen.",
+        desc: "Las bases te siguen hasta el fin del mundo. Los medios te siguen con cámaras para otra cosa.",
         tagPos: "+20% Apoyo Base",
-        tagNeg: "−10% Imagen",
+        tagNeg: "−10% Imagen Pública",
         meterBonuses:   { base: 20, apoyo_part: 20, satis: 20, estab_soc: 20, rel_part: 20 },
         meterPenalties: { imagen: 10, img_nac: 10, inf_med: 10, vis_int: 10 },
         permBonuses:    { car_pop: 15 }
@@ -154,7 +155,7 @@ const PROFILES = [
         id: "tecnocrata",
         name: "Tecnócrata",
         icon: "🎓",
-        desc: "Sabes gobernar, pero el pueblo no sabe quién eres.",
+        desc: "Excel-master. Conoces cada cifra del presupuesto. El pueblo no sabe ni cómo te llamas.",
         tagPos: "+20% Profesionalismo",
         tagNeg: "−10% Popularidad",
         meterBonuses:   { prof: 20, efec_legis: 20, resp_inst: 20, inst_sol: 20 },
@@ -165,12 +166,56 @@ const PROFILES = [
         id: "populista",
         name: "Populista Nato",
         icon: "📣",
-        desc: "El pueblo te ama. Tu presupuesto, no tanto.",
+        desc: "Naciste para el micrófono. La gente te adora. Tu contador llora en silencio.",
         tagPos: "+25% Popularidad",
         tagNeg: "−15% Presupuesto",
         meterBonuses:   { pop: 25, satis: 25, momentum: 20, apoyo_pol: 20 },
         meterPenalties: { dinero: 15, presup: 15, presup_asig: 15, fin_pub: 15 },
         permBonuses:    { car_pop: 15 }
+    },
+    {
+        id: "militar",
+        name: "Militar Retirado",
+        icon: "🎖️",
+        desc: "Décadas de disciplina te forjaron. Las urnas son otro tipo de campo de batalla.",
+        tagPos: "+25% Seguridad",
+        tagNeg: "−15% Transparencia",
+        meterBonuses:   { segur: 25, seg_nac: 25, estab: 20, estab_soc: 20, peso_pol: 15 },
+        meterPenalties: { transp: 15, cred: 10, img_nac: 10, vis_int: 10 },
+        permBonuses:    { cap_pol: 15 }
+    },
+    {
+        id: "periodista",
+        name: "Periodista Reconvertido",
+        icon: "📡",
+        desc: "Pasaste años destrozando políticos en cámara. Ahora eres uno de ellos. Irónico.",
+        tagPos: "+25% Imagen/Medios",
+        tagNeg: "−15% Apoyo Partidario",
+        meterBonuses:   { imagen: 25, img_nac: 25, inf_med: 20, momentum: 15 },
+        meterPenalties: { base: 15, apoyo_part: 15, rel_part: 15, cred: 10 },
+        permBonuses:    { car_pop: 10 }
+    },
+    {
+        id: "oportunista",
+        name: "El Oportunista",
+        icon: "🎪",
+        desc: "Siempre en el lugar correcto a la hora correcta. O eso dices tú.",
+        tagPos: "+30% Momentum",
+        tagNeg: "−20% Credibilidad",
+        meterBonuses:   { momentum: 30, pop: 15, coalic: 20, apoyo_pol: 15 },
+        meterPenalties: { cred: 20, transp: 15, legit: 15, resp_inst: 10 },
+        permBonuses:    { cap_pol: 10 }
+    },
+    {
+        id: "jurista",
+        name: "El Jurista",
+        icon: "⚖️",
+        desc: "Constitución en mano, corbata perfecta. La gente quiere carisma, tú ofreces jurisprudencia.",
+        tagPos: "+20% Legitimidad/Instituciones",
+        tagNeg: "−15% Popularidad",
+        meterBonuses:   { legit: 20, inst_sol: 20, resp_inst: 20, transp: 15, pod_legis: 15 },
+        meterPenalties: { pop: 15, satis: 10, momentum: 15, inf_med: 10 },
+        permBonuses:    { int_eti: 20 }
     }
 ];
 
@@ -245,6 +290,41 @@ const RANDOM_EVENTS = [
         desc: "Documentos internos de tu gobierno circulan en Twitter, TikTok y hasta en el grupo de WhatsApp de los abuelitos. El escándalo es total.",
         optA: { label: "😔 Reconocerlo y pedir disculpas (en llorar)", hint: "Pierdes ahora, quizás sobrevives después", posAmount: 16, negAmount: 20 },
         optB: { label: "🤥 Negar todo y contraatacar al mensajero",     hint: "Táctico, clásico, predeciblemente malo",  posAmount: 10, negAmount: 28 }
+    },
+    {
+        id: "ev11", icon: "🐛",
+        title: "¡TU JEFE DE GABINETE RENUNCIÓ EN VIVO!",
+        desc: "En plena conferencia de prensa, tu hombre de confianza anunció su renuncia, dijo que no puede más, y se fue. Con el micrófono prendido.",
+        optA: { label: "😤 Reemplazarlo al instante con fanfarria", hint: "Recompones el equipo, el costo es alto",      posAmount: 20, negAmount: 18 },
+        optB: { label: "🧘 Actuar como si nada pasó",               hint: "Nadie te cree, pero al menos no entras en pánico", posAmount: 8, negAmount: 14 }
+    },
+    {
+        id: "ev12", icon: "📊",
+        title: "¡ENCUESTA CATASTRÓFICA! ¡5% DE APROBACIÓN!",
+        desc: "Una encuesta te da 5% de aprobación. El encuestador dice que el 5% es 'el margen de error'. Tu equipo no sabe si reír o llorar.",
+        optA: { label: "📣 Campaña de imagen masiva y urgente",     hint: "Subes en los sondeos, bajas en el banco",    posAmount: 22, negAmount: 20 },
+        optB: { label: "📉 Ignorarla y 'seguir trabajando'",        hint: "Conservas recursos, pierdes narrativa",      posAmount: 6,  negAmount: 16 }
+    },
+    {
+        id: "ev13", icon: "🎭",
+        title: "¡UNA CELEBRIDAD TE APOYA... O TE DESTRUYE!",
+        desc: "El artista más popular del país publicó algo sobre ti. No está claro si es apoyo o burla. El algoritmo lo hace viral de todas formas.",
+        optA: { label: "🤩 Abrazar el momento y salir con él/ella", hint: "Popularidad o ridículo viral — fifty-fifty", posAmount: 26, negAmount: 22 },
+        optB: { label: "🙈 No pronunciarte y esperar que pase",     hint: "El tema muere solo. O no.",                  posAmount: 8,  negAmount: 10 }
+    },
+    {
+        id: "ev14", icon: "🏗️",
+        title: "¡SE CAYÓ LA OBRA INAUGURADA LA SEMANA PASADA!",
+        desc: "El puente que inauguraste con fanfarria, banda y globos acaba de colapsar. Nadie salió herido, pero el video ya tiene un millón de visitas.",
+        optA: { label: "🔧 Asumir responsabilidad y reconstruir YA", hint: "Credibilidad recuperada, presupuesto destruido", posAmount: 20, negAmount: 26 },
+        optB: { label: "👷 Culpar a la empresa constructora",        hint: "Zafas del golpe directo, pero nadie te cree",   posAmount: 10, negAmount: 18 }
+    },
+    {
+        id: "ev15", icon: "🌐",
+        title: "¡TE INVITARON AL FORO ECONÓMICO MUNDIAL!",
+        desc: "Davos, Ginebra, corbatas caras. Te invitaron a hablar ante los líderes mundiales. Tu equipo no sabe si es una oportunidad o una trampa.",
+        optA: { label: "✈️ Ir y darlo todo en el escenario global", hint: "Imagen internacional al tope, presupuesto del viaje también", posAmount: 24, negAmount: 18 },
+        optB: { label: "🏠 Quedarte y 'priorizar lo local'",         hint: "Tus bases lo aplauden, el mundo te ignora",               posAmount: 12, negAmount: 10 }
     }
 ];
 
@@ -311,6 +391,13 @@ const GameState = {
         this.corruptionScore = 0;
         this.popularityScore = 0;
         this.controlScore = 0;
+
+        // ── Seleccionar 4 perfiles para esta run (determinista por semilla) ──
+        // Se baraja el pool completo y se toman los primeros 4
+        this.runProfiles = [...ALL_PROFILES].sort(() => this.rng() - 0.5).slice(0, 4);
+
+        // ── Seleccionar 6 eventos para esta run (determinista por semilla) ──
+        this.runEvents = [...RANDOM_EVENTS].sort(() => this.rng() - 0.5).slice(0, 6);
 
         const permIdx = Math.floor(this.rng() * PERMANENT_METERS.length);
         const perm = PERMANENT_METERS[permIdx];
@@ -464,8 +551,9 @@ const GameState = {
     },
 
     _triggerRandomEvent: function () {
-        const evIdx = Math.floor(this.rng() * RANDOM_EVENTS.length);
-        const template = RANDOM_EVENTS[evIdx];
+        const pool = (this.runEvents && this.runEvents.length > 0) ? this.runEvents : RANDOM_EVENTS;
+        const evIdx = Math.floor(this.rng() * pool.length);
+        const template = pool[evIdx];
 
         const shuffled = [...this.activeMeters].sort(() => this.rng() - 0.5);
 

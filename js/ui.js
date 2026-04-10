@@ -92,8 +92,13 @@ document.addEventListener('DOMContentLoaded', () => {
         btnProfileStart.disabled = true;
         profileSeedCode.textContent = seedToCode(seed);
 
+        // Generar los 4 perfiles de esta run usando la misma semilla (determinista)
+        // Debe ser idéntico al orden en startNewRun para consistencia
+        const tempRng = createSeededRNG(seed);
+        const runProfiles = [...ALL_PROFILES].sort(() => tempRng() - 0.5).slice(0, 4);
+
         profileCardsEl.innerHTML = '';
-        PROFILES.forEach(p => {
+        runProfiles.forEach(p => {
             const card = document.createElement('div');
             card.className = 'profile-card';
             card.dataset.profileId = p.id;
@@ -600,24 +605,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const destX = mRect.left + mRect.width / 2;
         const destY = mRect.top + mRect.height / 2;
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 25; i++) {
             const p = document.createElement('div');
             const isPos = eff.amount >= 0;
             p.className = `particle ${isPos ? 'pos' : 'neg'}`;
             p.textContent = isPos ? '+' : '-';
             p.style.left = `${startX}px`;
             p.style.top = `${startY}px`;
+            p.style.fontSize = `${12 + Math.random() * 12}px`;
             
             // Random offset spread
-            const spread = 60;
+            const spread = 80;
             const dx = (destX - startX) + (Math.random() * spread - spread / 2);
             const dy = (destY - startY) + (Math.random() * spread - spread / 2);
             p.style.setProperty('--dx', `${dx}px`);
             p.style.setProperty('--dy', `${dy}px`);
 
-            // Random delay and speed for organic feel
-            p.style.animationDelay = `${Math.random() * 0.3}s`;
-            p.style.animationDuration = `${0.6 + Math.random() * 0.6}s`;
+            // Higher randomness for speed and path
+            p.style.animationDelay = `${Math.random() * 0.4}s`;
+            p.style.animationDuration = `${0.5 + Math.random() * 0.5}s`;
 
             document.body.appendChild(p);
             setTimeout(() => p.remove(), 1200);
