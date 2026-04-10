@@ -34,8 +34,8 @@
 **Prioridad: PRIMERO**
 *Sin esto el juego se siente como prototipo, no como producto.*
 
-- [ ] Squash & stretch al hacer clic en una carta (compresión + rebote)
-- [ ] Preview de efectos al hacer hover sobre cada carta (resaltar medidores afectados)
+- [x] Squash & stretch al hacer clic en una carta (compresión + rebote)
+- [x] Preview de efectos al hacer hover sobre cada carta (resaltar medidores afectados)
 - [ ] Hitstop de 2-3 frames en momentos dramáticos
 - [ ] Partículas al subir medidores (+) y al bajar (-)
 - [ ] Shake en la carta rechazada al seleccionar otra

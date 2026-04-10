@@ -43,4 +43,13 @@ Todas las novedades, implementaciones tecnológicas y decisiones arquitecturales
 - **Fix:** Bloqueo de doble-click en cartas durante la animación.
 - **Fix:** Efecto de "páginas apiladas" (box-shadow escalonado) en el periódico.
 
+## [v0.5.0] - Steam Juice & Polish (Pilar 1)
+- **Mejora:** Implementación de **Squash & Stretch** (Física de rebote) al seleccionar cartas para mayor peso visual.
+- **Mejora:** Implementación de **Camino 2: Iluminación de Previsión** (Glow dorado en medidores afectados al hacer hover).
+- **Mejora:** Refuerzo de contraste en medidores críticos (glow rojo y animación de pulso).
+- **Añadido:** **Pulsado 3D** en cartas con integración mejorada de Vanilla-Tilt.
+- **Añadido:** Documento estratégico `STEAM_ROADMAP.md` para planificación comercial.
+- **Añadido:** 32 nuevas cartas para Candidato y Alcalde, solucionando problemas de agotamiento y variedad.
+- **Fix:** Gran overhaul del sistema de Reshuffle (ahora detecta bloqueos de cobertura y evita duplicados inmediatos).
+
 *Reglas core establecidas:* Desarrollo en HTML/CSS/JS Vanilla. Motor lógico separado por responsabilidad (engine, cards, ui). Tolerancia cero a mecánicas ajenas a la decisión por contexto.

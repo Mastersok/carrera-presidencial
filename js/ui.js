@@ -229,6 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             // Si estamos en tutorial, no hacer nada
             if (!tutorialOverlay.classList.contains('hidden')) return;
+            if (!profileOverlay.classList.contains('hidden')) return;
+            if (!eventOverlay.classList.contains('hidden')) return;
             // Si estamos en newspaper/ascend/intro, no hacer nada
             if (!overlay.classList.contains('hidden')) return;
             if (!ascendOverlay.classList.contains('hidden')) return;
@@ -634,9 +636,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>`;
             });
 
+            const promiseBadge = card.isPromise && card.promise
+                ? `<div class="promise-badge">⏳ PROMESA — vence en ${card.promise.roundsLeft} ronda${card.promise.roundsLeft !== 1 ? 's' : ''}</div>`
+                : '';
+
             el.innerHTML = `
                 <div class="card-banner">
-                    <span class="card-banner-icon">${bannerIcons[cardType]}</span>
+                    <span class="card-banner-icon">${card.isPromise ? '📋' : bannerIcons[cardType]}</span>
                     <span class="card-banner-number">${idx + 1}</span>
                 </div>
                 <div class="card-title-zone">
@@ -646,6 +652,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="card-desc">${card.desc}</div>
                 </div>
                 <div class="card-effects-zone">${effectsHTML}</div>
+                ${promiseBadge}
             `;
 
             // Hover Preview Events - Camino 2 (Glow neutral en medidor)
@@ -694,7 +701,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 100);
 
                 setTimeout(() => {
-                    GameState.applyCardEffects(card.effects);
+                    GameState.applyCardEffects(card.effects, card.promise || null);
                     cardsEl.dataset.locked = 'false';
                 }, 900);
             });

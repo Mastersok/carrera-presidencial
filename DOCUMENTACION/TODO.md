@@ -31,7 +31,13 @@ Esta es la 'biblia' del estado del proyecto para la carpeta de documentación.
 - [x] Programar Lógica del Periódico (evaluar si es Win/Loss y seleccionar Titular en base a medidores).
 - [x] Mover textos a archivo independiente y expandir narrativa (párrafos de estilo noticia por cargo y avisos satíricos).
 
-## FASE 6: Polish (Pulido y Sonido) [EN PROCESO]
-- [ ] Añadir SFX base para Interacción de Cartas y Alarmas de medidor crítico.
+## FASE 6: Polish (Pulido y Sonido) [COMPLETO]
+- [x] Añadir SFX base para Interacción de Cartas y Alarmas de medidor crítico.
 - [x] Balance Test Nivel 1-5 (Desde Candidato a Presidente).
 - [x] Git & GitHub Deployment.
+
+## FASE 7: Roadmap hacia Steam [EN PROCESO]
+- [x] Pilar 1: Juice & Game Feel (Fase 1: Física y Hovers).
+- [ ] Pilar 1: Juice & Game Feel (Fase 2: Partículas y Shake).
+- [ ] Pilar 2: Profundidad y Rejugabilidad (Perfiles y Promesas).
+- [ ] Pilar 3: Música Dinámica y Audio Babble.

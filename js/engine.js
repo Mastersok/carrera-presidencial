@@ -397,24 +397,26 @@ const GameState = {
         this.pendingEvent = null;
         // Reprogramar siguiente evento
         this.nextEventRound = this.currentRound + 3 + Math.floor(this.rng() * 2);
-        this.notifyStateChange("effects_applied");
-        this._checkDeathThenContinue("event");
-    },
 
-    _checkDeathThenContinue: function (source) {
+        // Verificar muerte
         const died = this.activeMeters.some(m => m.value <= 0);
         if (died) {
             this.runStatus = "game_over";
-            this.notifyStateChange("game_over", source === "event"
-                ? "La crisis fue demasiado grave para sobrevivir."
-                : "Un medidor crítico ha entrado en bancarrota absoluta (0%).");
+            this.notifyStateChange("game_over", "La crisis fue demasiado grave para sobrevivir.");
             return;
         }
-        if (source !== "event") {
-            this._processTurnEnd();
-        } else {
-            this._advanceRound();
+        // Avanzar ronda normalmente (sin double-render de cartas)
+        this._advanceRound();
+    },
+
+    _checkDeathThenContinue: function () {
+        const died = this.activeMeters.some(m => m.value <= 0);
+        if (died) {
+            this.runStatus = "game_over";
+            this.notifyStateChange("game_over", "Un medidor crítico ha entrado en bancarrota absoluta (0%).");
+            return;
         }
+        this._processTurnEnd();
     },
 
     _processTurnEnd: function () {
