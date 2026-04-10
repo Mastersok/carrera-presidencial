@@ -94,11 +94,11 @@
 **Prioridad: TERCERO** (paralelo al anterior)
 *Requisito mínimo para cualquier lanzamiento comercial.*
 
-- [ ] Volumen de música (slider 0-100%)
-- [ ] Volumen de efectos de sonido (slider 0-100%)
-- [ ] Toggle Pantalla Completa / Ventana
-- [ ] Reducir animaciones (modo accesibilidad)
-- [ ] Idioma: Español / English
+- [x] Volumen de música (slider 0-100%)
+- [x] Volumen de efectos de sonido (slider 0-100%)
+- [x] Toggle Pantalla Completa / Ventana
+- [x] Reducir animaciones (modo accesibilidad)
+- [x] Idioma: Español / English (UI y persistencia listas)
 
 **Stack técnico:**
 - localStorage para persistir preferencias entre sesiones
@@ -110,21 +110,72 @@
 **Prioridad: CUARTO**
 *Steam los requiere; generan comunidad y viralidad orgánica.*
 
-| Achievement | Condición | Rareza |
+> **Nota de diseño:** Todas las condiciones usan variables internas del engine
+> (`corruptionScore`, `popularityScore`, `controlScore`, `roleIndex`, `usedEventIds`, etc.)
+> — nunca nombres de medidores específicos de un cargo, que no existen en otros.
+
+#### 🟢 Primeros Pasos
+| Achievement | Condición técnica | Rareza |
 |---|---|:---:|
-| Primer Escándalo | Pierde en el primer turno | Común |
-| Sin Mancha | Completa Candidato con 0% Corrupción | Poco común |
-| Oligarca | Gana con Dinero > 90% | Raro |
-| El Plan Funcionó | Gana la presidencia con Credibilidad < 5% | Épico |
-| Perfecto | Completa la Carrera con todos los medidores > 70% | Legendario |
-| Night Owl | Juega a las 3am (timestamp real) | Secreto |
-| 100 Veces | Jugar 100 partidas totales | Secreto |
+| **"Primeros Votos"** | Completa el cargo de Candidato por primera vez | Común |
+| **"El Primer Tropiezo"** | Pierde una partida (cualquier cargo) | Común |
+| **"Promesa Rota"** | Una promesa vence y activa sus efectos negativos (`promises_expired`) | Común |
+| **"Compartir el Poder"** | Copia tu código de semilla con el botón de copiar | Común |
+
+#### 🟡 Los 4 Finales
+*Cada final tiene su achievement — el jugador que los quiere todos debe cambiar de estilo entre runs.*
+
+| Achievement | Condición técnica | Rareza |
+|---|---|:---:|
+| **"El Estadista"** | `getVictoryProfile() === "estadista"` al terminar la carrera | Poco común |
+| **"El Caudillo"** | `getVictoryProfile() === "caudillo"` al terminar la carrera | Poco común |
+| **"El Oligarca"** | `getVictoryProfile() === "oligarca"` al terminar la carrera | Poco común |
+| **"El Dictador"** | `getVictoryProfile() === "dictador"` al terminar la carrera | Poco común |
+| **"Los 4 Rostros del Poder"** | Obtener los 4 finales distintos a lo largo de cualquier número de runs | Raro |
+
+#### 🔴 Desafíos de Carrera
+| Achievement | Condición técnica | Rareza |
+|---|---|:---:|
+| **"Desafío Diario"** | `isDailyChallenge === true && runStatus === "victory"` | Poco común |
+| **"Crisis Manager"** | `usedEventIds.length >= 5` en una sola run | Raro |
+| **"Al Filo del Abismo"** | Gana un cargo con al menos un medidor por debajo del umbral mínimo al inicio de la última ronda | Raro |
+| **"Sin Mancha"** | Termina la carrera completa con `corruptionScore < 30` | Raro |
+
+#### 🟣 Playstyle & Estrategia
+| Achievement | Condición técnica | Rareza |
+|---|---|:---:|
+| **"Voz del Pueblo"** | `popularityScore > 500` al ganar la presidencia | Raro |
+| **"Puño de Acero"** | `controlScore > 500` al ganar la presidencia | Raro |
+| **"El Plan Funcionó"** | `corruptionScore > 300 && runStatus === "victory"` — ganar siendo corrupto | Épico |
+| **"Hijo del Destino"** | Ganar la carrera completa usando el perfil "Hijo de Millonario" | Raro |
+
+#### ⚫ Maestría Absoluta
+| Achievement | Condición técnica | Rareza |
+|---|---|:---:|
+| **"Perfecto"** | Terminar la presidencia con los 3 medidores activos > 75% | Épico |
+| **"Sin Tocar Fondo"** | Completar la carrera entera sin que ningún medidor llegue a 0% en ningún momento | Épico |
+| **"Veterano"** | Completar 10 partidas completas hasta la presidencia (`localStorage` counter) | Legendario |
+
+#### 🔒 Secretos *(ocultos hasta desbloquear)*
+| Achievement | Condición técnica | Rareza |
+|---|---|:---:|
+| **"Night Owl"** | Jugar entre las 2:00am y las 4:00am según el reloj del sistema | Secreto |
+| **"Semilla Maldita"** | Perder en la ronda 1 del cargo Candidato en un Daily Challenge | Secreto |
+| **"Todo Pasa"** | Completar una partida completa sin resolver ningún evento especial (todos expirados o no disparados) | Secreto |
+
+---
+
+**Total: 22 achievements** — distribución: 4 Comunes · 6 Poco comunes · 7 Raros · 3 Épicos · 1 Legendario · 3 Secretos
+
+---
 
 **Stack técnico:**
-- Archivo achievements.json con definiciones
-- Módulo JS achievements.js que evalúa condiciones en tiempo real
-- Notificación Toast al desbloquear (con animación)
-- Al llegar a Steam: conectar con Steamworks JS bindings
+- `js/achievements.js` — módulo independiente con array de definiciones + función evaluadora
+- Cada achievement tiene: `{ id, name, desc, rarity, condition: fn(GameState, stats) }`
+- Se evalúa en cada `notifyStateChange` (game_over, victory, won_role, promises_expired, random_event)
+- `localStorage["cp_achievements"]` — JSON con IDs desbloqueados + contador de runs
+- Toast de notificación: CSS puro + JS, sin librerías (slide-in desde arriba, 3s, estilo periódico)
+- Al llegar a Steam: reemplazar `localStorage` por `Steamworks JS bindings` sin cambiar la lógica de condiciones
 
 ---
 
