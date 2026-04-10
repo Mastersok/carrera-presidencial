@@ -399,7 +399,7 @@ const GameState = {
         this.nextEventRound = this.currentRound + 3 + Math.floor(this.rng() * 2);
 
         // Verificar muerte
-        const died = this.activeMeters.some(m => m.value <= 0);
+        const died = this.activeMeters.some(m => m.value <= 0) || (this.permanentMeter && this.permanentMeter.value <= 0);
         if (died) {
             this.runStatus = "game_over";
             this.notifyStateChange("game_over", "La crisis fue demasiado grave para sobrevivir.");
@@ -410,7 +410,7 @@ const GameState = {
     },
 
     _checkDeathThenContinue: function () {
-        const died = this.activeMeters.some(m => m.value <= 0);
+        const died = this.activeMeters.some(m => m.value <= 0) || (this.permanentMeter && this.permanentMeter.value <= 0);
         if (died) {
             this.runStatus = "game_over";
             this.notifyStateChange("game_over", "Un medidor crítico ha entrado en bancarrota absoluta (0%).");
@@ -438,7 +438,7 @@ const GameState = {
         }
 
         // Verificar muerte post-promesas
-        const died = this.activeMeters.some(m => m.value <= 0);
+        const died = this.activeMeters.some(m => m.value <= 0) || (this.permanentMeter && this.permanentMeter.value <= 0);
         if (died) {
             this.runStatus = "game_over";
             this.notifyStateChange("game_over", "Una promesa incumplida arrastró tu carrera al abismo.");
@@ -467,27 +467,33 @@ const GameState = {
         const evIdx = Math.floor(this.rng() * RANDOM_EVENTS.length);
         const template = RANDOM_EVENTS[evIdx];
 
-        // Resolver medidores dinámicamente
         const shuffled = [...this.activeMeters].sort(() => this.rng() - 0.5);
-        const mA = shuffled[0];
-        const mB = shuffled[Math.min(1, shuffled.length - 1)];
-        const mNeg = shuffled[shuffled.length - 1];
-        const mNegB = shuffled[Math.max(0, shuffled.length - 2)];
+
+        // Helper: elige un medidor diferente al excluido
+        const pickOther = (excludeId) =>
+            shuffled.find(m => m.id !== excludeId) || shuffled[0];
+
+        const mAPos = shuffled[0];
+        const mANeg = pickOther(mAPos.id);
+
+        // Para optB usar un medidor positivo distinto al de optA si hay suficientes
+        const mBPos = shuffled.find(m => m.id !== mAPos.id) || shuffled[0];
+        const mBNeg = shuffled.find(m => m.id !== mBPos.id) || pickOther(mBPos.id);
 
         this.pendingEvent = {
             ...template,
             optA: {
                 ...template.optA,
                 effects: [
-                    { meterId: mA.id,   meterName: mA.name,   amount:  template.optA.posAmount },
-                    { meterId: mNeg.id, meterName: mNeg.name, amount: -template.optA.negAmount }
+                    { meterId: mAPos.id, meterName: mAPos.name, amount:  template.optA.posAmount },
+                    { meterId: mANeg.id, meterName: mANeg.name, amount: -template.optA.negAmount }
                 ]
             },
             optB: {
                 ...template.optB,
                 effects: [
-                    { meterId: mB.id,    meterName: mB.name,    amount:  template.optB.posAmount },
-                    { meterId: mNegB.id, meterName: mNegB.name, amount: -template.optB.negAmount }
+                    { meterId: mBPos.id, meterName: mBPos.name, amount:  template.optB.posAmount },
+                    { meterId: mBNeg.id, meterName: mBNeg.name, amount: -template.optB.negAmount }
                 ]
             }
         };

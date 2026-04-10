@@ -600,23 +600,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const destX = mRect.left + mRect.width / 2;
         const destY = mRect.top + mRect.height / 2;
 
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 10; i++) {
             const p = document.createElement('div');
             const isPos = eff.amount >= 0;
             p.className = `particle ${isPos ? 'pos' : 'neg'}`;
-            p.textContent = isPos ? '▲' : '▼';
+            p.textContent = isPos ? '+' : '-';
             p.style.left = `${startX}px`;
             p.style.top = `${startY}px`;
             
             // Random offset spread
-            const spread = 40;
+            const spread = 60;
             const dx = (destX - startX) + (Math.random() * spread - spread / 2);
             const dy = (destY - startY) + (Math.random() * spread - spread / 2);
             p.style.setProperty('--dx', `${dx}px`);
             p.style.setProperty('--dy', `${dy}px`);
 
+            // Random delay and speed for organic feel
+            p.style.animationDelay = `${Math.random() * 0.3}s`;
+            p.style.animationDuration = `${0.6 + Math.random() * 0.6}s`;
+
             document.body.appendChild(p);
-            setTimeout(() => p.remove(), 1000);
+            setTimeout(() => p.remove(), 1200);
         }
     }
 
