@@ -474,18 +474,14 @@ document.addEventListener('DOMContentLoaded', () => {
             el.className = `decision-card card-type-${cardType}`;
             el.style.animationDelay = `${idx * 0.18}s`;
 
-            // Efectos como pastillas (pills)
+            // Efectos como pastillas (pills) - Modo Misterio
             let effectsHTML = '';
             card.effects.forEach(eff => {
-                const pos = eff.amount >= 0;
-                const cls = pos ? 'effect-pos' : 'effect-neg';
-                const sign = pos ? '+' : '';
-                const arrow = pos ? '▲' : '▼';
                 effectsHTML += `
-                    <div class="effect-row ${cls}">
+                    <div class="effect-row effect-neutral">
                         <span class="effect-pill">
-                            <span class="effect-arrow-icon">${arrow}</span>
-                            ${sign}${eff.amount}% ${eff.meterName}
+                            <span class="effect-arrow-icon">👁️</span>
+                            Impacto en ${eff.meterName}
                         </span>
                     </div>`;
             });
@@ -504,53 +500,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="card-effects-zone">${effectsHTML}</div>
             `;
 
-            // Hover Preview Events
+            // Hover Preview Events - Modo Misterio
             el.addEventListener('mouseenter', () => {
                 if (cardsEl.dataset.locked === 'true') return;
                 card.effects.forEach(eff => {
                     const meterEl = document.querySelector(`.meter-card[data-meter-id="${eff.meterId}"]`);
                     if (meterEl) {
-                        meterEl.classList.add(eff.amount >= 0 ? 'preview-pos' : 'preview-neg');
-                        
-                        // Text Preview 
-                        const valSpan = meterEl.querySelector('.meter-value');
-                        let currentVal = 0;
-                        if (valSpan) {
-                            if (valSpan.dataset.previewActive !== 'true') {
-                                valSpan.dataset.original = valSpan.innerHTML;
-                                valSpan.dataset.previewActive = 'true';
-                            } else {
-                                // Already active, fallback to parsing the *original* to not parse the preview HTML text
-                                // Let's ensure it's safely handled. But since it's already active, it shouldn't get here unless mouseenter fired twice without mouseleave.
-                            }
-                            
-                            // We must parse from original!
-                            const origHTML = valSpan.dataset.original || valSpan.innerHTML;
-                            currentVal = parseInt(origHTML);
-                            
-                            if (!isNaN(currentVal)) {
-                                const newVal = Math.max(0, Math.min(100, currentVal + eff.amount));
-                                const previewClass = eff.amount >= 0 ? 'pos' : 'neg';
-                                valSpan.innerHTML = `${currentVal}% <span class="preview-text ${previewClass}">→ ${newVal}%</span>`;
-                            }
-                        }
-
-                        // Bar Preview
-                        const previewFill = meterEl.querySelector('.meter-preview-fill');
-                        if (previewFill && !isNaN(currentVal)) {
-                            previewFill.style.opacity = '1';
-                            previewFill.classList.remove('is-pos', 'is-neg');
-                            if (eff.amount >= 0) {
-                                previewFill.classList.add('is-pos');
-                                previewFill.style.left = `${currentVal}%`;
-                                previewFill.style.width = `${Math.min(100 - currentVal, eff.amount)}%`;
-                            } else {
-                                previewFill.classList.add('is-neg');
-                                const newVal = Math.max(0, currentVal + eff.amount);
-                                previewFill.style.left = `${newVal}%`;
-                                previewFill.style.width = `${currentVal - newVal}%`;
-                            }
-                        }
+                        meterEl.classList.add('preview-neutral');
                     }
                 });
             });
@@ -559,18 +515,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.effects.forEach(eff => {
                     const meterEl = document.querySelector(`.meter-card[data-meter-id="${eff.meterId}"]`);
                     if (meterEl) {
-                        meterEl.classList.remove('preview-pos', 'preview-neg');
-                        
-                        const valSpan = meterEl.querySelector('.meter-value');
-                        if (valSpan && valSpan.dataset.previewActive === 'true') {
-                            valSpan.innerHTML = valSpan.dataset.original;
-                            valSpan.dataset.previewActive = 'false';
-                        }
-
-                        const previewFill = meterEl.querySelector('.meter-preview-fill');
-                        if (previewFill) {
-                            previewFill.style.opacity = '0';
-                        }
+                        meterEl.classList.remove('preview-neutral');
                     }
                 });
             });
@@ -585,18 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.effects.forEach(eff => {
                     const meterEl = document.querySelector(`.meter-card[data-meter-id="${eff.meterId}"]`);
                     if (meterEl) {
-                        meterEl.classList.remove('preview-pos', 'preview-neg');
-                        
-                        const valSpan = meterEl.querySelector('.meter-value');
-                        if (valSpan && valSpan.dataset.previewActive === 'true') {
-                            valSpan.innerHTML = valSpan.dataset.original;
-                            valSpan.dataset.previewActive = 'false';
-                        }
-
-                        const previewFill = meterEl.querySelector('.meter-preview-fill');
-                        if (previewFill) {
-                            previewFill.style.opacity = '0';
-                        }
+                        meterEl.classList.remove('preview-neutral');
                     }
                 });
 

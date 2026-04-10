@@ -95,6 +95,16 @@ body::before {
     background-color: var(--crimson) !important;
 }
 
+/* Modo Misterio */
+.meter-card.preview-neutral {
+    box-shadow: 0 0 12px rgba(253, 246, 227, 0.8);
+    transform: scale(1.02);
+    border-color: #fdf6e3;
+}
+.meter-card.preview-neutral .meter-fill {
+    box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.8), 0 0 5px rgba(253, 246, 227, 0.5);
+}
+
 /* ===========================
    PANTALLAS PRINCIPALES Y OVERLAYS =========================== */
 #game-screen {
@@ -872,6 +882,16 @@ body::before {
 
 .effect-neg .effect-arrow-icon {
     color: var(--crimson);
+}
+
+.effect-neutral .effect-pill {
+    background: rgba(26, 18, 9, 0.4);
+    color: #fdf6e3;
+    border-color: rgba(253, 246, 227, 0.3);
+    box-shadow: 2px 2px 0 rgba(26, 18, 9, 0.8);
+}
+.effect-neutral .effect-arrow-icon {
+    color: var(--gold);
 }
 
 /* ─── ANIMACIÓN DE ENTRADA ─── */

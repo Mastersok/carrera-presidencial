@@ -1,5 +1,5 @@
 /**
- * CARDS.JS v2.0 — Sistema de Cartas Contextual con Anti-Repetición
+ * CARDS.JS v3.0 — Sistema de Cartas Contextual con Anti-Repetición y Promesas
  * ─────────────────────────────────────────────────────────────────
  * Cada carta tiene:
  *   primary:  { meterId, direction }  → medidor fijo temáticamente coherente
@@ -11,7 +11,15 @@
  * 1. Filtra cartas cuyo metro primario esté activo en esta run
  * 2. Asigna el efecto secundario dinámicamente desde los medidores activos
  * 3. Nunca repite una carta dentro del mismo cargo (anti-repeat pool)
+ * 4. Cartas de promesa: ganancia inmediata + efecto retardado (vence en 2 rondas)
  */
+
+/** Usa el RNG semillado del GameState si está disponible, si no Math.random */
+function _rng() {
+    return (typeof GameState !== 'undefined' && typeof GameState.rng === 'function')
+        ? GameState.rng()
+        : Math.random();
+}
 
 const CARD_POOL = {
 
