@@ -570,6 +570,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const tooltipText = meter.desc || '';
 
+        // ── Indicador de bono/penalidad de perfil activo ──
+        let profileBadge = '';
+        if (!isPerm && GameState.selectedProfile) {
+            const bonus   = (GameState.selectedProfile.meterBonuses   || {})[meter.id] || 0;
+            const penalty = (GameState.selectedProfile.meterPenalties || {})[meter.id] || 0;
+            if (bonus > 0) {
+                profileBadge = `<span class="profile-meter-badge bonus" title="Bono de origen activo: +${bonus}%">${GameState.selectedProfile.icon}+${bonus}%</span>`;
+            } else if (penalty > 0) {
+                profileBadge = `<span class="profile-meter-badge malus" title="Penalidad de origen: −${penalty}%">${GameState.selectedProfile.icon}−${penalty}%</span>`;
+            }
+        }
+
         // Línea del umbral mínimo (solo para medidores temporales)
         let thresholdMarker = '';
         if (!isPerm) {
@@ -581,6 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="meter-name">
                     <span class="meter-icon">${icon}</span>
                     ${meter.name}
+                    ${profileBadge}
                 </span>
                 <span class="${valClass}">${val}%</span>
             </div>

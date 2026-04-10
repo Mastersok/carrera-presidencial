@@ -2756,6 +2756,20 @@ body::before {
 #victory-ending-icon { font-size: 1.4rem; }
 #victory-ending-label { font-size: 0.9rem; }
 
+/* ── Profile meter bonus/malus badge ── */
+.profile-meter-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 8px;
+    margin-left: 4px;
+    display: inline-block;
+    vertical-align: middle;
+    letter-spacing: 0;
+}
+.profile-meter-badge.bonus { background: #d4f5d9; color: #1a5c2a; border: 1px solid #8bcf96; }
+.profile-meter-badge.malus { background: #fde4e4; color: #7a1010; border: 1px solid #e89090; }
+
 /* ── Daily challenge badge ── */
 #events-bar {
     min-height: 0;

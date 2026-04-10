@@ -50,20 +50,20 @@
 ### 🔄 PILAR 2 — Profundidad y Rejugabilidad
 **Prioridad: SEGUNDO**
 
-- [ ] Perfiles iniciales (elegir antes de empezar cada run):
+- [x] Perfiles iniciales (elegir antes de empezar cada run):
   - Hijo de Millonario: +20% Dinero, -10% Credibilidad
   - Líder Sindical: +20% Bases, -10% Imagen
   - Tecnócrata: +20% Profesionalismo, -10% Popularidad
   - Populista Nato: +25% Popularidad, -15% Presupuesto
-- [ ] Promises System: Cartas que generan una promesa que vence en 2 rondas
-- [ ] Eventos aleatorios cada 3-4 rondas (interrupción tipo Reigns: 1 carta gigante, 2 opciones)
-- [ ] Múltiples finales según perfil de victoria:
+- [x] Promises System: Cartas que generan una promesa que vence en 2 rondas
+- [x] Eventos aleatorios cada 3-4 rondas (interrupción tipo Reigns: 1 carta gigante, 2 opciones)
+- [x] Múltiples finales según perfil de victoria:
   - Alta Corrupción: Final del Oligarca corrupto
   - Alta Popularidad: Final del Caudillo populista
   - Equilibrio perfecto: Final del Estadista
   - Fuerza/Control: Final del Dictador "democrático"
-- [ ] Seed system para compartir partidas (código de 6 dígitos reproducible)
-- [ ] Daily Challenge: Seed fija diaria con tabla de posiciones
+- [x] Seed system para compartir partidas (código de 6 dígitos reproducible)
+- [x] Daily Challenge: Seed fija diaria con tabla de posiciones
 
 **Stack técnico:**
 - Seedrandom.js para partidas reproducibles

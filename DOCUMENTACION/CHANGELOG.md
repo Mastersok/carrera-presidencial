@@ -52,6 +52,10 @@ Todas las novedades, implementaciones tecnológicas y decisiones arquitecturales
 - **Añadido:** **Pulsado 3D** en cartas con integración mejorada de Vanilla-Tilt.
 - **Añadido:** Documento estratégico `STEAM_ROADMAP.md` para planificación comercial.
 - **Añadido:** 32 nuevas cartas para Candidato y Alcalde, solucionando problemas de agotamiento y variedad.
-- **Fix:** Gran overhaul del sistema de Reshuffle (ahora detecta bloqueos de cobertura y evita duplicados inmediatos).
-
-*Reglas core establecidas:* Desarrollo en HTML/CSS/JS Vanilla. Motor lógico separado por responsabilidad (engine, cards, ui). Tolerancia cero a mecánicas ajenas a la decisión por contexto.
+## [v0.6.0] - Rejugabilidad & Profundidad (Pilar 2)
+- **Añadido:** Sistema de **Perfiles Iniciales** (8 identidades únicas con bonos y penalizaciones).
+- **Añadido:** **Promises System** (Cartas con efectos retardados).
+- **Añadido:** **Eventos Aleatorios** expandidos (15 eventos tipo interrupción Reigns).
+- **Añadido:** **Múltiples Finales** (Estadista, Caudillo, Oligarca, Dictador).
+- **Añadido:** **Seed System** y **Daily Challenge** (Semillas compartibles y retos diarios).
+- **Mejora:** Lógica de juego determinista basada en Mulberry32.

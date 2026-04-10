@@ -220,111 +220,132 @@ const ALL_PROFILES = [
 ];
 
 // ── EVENTOS ALEATORIOS ───────────────────────────────────────────────────────
+// roles: índices de ROLES[] donde puede dispararse este evento
+//   0=candidato  1=alcalde  2=diputado  3=senador  4=presidente
 const RANDOM_EVENTS = [
+    // ── Universales (cualquier cargo) ─────────────────────────────────────────
     {
-        id: "ev01", icon: "📰",
+        id: "ev01", icon: "📰", roles: [0,1,2,3,4],
         title: "¡ESCÁNDALO DE PROPORCIONES BÍBLICAS!",
-        desc: "Un periodista de investigación publicó ALGO. No está claro qué exactamente, pero suena muy mal. El país pide tu cabeza. O al menos un comunicado.",
+        desc: "Un periodista de investigación publicó ALGO. No está claro qué exactamente, pero suena muy mal. La gente pide tu cabeza. O al menos un comunicado.",
         optA: { label: "🎤 Confrontar en vivo (con cámara y todo)", hint: "Alto riesgo, alto espectáculo",     posAmount: 18, negAmount: 22 },
         optB: { label: "🤫 Manejar en silencio y rezar",           hint: "Menor daño, menor escena",          posAmount: 8,  negAmount: 12 }
     },
     {
-        id: "ev02", icon: "💰",
-        title: "¡LA ECONOMÍA DIJO 'NO MÁS'!",
-        desc: "Los mercados colapsaron. El FMI llamó. Tu contador lloró. El pueblo no entiende qué pasó, pero sabe que fue tu culpa.",
-        optA: { label: "✂️ Austeridad de emergencia (sin café ejecutivo)", hint: "Recuperas fondos, sacrificas comodidades", posAmount: 22, negAmount: 18 },
-        optB: { label: "💸 Gastar más para salir del hoyo",               hint: "Clásica estrategia. Clásicos resultados.", posAmount: 14, negAmount: 25 }
-    },
-    {
-        id: "ev03", icon: "✊",
-        title: "¡HUELGA GENERAL! ¡TODOS PARAN! ¡CAOS!",
-        desc: "Los trabajadores pararon todo. El camionero paró. El barista paró. Hasta el tipo que recarga los extinguidores paró. El país está paralizado.",
-        optA: { label: "🤝 Negociar con los líderes sindicales", hint: "Cedes algo, obtienes paz (temporalmente)", posAmount: 20, negAmount: 15 },
-        optB: { label: "🚨 Declarar estado de emergencia",       hint: "Orden inmediata. Popularidad inmolada.",  posAmount: 10, negAmount: 8  }
-    },
-    {
-        id: "ev04", icon: "🌪️",
-        title: "¡TERREMOTO! ¡LA NATURALEZA NO RESPETA AGENDAS!",
-        desc: "Un sismo sacudió todo. Tu agenda está cancelada. Las cámaras apuntan a los escombros y a ti, alternadamente.",
-        optA: { label: "🚁 Respuesta humanitaria total (y visible)", hint: "Héroe de portada, presupuesto en llamas", posAmount: 26, negAmount: 20 },
-        optB: { label: "📋 Respuesta coordinada y discreta",        hint: "Ahorras recursos, pero las críticas llegan igual", posAmount: 12, negAmount: 10 }
-    },
-    {
-        id: "ev05", icon: "🤝",
+        id: "ev05", icon: "🤝", roles: [0,1,2,3,4],
         title: "¡TU MAYOR RIVAL QUIERE SER TU AMIGO!",
-        desc: "El político que más te ha atacado aparece con la mano extendida. Propone una alianza. Sonríe. Desconfías.",
+        desc: "El político que más te ha atacado aparece con la mano extendida. Propone una alianza. Sonríe. Desconfías profundamente.",
         optA: { label: "😬 Aceptar la alianza (con recelo)",    hint: "Más poder, más compromisos incómodos", posAmount: 22, negAmount: 12 },
         optB: { label: "🙅 Rechazarlo y actuar solo",           hint: "Principios intactos, aliados perdidos",posAmount: 8,  negAmount: 18 }
     },
     {
-        id: "ev06", icon: "🎙️",
+        id: "ev06", icon: "🎙️", roles: [0,1,2,3,4],
         title: "¡TU COLABORADOR LA CAGÓ EN VIVO!",
-        desc: "En cadena nacional, tu asesor dijo AQUELLO. No repetiremos qué. Pero todo el país ya lo sabe. Y pide explicaciones.",
+        desc: "En cámara, tu asesor de confianza dijo AQUELLO. No repetiremos qué. Pero todo el mundo ya lo sabe. Y exige explicaciones.",
         optA: { label: "🪓 Desvincularlo en tiempo récord",  hint: "Imagen recuperada, aliado perdido",    posAmount: 20, negAmount: 14 },
         optB: { label: "🛡️ Defenderlo (y enterrarte con él)",hint: "Lealtad admirable, consecuencias predecibles", posAmount: 6, negAmount: 24 }
     },
     {
-        id: "ev07", icon: "🔍",
-        title: "¡EL JUEZ TE INVESTIGA!",
-        desc: "Un juez abrió una investigación sobre 'presuntas irregularidades'. La oposición festeja. Tu abogado no contesta.",
-        optA: { label: "📂 Cooperar plenamente (y dramáticamente)", hint: "Honestidad cara pero luminosa",              posAmount: 24, negAmount: 16 },
-        optB: { label: "⚔️ Atacar la independencia judicial",       hint: "Ganas tiempo, pierdes la moral del país",   posAmount: 8,  negAmount: 26 }
-    },
-    {
-        id: "ev08", icon: "🌍",
-        title: "¡EL MUNDO TE SEÑALA CON EL DEDO!",
-        desc: "Un organismo internacional con siglas que nadie recuerda criticó una de tus políticas. La prensa lo amplificó mil veces.",
-        optA: { label: "🏳️ Ceder y reformar (con cara seria)", hint: "Legitimidad exterior, base interior furiosa", posAmount: 18, negAmount: 14 },
-        optB: { label: "🦅 Defender soberanía a capa y espada", hint: "Tu base te ovaciona, el FMI te anota",         posAmount: 10, negAmount: 20 }
-    },
-    {
-        id: "ev09", icon: "🏛️",
-        title: "¡MOCIÓN DE CENSURA! ¡AHORA SÍ TE FUERON!",
-        desc: "La oposición presentó una moción de censura. Tienes exactamente 24 horas para no quedar en el olvido histórico.",
-        optA: { label: "🍪 Comprar voluntades (políticamente hablando)", hint: "Sobrevives, pero debes muchos favores", posAmount: 20, negAmount: 18 },
-        optB: { label: "📣 Apelar al pueblo directamente",               hint: "Épico si funciona. Catastrófico si no.",posAmount: 28, negAmount: 24 }
-    },
-    {
-        id: "ev10", icon: "💣",
-        title: "¡FILTRACIÓN MASIVA! ¡TODO SALIÓ A LA LUZ!",
-        desc: "Documentos internos de tu gobierno circulan en Twitter, TikTok y hasta en el grupo de WhatsApp de los abuelitos. El escándalo es total.",
-        optA: { label: "😔 Reconocerlo y pedir disculpas (en llorar)", hint: "Pierdes ahora, quizás sobrevives después", posAmount: 16, negAmount: 20 },
-        optB: { label: "🤥 Negar todo y contraatacar al mensajero",     hint: "Táctico, clásico, predeciblemente malo",  posAmount: 10, negAmount: 28 }
-    },
-    {
-        id: "ev11", icon: "🐛",
-        title: "¡TU JEFE DE GABINETE RENUNCIÓ EN VIVO!",
-        desc: "En plena conferencia de prensa, tu hombre de confianza anunció su renuncia, dijo que no puede más, y se fue. Con el micrófono prendido.",
-        optA: { label: "😤 Reemplazarlo al instante con fanfarria", hint: "Recompones el equipo, el costo es alto",      posAmount: 20, negAmount: 18 },
-        optB: { label: "🧘 Actuar como si nada pasó",               hint: "Nadie te cree, pero al menos no entras en pánico", posAmount: 8, negAmount: 14 }
-    },
-    {
-        id: "ev12", icon: "📊",
+        id: "ev12", icon: "📊", roles: [0,1,2,3,4],
         title: "¡ENCUESTA CATASTRÓFICA! ¡5% DE APROBACIÓN!",
-        desc: "Una encuesta te da 5% de aprobación. El encuestador dice que el 5% es 'el margen de error'. Tu equipo no sabe si reír o llorar.",
+        desc: "Una encuesta te da 5% de aprobación. El encuestador dice que el 5% 'es el margen de error'. Tu equipo no sabe si reír o llorar.",
         optA: { label: "📣 Campaña de imagen masiva y urgente",     hint: "Subes en los sondeos, bajas en el banco",    posAmount: 22, negAmount: 20 },
         optB: { label: "📉 Ignorarla y 'seguir trabajando'",        hint: "Conservas recursos, pierdes narrativa",      posAmount: 6,  negAmount: 16 }
     },
     {
-        id: "ev13", icon: "🎭",
+        id: "ev13", icon: "🎭", roles: [0,1,2,3,4],
         title: "¡UNA CELEBRIDAD TE APOYA... O TE DESTRUYE!",
         desc: "El artista más popular del país publicó algo sobre ti. No está claro si es apoyo o burla. El algoritmo lo hace viral de todas formas.",
         optA: { label: "🤩 Abrazar el momento y salir con él/ella", hint: "Popularidad o ridículo viral — fifty-fifty", posAmount: 26, negAmount: 22 },
         optB: { label: "🙈 No pronunciarte y esperar que pase",     hint: "El tema muere solo. O no.",                  posAmount: 8,  negAmount: 10 }
     },
     {
-        id: "ev14", icon: "🏗️",
+        id: "ev07", icon: "🔍", roles: [0,1,2,3,4],
+        title: "¡EL JUEZ TE INVESTIGA!",
+        desc: "Un juez abrió una investigación sobre 'presuntas irregularidades' en tu gestión. La oposición festeja. Tu abogado no contesta el teléfono.",
+        optA: { label: "📂 Cooperar plenamente (y dramáticamente)", hint: "Honestidad cara pero luminosa",              posAmount: 24, negAmount: 16 },
+        optB: { label: "⚔️ Atacar la independencia judicial",       hint: "Ganas tiempo, pierdes la moral del país",   posAmount: 8,  negAmount: 26 }
+    },
+    // ── Candidato y Alcalde (cargos bajos, aún construyendo nombre) ────────────
+    {
+        id: "ev16", icon: "🎤", roles: [0,1],
+        title: "¡TU PRIMER DEBATE TELEVISADO! ¡LAS LUCES TE CIEGAN!",
+        desc: "El estudio de TV es más pequeño de lo que imaginabas. Las luces encandilan. Tu rival ya sonríe. Tu mamá está viendo. El país también, pero hay partido de fútbol.",
+        optA: { label: "🎯 Atacar con todo desde la primera pregunta", hint: "Si funciona, eres estrella. Si no, meme eterno", posAmount: 24, negAmount: 20 },
+        optB: { label: "🧘 Jugar seguro y no cometer errores",         hint: "No brillas, pero tampoco te hundes en vivo",    posAmount: 12, negAmount: 8  }
+    },
+    {
+        id: "ev17", icon: "💸", roles: [0,1,2],
+        title: "¡FILTRARON LOS GASTOS DE TU CAMPAÑA!",
+        desc: "Alguien filtró el detalle de tus gastos. Los números son... creativos. El periodista escribe 'irregularidades'. Tu tesorero pide vacaciones con urgencia inusual.",
+        optA: { label: "📊 Publicar TODO con 'total transparencia'",   hint: "La honestidad duele, pero a veces convence",  posAmount: 20, negAmount: 16 },
+        optB: { label: "🗃️ Cuestionar la fuente y atacar al mensajero", hint: "Táctico. La verdad igual termina saliendo.", posAmount: 8,  negAmount: 20 }
+    },
+    // ── Alcalde y arriba (tienes cargo ejecutivo, gestionas cosas reales) ──────
+    {
+        id: "ev03", icon: "✊", roles: [1,2,3,4],
+        title: "¡HUELGA GENERAL! ¡TODOS PARAN! ¡CAOS!",
+        desc: "Los trabajadores pararon todo. El camionero paró. El barista paró. Hasta el tipo que recarga los extinguidores paró. Y todos te miran a ti.",
+        optA: { label: "🤝 Negociar con los líderes sindicales", hint: "Cedes algo, obtienes paz (temporalmente)", posAmount: 20, negAmount: 15 },
+        optB: { label: "🚨 Declarar estado de emergencia",       hint: "Orden inmediata. Popularidad inmolada.",  posAmount: 10, negAmount: 8  }
+    },
+    {
+        id: "ev04", icon: "🌪️", roles: [1,2,3,4],
+        title: "¡TERREMOTO! ¡LA NATURALEZA NO RESPETA AGENDAS!",
+        desc: "Un sismo sacudió la región. Tu agenda del mes está cancelada. Las cámaras apuntan a los escombros y a ti, alternadamente.",
+        optA: { label: "🚁 Respuesta humanitaria total (y visible)", hint: "Héroe de portada, presupuesto en llamas", posAmount: 26, negAmount: 20 },
+        optB: { label: "📋 Respuesta coordinada y discreta",        hint: "Ahorras recursos, pero las críticas llegan igual", posAmount: 12, negAmount: 10 }
+    },
+    {
+        id: "ev10", icon: "💣", roles: [1,2,3,4],
+        title: "¡FILTRACIÓN MASIVA! ¡TODO SALIÓ A LA LUZ!",
+        desc: "Documentos internos de tu gestión circulan en Twitter, TikTok y hasta en el grupo de WhatsApp de los abuelitos. El escándalo es total.",
+        optA: { label: "😔 Reconocerlo y pedir disculpas (y llorar)", hint: "Pierdes ahora, quizás sobrevives después", posAmount: 16, negAmount: 20 },
+        optB: { label: "🤥 Negar todo y contraatacar al mensajero",    hint: "Táctico, clásico, predeciblemente malo",  posAmount: 10, negAmount: 28 }
+    },
+    {
+        id: "ev11", icon: "🐛", roles: [1,2,3,4],
+        title: "¡TU JEFE DE GABINETE RENUNCIÓ EN VIVO!",
+        desc: "En plena conferencia de prensa, tu hombre de confianza anunció su renuncia, dijo que no puede más, y se fue. Con el micrófono prendido.",
+        optA: { label: "😤 Reemplazarlo al instante con fanfarria", hint: "Recompones el equipo, el costo es alto",           posAmount: 20, negAmount: 18 },
+        optB: { label: "🧘 Actuar como si nada pasó",               hint: "Nadie te cree, pero al menos no entras en pánico", posAmount: 8,  negAmount: 14 }
+    },
+    {
+        id: "ev14", icon: "🏗️", roles: [1,2,3,4],
         title: "¡SE CAYÓ LA OBRA INAUGURADA LA SEMANA PASADA!",
-        desc: "El puente que inauguraste con fanfarria, banda y globos acaba de colapsar. Nadie salió herido, pero el video ya tiene un millón de visitas.",
+        desc: "La obra que inauguraste con fanfarria, banda y globos acaba de colapsar. Nadie salió herido, pero el video ya tiene un millón de visitas.",
         optA: { label: "🔧 Asumir responsabilidad y reconstruir YA", hint: "Credibilidad recuperada, presupuesto destruido", posAmount: 20, negAmount: 26 },
         optB: { label: "👷 Culpar a la empresa constructora",        hint: "Zafas del golpe directo, pero nadie te cree",   posAmount: 10, negAmount: 18 }
     },
+    // ── Diputado y arriba (actor nacional, leyes, presupuesto nacional) ────────
     {
-        id: "ev15", icon: "🌐",
+        id: "ev02", icon: "💰", roles: [2,3,4],
+        title: "¡LA ECONOMÍA DIJO 'NO MÁS'!",
+        desc: "Los mercados colapsaron. El FMI llamó. Tu ministro de hacienda lloró. El pueblo no entiende qué pasó, pero sabe que fue tu culpa.",
+        optA: { label: "✂️ Austeridad de emergencia (sin café ejecutivo)", hint: "Recuperas fondos, sacrificas comodidades", posAmount: 22, negAmount: 18 },
+        optB: { label: "💸 Gastar más para salir del hoyo",               hint: "Clásica estrategia. Clásicos resultados.", posAmount: 14, negAmount: 25 }
+    },
+    {
+        id: "ev09", icon: "🏛️", roles: [2,3,4],
+        title: "¡MOCIÓN DE CENSURA! ¡AHORA SÍ TE FUERON!",
+        desc: "La oposición presentó una moción de censura en el congreso. Tienes exactamente 24 horas para no quedar en el olvido histórico.",
+        optA: { label: "🍪 Comprar voluntades (políticamente hablando)", hint: "Sobrevives, pero debes muchos favores", posAmount: 20, negAmount: 18 },
+        optB: { label: "📣 Apelar al pueblo directamente",               hint: "Épico si funciona. Catastrófico si no.",posAmount: 28, negAmount: 24 }
+    },
+    // ── Senador y Presidente (figura nacional con peso internacional) ──────────
+    {
+        id: "ev08", icon: "🌍", roles: [3,4],
+        title: "¡EL MUNDO TE SEÑALA CON EL DEDO!",
+        desc: "Un organismo internacional con siglas que nadie recuerda criticó una de tus políticas. La prensa local lo amplificó mil veces.",
+        optA: { label: "🏳️ Ceder y reformar (con cara seria)",   hint: "Legitimidad exterior, base interior furiosa", posAmount: 18, negAmount: 14 },
+        optB: { label: "🦅 Defender soberanía a capa y espada", hint: "Tu base te ovaciona, el FMI te anota",         posAmount: 10, negAmount: 20 }
+    },
+    {
+        id: "ev15", icon: "🌐", roles: [3,4],
         title: "¡TE INVITARON AL FORO ECONÓMICO MUNDIAL!",
-        desc: "Davos, Ginebra, corbatas caras. Te invitaron a hablar ante los líderes mundiales. Tu equipo no sabe si es una oportunidad o una trampa.",
+        desc: "Davos, Ginebra, corbatas que cuestan más que un auto. Te invitaron a hablar ante líderes mundiales. Tu equipo no sabe si es oportunidad o trampa.",
         optA: { label: "✈️ Ir y darlo todo en el escenario global", hint: "Imagen internacional al tope, presupuesto del viaje también", posAmount: 24, negAmount: 18 },
-        optB: { label: "🏠 Quedarte y 'priorizar lo local'",         hint: "Tus bases lo aplauden, el mundo te ignora",               posAmount: 12, negAmount: 10 }
+        optB: { label: "🏠 Quedarte y 'priorizar lo local'",        hint: "Tus bases lo aplauden, el mundo te ignora",                  posAmount: 12, negAmount: 10 }
     }
 ];
 
@@ -396,8 +417,8 @@ const GameState = {
         // Se baraja el pool completo y se toman los primeros 4
         this.runProfiles = [...ALL_PROFILES].sort(() => this.rng() - 0.5).slice(0, 4);
 
-        // ── Seleccionar 6 eventos para esta run (determinista por semilla) ──
-        this.runEvents = [...RANDOM_EVENTS].sort(() => this.rng() - 0.5).slice(0, 6);
+        // ── Anti-repetición de eventos: registra qué IDs ya se dispararon ──
+        this.usedEventIds = [];
 
         const permIdx = Math.floor(this.rng() * PERMANENT_METERS.length);
         const perm = PERMANENT_METERS[permIdx];
@@ -551,9 +572,16 @@ const GameState = {
     },
 
     _triggerRandomEvent: function () {
-        const pool = (this.runEvents && this.runEvents.length > 0) ? this.runEvents : RANDOM_EVENTS;
+        // Filtrar por cargo actual y excluir eventos ya disparados este run
+        const forRole = RANDOM_EVENTS.filter(e => e.roles.includes(this.roleIndex));
+        const fresh   = forRole.filter(e => !(this.usedEventIds || []).includes(e.id));
+        // Si ya usamos todos los del cargo, reutilizar (mejor que no disparar nada)
+        const pool = fresh.length > 0 ? fresh : forRole;
         const evIdx = Math.floor(this.rng() * pool.length);
         const template = pool[evIdx];
+        // Registrar como usado
+        if (!this.usedEventIds) this.usedEventIds = [];
+        if (!this.usedEventIds.includes(template.id)) this.usedEventIds.push(template.id);
 
         const shuffled = [...this.activeMeters].sort(() => this.rng() - 0.5);
 
