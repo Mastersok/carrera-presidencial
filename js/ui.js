@@ -515,11 +515,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Text Preview 
                         const valSpan = meterEl.querySelector('.meter-value');
                         let currentVal = 0;
-                        if (valSpan && !valSpan.dataset.previewActive) {
-                            valSpan.dataset.original = valSpan.innerHTML;
-                            valSpan.dataset.previewActive = 'true';
+                        if (valSpan) {
+                            if (valSpan.dataset.previewActive !== 'true') {
+                                valSpan.dataset.original = valSpan.innerHTML;
+                                valSpan.dataset.previewActive = 'true';
+                            } else {
+                                // Already active, fallback to parsing the *original* to not parse the preview HTML text
+                                // Let's ensure it's safely handled. But since it's already active, it shouldn't get here unless mouseenter fired twice without mouseleave.
+                            }
                             
-                            currentVal = parseInt(valSpan.textContent);
+                            // We must parse from original!
+                            const origHTML = valSpan.dataset.original || valSpan.innerHTML;
+                            currentVal = parseInt(origHTML);
+                            
                             if (!isNaN(currentVal)) {
                                 const newVal = Math.max(0, Math.min(100, currentVal + eff.amount));
                                 const previewClass = eff.amount >= 0 ? 'pos' : 'neg';
@@ -531,15 +539,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         const previewFill = meterEl.querySelector('.meter-preview-fill');
                         if (previewFill && !isNaN(currentVal)) {
                             previewFill.style.opacity = '1';
+                            previewFill.classList.remove('is-pos', 'is-neg');
                             if (eff.amount >= 0) {
+                                previewFill.classList.add('is-pos');
                                 previewFill.style.left = `${currentVal}%`;
                                 previewFill.style.width = `${Math.min(100 - currentVal, eff.amount)}%`;
-                                previewFill.style.backgroundColor = 'rgba(45, 198, 83, 0.8)';
                             } else {
+                                previewFill.classList.add('is-neg');
                                 const newVal = Math.max(0, currentVal + eff.amount);
                                 previewFill.style.left = `${newVal}%`;
                                 previewFill.style.width = `${currentVal - newVal}%`;
-                                previewFill.style.backgroundColor = 'rgba(230, 57, 70, 0.9)';
                             }
                         }
                     }
@@ -559,7 +568,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
 
                         const previewFill = meterEl.querySelector('.meter-preview-fill');
-                        if (previewFill) previewFill.style.opacity = '0';
+                        if (previewFill) {
+                            previewFill.style.opacity = '0';
+                        }
                     }
                 });
             });
@@ -583,7 +594,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
 
                         const previewFill = meterEl.querySelector('.meter-preview-fill');
-                        if (previewFill) previewFill.style.opacity = '0';
+                        if (previewFill) {
+                            previewFill.style.opacity = '0';
+                        }
                     }
                 });
 
