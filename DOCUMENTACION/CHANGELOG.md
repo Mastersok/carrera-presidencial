@@ -44,8 +44,10 @@ Todas las novedades, implementaciones tecnológicas y decisiones arquitecturales
 - **Fix:** Efecto de "páginas apiladas" (box-shadow escalonado) en el periódico.
 
 ## [v0.5.0] - Steam Juice & Polish (Pilar 1)
-- **Mejora:** Implementación de **Squash & Stretch** (Física de rebote) al seleccionar cartas para mayor peso visual.
-- **Mejora:** Implementación de **Camino 2: Iluminación de Previsión** (Glow dorado en medidores afectados al hacer hover).
+- **Mejora:** Implementación de **Squash & Stretch** y **Hitstop** (Screen Shake de impacto) al seleccionar cartas.
+- **Mejora:** Sistema de **Partículas** (íconos voladores) que viajan de la carta al medidor afectado.
+- **Mejora:** Animación de **Shake de Rechazo** para las cartas no elegidas.
+- **Mejora:** Implementación de **Camino 2: Iluminación de Previsión** (Glow dorado en medidores afectados).
 - **Mejora:** Refuerzo de contraste en medidores críticos (glow rojo y animación de pulso).
 - **Añadido:** **Pulsado 3D** en cartas con integración mejorada de Vanilla-Tilt.
 - **Añadido:** Documento estratégico `STEAM_ROADMAP.md` para planificación comercial.

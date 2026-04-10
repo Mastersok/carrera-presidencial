@@ -36,9 +36,9 @@
 
 - [x] Squash & stretch al hacer clic en una carta (compresión + rebote)
 - [x] Preview de efectos al hacer hover sobre cada carta (resaltar medidores afectados)
-- [ ] Hitstop de 2-3 frames en momentos dramáticos
-- [ ] Partículas al subir medidores (+) y al bajar (-)
-- [ ] Shake en la carta rechazada al seleccionar otra
+- [x] Hitstop de 2-3 frames en momentos dramáticos
+- [x] Partículas al subir medidores (+) y al bajar (-)
+- [x] Shake en la carta rechazada al seleccionar otra
 
 **Stack técnico:**
 - GSAP (GreenSock) o Anime.js para animaciones de cartas

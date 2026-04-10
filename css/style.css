@@ -927,6 +927,43 @@ body::before {
     filter: grayscale(0.6);
     transform: scale(0.86) translateY(8px) !important;
     pointer-events: none;
+    animation: card-shake-rejected 0.4s ease-in-out;
+}
+
+@keyframes card-shake-rejected {
+    0%, 100% { transform: scale(0.86) translateY(8px); }
+    20%, 60% { transform: scale(0.86) translateY(8px) translateX(-4px) rotate(-1deg); }
+    40%, 80% { transform: scale(0.86) translateY(8px) translateX(4px) rotate(1deg); }
+}
+
+/* Partículas */
+.particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1000;
+    font-weight: 900;
+    font-family: var(--font-title);
+    animation: particle-float 1s ease-out forwards;
+}
+
+.particle.pos { color: var(--emerald-light); text-shadow: 0 0 5px var(--emerald); }
+.particle.neg { color: var(--crimson-light); text-shadow: 0 0 5px var(--crimson); }
+
+@keyframes particle-float {
+    0% { transform: translate(0, 0) scale(1.5); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(0.5); opacity: 0; }
+}
+
+/* Hitstop / Impacto */
+.hitstop-active {
+    animation: screen-hitstop 0.15s ease-in-out;
+}
+
+@keyframes screen-hitstop {
+    0%, 100% { transform: none; }
+    25% { transform: translate(-2px, 2px); }
+    50% { transform: translate(2px, -2px); }
+    75% { transform: translate(-1px, 1px); }
 }
 
 /* ===========================

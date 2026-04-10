@@ -589,6 +589,37 @@ document.addEventListener('DOMContentLoaded', () => {
         return card;
     }
 
+    function spawnParticles(sourceEl, eff) {
+        const rect = sourceEl.getBoundingClientRect();
+        const startX = rect.left + rect.width / 2;
+        const startY = rect.top + rect.height / 2;
+
+        const meterEl = document.querySelector(`.meter-card[data-meter-id="${eff.meterId}"]`);
+        if (!meterEl) return;
+        const mRect = meterEl.getBoundingClientRect();
+        const destX = mRect.left + mRect.width / 2;
+        const destY = mRect.top + mRect.height / 2;
+
+        for (let i = 0; i < 3; i++) {
+            const p = document.createElement('div');
+            const isPos = eff.amount >= 0;
+            p.className = `particle ${isPos ? 'pos' : 'neg'}`;
+            p.textContent = isPos ? '▲' : '▼';
+            p.style.left = `${startX}px`;
+            p.style.top = `${startY}px`;
+            
+            // Random offset spread
+            const spread = 40;
+            const dx = (destX - startX) + (Math.random() * spread - spread / 2);
+            const dy = (destY - startY) + (Math.random() * spread - spread / 2);
+            p.style.setProperty('--dx', `${dx}px`);
+            p.style.setProperty('--dy', `${dy}px`);
+
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 1000);
+        }
+    }
+
     function renderCards(state) {
         cardsEl.innerHTML = '';
         cardsEl.dataset.locked = 'false';
@@ -691,12 +722,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Squash anim (impact visual)
                 el.classList.add('squash-active');
+                
+                // Hitstop (Screen Shake breve)
+                document.body.classList.add('hitstop-active');
+                setTimeout(() => document.body.classList.remove('hitstop-active'), 150);
+
+                // Spawn Particles
+                card.effects.forEach(eff => {
+                    spawnParticles(el, eff);
+                });
 
                 setTimeout(() => {
                     el.classList.remove('squash-active');
                     el.classList.add('selected');
                     cardsEl.querySelectorAll('.decision-card').forEach(c => {
-                        if (c !== el) c.classList.add('rejected');
+                        if (c !== el) {
+                            c.classList.add('rejected');
+                        }
                     });
                 }, 100);
 
