@@ -63,7 +63,12 @@ const CARD_POOL = {
         { id:"ca33", title:"Firma ante Notario",      desc:"Recreas una firma pública frente a testigos ilustres.",                               primary:"legit",    baseGain:18, baseRisk:10 },
         { id:"ca34", title:"Aprobación de Históricos",desc:"Los viejos próceres de tu partido te levantan la mano.",                              primary:"legit",    baseGain:22, baseRisk:16 },
         { id:"ca35", title:"Cita Académica",          desc:"Usas datos y estudios para apoyar tu plan. Suenas muy inteligente hoy.",              primary:"prof",     baseGain:18, baseRisk:10 },
-        { id:"ca36", title:"Debate Técnico",          desc:"Humillas a tu rival hablando de tasas impositivas. Aburrido pero letal.",             primary:"prof",     baseGain:20, baseRisk:14 }
+        { id:"ca36", title:"Debate Técnico",          desc:"Humillas a tu rival hablando de tasas impositivas. Aburrido pero letal.",             primary:"prof",     baseGain:20, baseRisk:14 },
+        // ── CARTAS DE PROMESA ──
+        { id:"ca_p1", title:"¡Subsidios para Todos!", desc:"Anuncias subsidios a voz en cuello en el mitin. La gente te ama ahora. La factura llega sola después.", primary:"pop",   baseGain:20, baseRisk:0, noRisk:true,
+          promise:{ label:"💰 Subsidios prometidos", roundsLeft:2, effects:[{meterId:"dinero", amount:-25}] } },
+        { id:"ca_p2", title:"Juro por Estas (Transparencia)",  desc:"Juras publicar cada gasto. El periódico te aplaude. Los auditores empiezan a leer. Oops.", primary:"cred",   baseGain:18, baseRisk:0, noRisk:true,
+          promise:{ label:"🔍 Auditoría prometida",  roundsLeft:2, effects:[{meterId:"cred", amount:12}, {meterId:"imagen", amount:-20}] } }
     ],
 
     /* ════════════════════════════════════════════════════
@@ -106,7 +111,12 @@ const CARD_POOL = {
         { id:"al33", title:"Día Sin Autos",           desc:"Prohíbes autos en el centro por un día. El aire y los peatones agradecen.",           primary:"medio",  baseGain:18, baseRisk:14 },
         { id:"al34", title:"Reciclaje Obligatorio",   desc:"Pones tachos de colores por todas partes. Multiplicas los puntos limpios.",           primary:"medio",  baseGain:22, baseRisk:16 },
         { id:"al35", title:"Luminarias LED",          desc:"Cambias luces antiguas. La ciudad brilla más (y gasta un poco menos).",               primary:"infra",  baseGain:20, baseRisk:12 },
-        { id:"al36", title:"Pasos Peatonales",        desc:"Pintas cruces seguros y pones lomos de toro donde la gente pedía.",                   primary:"infra",  baseGain:16, baseRisk:10 }
+        { id:"al36", title:"Pasos Peatonales",        desc:"Pintas cruces seguros y pones lomos de toro donde la gente pedía.",                   primary:"infra",  baseGain:16, baseRisk:10 },
+        // ── CARTAS DE PROMESA ──
+        { id:"al_p1", title:"¡Obras ya! (próximamente)", desc:"Prometiste las obras en campaña. Ahora hay que pagarlas. La sonrisa fue gratis. La cinta de inauguración, no.", primary:"satis", baseGain:22, baseRisk:0, noRisk:true,
+          promise:{ label:"🏗️ Obras prometidas", roundsLeft:2, effects:[{meterId:"presup", amount:-28}] } },
+        { id:"al_p2", title:"Bono Municipal (cheques en camino)", desc:"Repartes bonos con foto incluida. Los vecinos sonríen. El contador municipal no.", primary:"satis", baseGain:20, baseRisk:0, noRisk:true,
+          promise:{ label:"💸 Bono por cobrar", roundsLeft:2, effects:[{meterId:"presup", amount:-22}] } }
     ],
 
     /* ════════════════════════════════════════════════════
@@ -133,7 +143,12 @@ const CARD_POOL = {
         { id:"di17", title:"Gira Legislativa",         desc:"Visitas varios distritos con tu comitiva. Gastas mucho, aprendes poco.",              primary:"inf_dist",    baseGain:16, baseRisk:14 },
         { id:"di18", title:"Seminario de Leyes",       desc:"Organizas un seminario jurídico. Asisten tres abogados y tu secretaria.",             primary:"pod_legis",   baseGain:14, baseRisk:8  },
         { id:"di19", title:"Auditoria al Gasto",       desc:"Auditas el gasto de tu propio gabinete. Encuentras cosas. Guardas silencio.",         primary:"transp",      baseGain:18, baseRisk:22 },
-        { id:"di20", title:"Campaña de Identidad",     desc:"Lanzas una campaña de imagen con tu rostro en vallas. Cara conocida.",                primary:"img_nac",     baseGain:16, baseRisk:10 }
+        { id:"di20", title:"Campaña de Identidad",     desc:"Lanzas una campaña de imagen con tu rostro en vallas. Cara conocida.",                primary:"img_nac",     baseGain:16, baseRisk:10 },
+        // ── CARTAS DE PROMESA ──
+        { id:"di_p1", title:"El Proyecto del Siglo™", desc:"Presentas tu gran proyecto. El país lo ovaciona. Los auditores preguntan de dónde sale el dinero.", primary:"pod_legis", baseGain:24, baseRisk:0, noRisk:true,
+          promise:{ label:"📜 Proyecto vence", roundsLeft:2, effects:[{meterId:"transp", amount:-20}] } },
+        { id:"di_p2", title:"Pacto de Caballeros (o lo que sea)", desc:"Firmas un acuerdo de coalición. Todos sonríen. Nadie aclara qué significa exactamente.", primary:"coalic", baseGain:22, baseRisk:0, noRisk:true,
+          promise:{ label:"🤝 Pacto vence", roundsLeft:2, effects:[{meterId:"apoyo_part", amount:-18}] } }
     ],
 
     /* ════════════════════════════════════════════════════
@@ -160,7 +175,12 @@ const CARD_POOL = {
         { id:"se17", title:"Decreto de Estado",        desc:"Impulsas una declaración de estado especial ante una crisis. Emergencia legislativa.",  primary:"peso_pol",   baseGain:26, baseRisk:22 },
         { id:"se18", title:"Sesión Especial",          desc:"Convocas una sesión fuera del calendario normal. Urgencia real o calculada.",           primary:"efec_legis", baseGain:20, baseRisk:14 },
         { id:"se19", title:"Foro de Liderazgo",        desc:"Te invitan como panelista principal. Hablas con gravedad. Te fotografían.",             primary:"inf_med",    baseGain:18, baseRisk:10 },
-        { id:"se20", title:"Homenaje Institucional",   desc:"Recibes un reconocimiento formal del Senado. Guardas la plaqueta para la posteridad.", primary:"legado",     baseGain:18, baseRisk:8  }
+        { id:"se20", title:"Homenaje Institucional",   desc:"Recibes un reconocimiento formal del Senado. Guardas la plaqueta para la posteridad.", primary:"legado",     baseGain:18, baseRisk:8  },
+        // ── CARTAS DE PROMESA ──
+        { id:"se_p1", title:"La Gran Reforma Histórica™", desc:"Propones una reforma que cambiará el país. Todos aplauden. Nadie sabe los detalles. Perfecto por ahora.", primary:"efec_legis", baseGain:26, baseRisk:0, noRisk:true,
+          promise:{ label:"📜 Reforma vence", roundsLeft:2, effects:[{meterId:"legado", amount:12}, {meterId:"resp_inst", amount:-22}] } },
+        { id:"se_p2", title:"Alianza Estratégica (con asterisco)", desc:"Tejes una alianza poderosa. El comunicado es espléndido. El acuerdo privado, menos.", primary:"rel_part", baseGain:20, baseRisk:0, noRisk:true,
+          promise:{ label:"🤝 Alianza vence", roundsLeft:2, effects:[{meterId:"rel_part", amount:8}, {meterId:"peso_pol", amount:-18}] } }
     ],
 
     /* ════════════════════════════════════════════════════
@@ -187,7 +207,12 @@ const CARD_POOL = {
         { id:"pr17", title:"Reforma de la Constitución", desc:"Propones cambios constitucionales. Todo el país tiene una opinión. Nadie la misma.", primary:"inst_sol",  baseGain:30, baseRisk:28 },
         { id:"pr18", title:"Nombramiento Judicial",    desc:"Designas a un juez de la corte suprema. Tu legado judicial queda sellado.",           primary:"inst_sol",  baseGain:22, baseRisk:16 },
         { id:"pr19", title:"Ley Anticorrupción",       desc:"Firmas la ley contra la corrupción. El mismo día, alguien de tu gabinete es investigado.", primary:"inst_sol", baseGain:26, baseRisk:22 },
-        { id:"pr20", title:"Referéndum Nacional",      desc:"Sometes una decisión histórica al voto popular. El resultado te sorprende.",          primary:"apoyo_pol", baseGain:24, baseRisk:22 }
+        { id:"pr20", title:"Referéndum Nacional",      desc:"Sometes una decisión histórica al voto popular. El resultado te sorprende.",          primary:"apoyo_pol", baseGain:24, baseRisk:22 },
+        // ── CARTAS DE PROMESA ──
+        { id:"pr_p1", title:"Decreto Populista (letra chica pendiente)", desc:"Firmas un decreto que encanta a las masas. El Ministerio de Hacienda emite un comunicado sombrío.", primary:"apoyo_pol", baseGain:24, baseRisk:0, noRisk:true,
+          promise:{ label:"📣 Decreto vence", roundsLeft:2, effects:[{meterId:"fin_pub", amount:-28}] } },
+        { id:"pr_p2", title:"Plan Nacional de Todo (en cuotas)", desc:"Anuncias un plan ambicioso de infraestructura. La bolsa sube. El déficit también.", primary:"eco_nac", baseGain:22, baseRisk:0, noRisk:true,
+          promise:{ label:"🏗️ Plan vence", roundsLeft:2, effects:[{meterId:"fin_pub", amount:-24}, {meterId:"eco_nac", amount:10}] } }
     ],
 
     /* ════════════════════════════════════════════════════
@@ -286,7 +311,7 @@ const CardGenerator = {
 
         // ── FASE 1: Una carta por medidor activo (garantía de cobertura) ──
         // Barajamos los medidores para que el orden sea aleatorio
-        const shuffledMeters = [...activeMeters].sort(() => 0.5 - Math.random());
+        const shuffledMeters = [...activeMeters].sort(() => 0.5 - _rng());
 
         for (const meter of shuffledMeters) {
             if (result.length >= count) break;
@@ -298,12 +323,12 @@ const CardGenerator = {
 
             let picked = null;
             if (roleCards.length > 0) {
-                picked = roleCards[Math.floor(Math.random() * roleCards.length)];
+                picked = roleCards[Math.floor(_rng() * roleCards.length)];
             } else {
                 // Fallback: universal disponible
                 const univAvail = universalPool.filter(c => !usedThisTurn.has(c.id));
                 if (univAvail.length > 0) {
-                    picked = univAvail[Math.floor(Math.random() * univAvail.length)];
+                    picked = univAvail[Math.floor(_rng() * univAvail.length)];
                 }
             }
 
@@ -325,7 +350,7 @@ const CardGenerator = {
 
             if (remaining.length === 0) break;
 
-            const picked = remaining[Math.floor(Math.random() * remaining.length)];
+            const picked = remaining[Math.floor(_rng() * remaining.length)];
             usedThisTurn.add(picked.id);
             result.push(this._buildCard(picked, activeMeters, permMeter, null));
         }
@@ -345,15 +370,17 @@ const CardGenerator = {
      * @param {string}  forcedPrimaryId  Si no es null, este metro es el efecto positivo
      */
     _buildCard: function(template, activeMeters, permMeter, forcedPrimaryId) {
-        const varPos = 1 + ((Math.random() * 0.5) - 0.25);   // ±25%
-        const varNeg = 1 + ((Math.random() * 0.5) - 0.25);
+        const varPos = 1 + ((_rng() * 0.5) - 0.25);   // ±25%
+        const varNeg = 1 + ((_rng() * 0.5) - 0.25);
 
-        // REGLA: cada carta tiene SIEMPRE mínimo 8 de gain y 8 de risk
+        // Cartas de promesa (noRisk): solo efecto positivo inmediato, el coste es diferido
+        const isPromiseCard = !!template.noRisk;
+
         const gainBase = (template.baseGain > 0) ? template.baseGain : 8;
-        const riskBase = (template.baseRisk > 0) ? template.baseRisk : 8;
+        const riskBase = (template.baseRisk > 0) ? template.baseRisk : (isPromiseCard ? 0 : 8);
 
         const finalGain = Math.max(5, Math.round(gainBase * varPos));
-        const finalRisk = Math.max(5, Math.round(riskBase * varNeg));
+        const finalRisk = isPromiseCard ? 0 : Math.max(5, Math.round(riskBase * varNeg));
 
         // ── Determinar el medidor POSITIVO (primary) ──
         let chosenPrimaryId;
@@ -362,7 +389,7 @@ const CardGenerator = {
             chosenPrimaryId = forcedPrimaryId;
         } else if (template.primary === 'any') {
             // Universal sin forzar: escoger al azar entre activos
-            chosenPrimaryId = activeMeters[Math.floor(Math.random() * activeMeters.length)]?.id;
+            chosenPrimaryId = activeMeters[Math.floor(_rng() * activeMeters.length)]?.id;
         } else {
             chosenPrimaryId = template.primary;
         }
@@ -376,25 +403,29 @@ const CardGenerator = {
         const negCandidates = activeMeters.filter(m => m.id !== posMeter?.id);
 
         let negMeter;
-        if (permMeter && permMeter.id !== posMeter?.id && Math.random() < 0.20) {
+        if (permMeter && permMeter.id !== posMeter?.id && _rng() < 0.20) {
             // 20% de chance de que el costo afecte al medidor permanente
             negMeter = permMeter;
         } else if (negCandidates.length > 0) {
-            negMeter = negCandidates[Math.floor(Math.random() * negCandidates.length)];
+            negMeter = negCandidates[Math.floor(_rng() * negCandidates.length)];
         } else {
             // Último recurso: permanente
             negMeter = permMeter;
         }
 
         const effects = [];
-        if (posMeter) effects.push({ meterId: posMeter.id, meterName: posMeter.name, amount:  finalGain });
-        if (negMeter) effects.push({ meterId: negMeter.id, meterName: negMeter.name, amount: -finalRisk });
+        if (posMeter) effects.push({ meterId: posMeter.id, meterName: posMeter.name, amount: finalGain });
+        if (!isPromiseCard && negMeter && finalRisk > 0) {
+            effects.push({ meterId: negMeter.id, meterName: negMeter.name, amount: -finalRisk });
+        }
 
         return {
-            id:      template.id + '_' + Date.now(),
-            title:   template.title,
-            desc:    template.desc,
-            primary: posMeter?.id,
+            id:       template.id + '_' + Date.now(),
+            title:    template.title,
+            desc:     template.desc,
+            primary:  posMeter?.id,
+            isPromise: isPromiseCard,
+            promise:  template.promise || null,
             effects
         };
     }

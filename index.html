@@ -24,7 +24,12 @@
             <h1 id="start-title">CARRERA<br>PRESIDENCIAL</h1>
             <p id="start-subtitle">De candidato anónimo a Presidente de la Nación</p>
             <button id="btn-play">⚡ JUGAR</button>
+            <button id="btn-daily">📅 DESAFÍO DIARIO</button>
             <button id="btn-tutorial">📖 ¿CÓMO JUGAR?</button>
+            <div id="seed-input-row">
+                <input id="seed-input" type="text" maxlength="6" placeholder="CÓDIGO" title="Ingresa un código de 6 caracteres para reproducir una partida">
+                <button id="btn-seed-play">🔁 USAR SEMILLA</button>
+            </div>
         </div>
     </div>
 
@@ -315,11 +320,64 @@
                 <span>PÁGINA 1</span>
             </div>
 
+            <!-- ══ FINAL NARRATIVO ══ -->
+            <div id="victory-ending-bar" class="hidden">
+                <span id="victory-ending-icon"></span>
+                <span id="victory-ending-label"></span>
+            </div>
+
+            <!-- ══ SEMILLA ══ -->
+            <div id="paper-seed-row">
+                <span id="paper-seed-label">🔑 Semilla de esta partida:</span>
+                <span id="paper-seed-code" class="seed-code-display">------</span>
+                <button id="btn-copy-seed" title="Copiar código">📋 Copiar</button>
+            </div>
+
             <!-- ══ BOTÓN ══ -->
             <div class="paper-footer">
                 <button id="btn-continue">🗳️ NUEVA CARRERA</button>
             </div>
 
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+     OVERLAY DE SELECCIÓN DE PERFIL
+     ═══════════════════════════════════════════════════ -->
+    <div id="profile-overlay" class="hidden">
+        <div id="profile-content">
+            <h1 id="profile-title">🎭 ELIGE TU ORIGEN</h1>
+            <p id="profile-subtitle">Tu pasado define tus ventajas y tus debilidades.</p>
+            <div id="profile-cards"></div>
+            <div id="profile-seed-row">
+                <span id="profile-seed-label">Semilla de partida:</span>
+                <span id="profile-seed-code">------</span>
+            </div>
+            <button id="btn-profile-start" disabled>⚡ ¡A LA CARGA!</button>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+     OVERLAY DE EVENTO ALEATORIO (tipo Reigns)
+     ═══════════════════════════════════════════════════ -->
+    <div id="event-overlay" class="hidden">
+        <div id="event-content">
+            <div id="event-badge">⚡ EVENTO ESPECIAL</div>
+            <div id="event-icon">🌪️</div>
+            <h1 id="event-title">TÍTULO DEL EVENTO</h1>
+            <p id="event-desc">Descripción del evento aquí.</p>
+            <div id="event-options">
+                <div class="event-option" id="event-opt-a">
+                    <div class="event-opt-label"></div>
+                    <div class="event-opt-hint"></div>
+                    <div class="event-opt-effects"></div>
+                </div>
+                <div class="event-option" id="event-opt-b">
+                    <div class="event-opt-label"></div>
+                    <div class="event-opt-hint"></div>
+                    <div class="event-opt-effects"></div>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -66,15 +66,95 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnTutorialClose = document.getElementById('btn-tutorial-close');
     const btnTutorialPlay = document.getElementById('btn-tutorial-play');
 
-    btnPlay.addEventListener('click', async () => {
-        await AudioManager.init();
-        AudioManager.startGame();
+    // ── Overlay de perfiles ─────────────────────────────
+    const profileOverlay  = document.getElementById('profile-overlay');
+    const profileCardsEl  = document.getElementById('profile-cards');
+    const btnProfileStart = document.getElementById('btn-profile-start');
+    const profileSeedCode = document.getElementById('profile-seed-code');
+    let pendingProfileSeed    = 0;
+    let pendingProfileIsDaily = false;
+    let selectedProfile       = null;
+
+    // ── Overlay de evento aleatorio ─────────────────────
+    const eventOverlay = document.getElementById('event-overlay');
+    const eventOptA    = document.getElementById('event-opt-a');
+    const eventOptB    = document.getElementById('event-opt-b');
+
+    // ── Botones nuevos del start-screen ─────────────────
+    const btnDaily    = document.getElementById('btn-daily');
+    const seedInput   = document.getElementById('seed-input');
+    const btnSeedPlay = document.getElementById('btn-seed-play');
+
+    function openProfileScreen(seed, isDaily) {
+        pendingProfileSeed    = seed;
+        pendingProfileIsDaily = isDaily;
+        selectedProfile       = null;
+        btnProfileStart.disabled = true;
+        profileSeedCode.textContent = seedToCode(seed);
+
+        profileCardsEl.innerHTML = '';
+        PROFILES.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'profile-card';
+            card.dataset.profileId = p.id;
+            card.innerHTML = `
+                <div class="profile-icon">${p.icon}</div>
+                <div class="profile-name">${p.name}</div>
+                <div class="profile-desc">${p.desc}</div>
+                <div class="profile-tags">
+                    <span class="profile-tag tag-pos">${p.tagPos}</span>
+                    <span class="profile-tag tag-neg">${p.tagNeg}</span>
+                </div>`;
+            card.addEventListener('click', () => {
+                profileCardsEl.querySelectorAll('.profile-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedProfile = p;
+                btnProfileStart.disabled = false;
+                try { AudioManager.uiClick(); } catch (e) {}
+            });
+            profileCardsEl.appendChild(card);
+        });
+
+        profileOverlay.classList.remove('hidden');
+    }
+
+    function launchGame() {
         startScreen.style.animation = 'fade-out 0.4s ease forwards';
         setTimeout(() => {
             startScreen.style.display = 'none';
             gameScreen.classList.remove('hidden');
-            GameState.startNewRun();
         }, 400);
+    }
+
+    btnPlay.addEventListener('click', async () => {
+        await AudioManager.init();
+        AudioManager.startGame();
+        openProfileScreen(generateSeed(), false);
+    });
+
+    btnDaily.addEventListener('click', async () => {
+        await AudioManager.init();
+        AudioManager.startGame();
+        launchGame();
+        setTimeout(() => GameState.startNewRun(getDailySeed(), null, true), 400);
+    });
+
+    btnSeedPlay.addEventListener('click', async () => {
+        const code = (seedInput.value || '').trim();
+        if (!code) return;
+        await AudioManager.init();
+        AudioManager.startGame();
+        openProfileScreen(codeToSeed(code), false);
+    });
+
+    seedInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') btnSeedPlay.click(); });
+
+    btnProfileStart.addEventListener('click', () => {
+        if (!selectedProfile) return;
+        try { AudioManager.uiClick(); } catch (e) {}
+        profileOverlay.classList.add('hidden');
+        launchGame();
+        setTimeout(() => GameState.startNewRun(pendingProfileSeed, selectedProfile, pendingProfileIsDaily), 400);
     });
 
     // ── Botón de Tutorial ──────────────────────────────
@@ -98,15 +178,9 @@ document.addEventListener('DOMContentLoaded', () => {
         e.stopPropagation();
         try { AudioManager.uiClick(); } catch (e) { }
         tutorialOverlay.classList.add('hidden');
-        // Iniciar el juego después de cerrar el tutorial
         await AudioManager.init();
         AudioManager.startGame();
-        startScreen.style.animation = 'fade-out 0.4s ease forwards';
-        setTimeout(() => {
-            startScreen.style.display = 'none';
-            gameScreen.classList.remove('hidden');
-            GameState.startNewRun();
-        }, 400);
+        openProfileScreen(generateSeed(), false);
     });
 
     // ── Menú de Pausa ──────────────────────────────────
@@ -133,8 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
         try { AudioManager.uiClick(); } catch (e) { }
         pauseOverlay.classList.add('hidden');
         btnPause.textContent = '⏸️';
-        // Reiniciar la partida completamente
-        GameState.startNewRun();
+        eventOverlay.classList.add('hidden');
+        // Reiniciar con el mismo perfil y semilla (para reproducibilidad)
+        GameState.startNewRun(GameState.seed, GameState.selectedProfile, GameState.isDailyChallenge);
     });
 
     btnMainMenu.addEventListener('click', (e) => {
@@ -181,26 +256,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
         switch (type) {
             case 'role_started':
-                CardGenerator.resetPool();   // ← anti-repeat: nuevo cargo, nuevo pool
+                CardGenerator.resetPool();
                 renderHeader(state);
                 renderMeters(state);
                 renderCards(state);
+                renderPromises(state);
                 showIntroScreen(state);
                 break;
             case 'next_round':
                 AudioManager.newRound();
                 renderHeader(state);
                 renderMeters(state);
+                renderPromises(state);
                 if (state.runStatus === 'active') renderCards(state);
                 break;
             case 'effects_applied':
                 renderHeader(state);
                 renderMeters(state);
+                renderPromises(state);
                 flashScreen();
                 if (state.runStatus === 'active') renderCards(state);
                 break;
+            case 'promise_added':
+                renderPromises(state);
+                break;
+            case 'promises_expired':
+                renderHeader(state);
+                renderMeters(state);
+                renderPromises(state);
+                flashScreen();
+                break;
+            case 'random_event':
+                showEventOverlay(message); // message = resolved event object
+                break;
             case 'game_over':
                 AudioManager.gameOver();
+                eventOverlay.classList.add('hidden');
                 renderHeader(state);
                 renderMeters(state);
                 shakeScreen();
@@ -208,11 +299,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'won_role':
                 AudioManager.ascend();
+                eventOverlay.classList.add('hidden');
                 showAscendScreen(state);
                 break;
             case 'victory':
                 AudioManager.victory();
-                showNewspaper(state, true, '¡Has completado la Carrera Presidencial! Pasaste de candidato anónimo a Presidente de la nación. La historia te juzgará.');
+                eventOverlay.classList.add('hidden');
+                showNewspaper(state, true, '¡Pasaste de candidato anónimo a Presidente de la Nación! La historia te juzgará... con algo de sarcasmo.');
                 break;
         }
     });
@@ -235,7 +328,10 @@ document.addEventListener('DOMContentLoaded', () => {
         AudioManager.uiClick();
         overlay.classList.add('hidden');
         if (GameState.runStatus === 'game_over' || GameState.runStatus === 'victory') {
-            GameState.startNewRun();
+            // Volver al menú y mostrar pantalla de perfil
+            gameScreen.classList.add('hidden');
+            startScreen.style.display = 'flex';
+            startScreen.style.animation = 'fade-in 0.4s ease forwards';
         } else if (GameState.runStatus === 'won_role') {
             GameState.advanceToNextRole();
         }
@@ -271,6 +367,54 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         introOverlay.classList.remove('hidden');
+    }
+
+    // ────────────────────────────────────────────────────
+    //   EVENTO ALEATORIO (tipo Reigns)
+    // ────────────────────────────────────────────────────
+    function showEventOverlay(ev) {
+        document.getElementById('event-icon').textContent  = ev.icon;
+        document.getElementById('event-title').textContent = ev.title;
+        document.getElementById('event-desc').textContent  = ev.desc;
+
+        function fillOption(el, opt) {
+            el.querySelector('.event-opt-label').textContent = opt.label;
+            el.querySelector('.event-opt-hint').textContent  = opt.hint;
+            const effectsEl = el.querySelector('.event-opt-effects');
+            effectsEl.innerHTML = opt.effects.map(e => {
+                const pos = e.amount >= 0;
+                return `<span class="event-eff ${pos ? 'pos' : 'neg'}">${pos ? '▲' : '▼'} ${Math.abs(e.amount)}% ${e.meterName}</span>`;
+            }).join('');
+            el.onclick = null; // reset
+            el.addEventListener('click', () => {
+                try { AudioManager.cardClick(); } catch (e) {}
+                eventOverlay.classList.add('hidden');
+                GameState.applyEventChoice(opt.effects);
+            }, { once: true });
+        }
+
+        fillOption(eventOptA, ev.optA);
+        fillOption(eventOptB, ev.optB);
+        eventOverlay.classList.remove('hidden');
+    }
+
+    // ────────────────────────────────────────────────────
+    //   BARRA DE PROMESAS
+    // ────────────────────────────────────────────────────
+    function renderPromises(state) {
+        const barEl = document.getElementById('active-promises');
+        if (!barEl) return;
+        barEl.innerHTML = '';
+        if (!state.activePromises || state.activePromises.length === 0) return;
+
+        state.activePromises.forEach(p => {
+            const tag = document.createElement('div');
+            tag.className = 'promise-tag';
+            tag.innerHTML = `
+                <span class="promise-label">${p.label}</span>
+                <span class="promise-rounds">${p.roundsLeft} ronda${p.roundsLeft !== 1 ? 's' : ''}</span>`;
+            barEl.appendChild(tag);
+        });
     }
 
     // ────────────────────────────────────────────────────
@@ -474,14 +618,18 @@ document.addEventListener('DOMContentLoaded', () => {
             el.className = `decision-card card-type-${cardType}`;
             el.style.animationDelay = `${idx * 0.18}s`;
 
-            // Efectos como pastillas (pills) - Modo Misterio
+            // Efectos como pastillas (pills) - Camino 2 (Números visibles)
             let effectsHTML = '';
             card.effects.forEach(eff => {
+                const pos = eff.amount >= 0;
+                const cls = pos ? 'effect-pos' : 'effect-neg';
+                const sign = pos ? '+' : '';
+                const arrow = pos ? '▲' : '▼';
                 effectsHTML += `
-                    <div class="effect-row effect-neutral">
+                    <div class="effect-row ${cls}">
                         <span class="effect-pill">
-                            <span class="effect-arrow-icon">👁️</span>
-                            Impacto en ${eff.meterName}
+                            <span class="effect-arrow-icon">${arrow}</span>
+                            ${sign}${eff.amount}% ${eff.meterName}
                         </span>
                     </div>`;
             });
@@ -500,7 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="card-effects-zone">${effectsHTML}</div>
             `;
 
-            // Hover Preview Events - Modo Misterio
+            // Hover Preview Events - Camino 2 (Glow neutral en medidor)
             el.addEventListener('mouseenter', () => {
                 if (cardsEl.dataset.locked === 'true') return;
                 card.effects.forEach(eff => {
@@ -698,6 +846,48 @@ document.addEventListener('DOMContentLoaded', () => {
             statsEl.appendChild(li);
         });
 
+        // ── Final narrativo (solo en victoria total) ──
+        const endingBar = document.getElementById('victory-ending-bar');
+        const endingIcon = document.getElementById('victory-ending-icon');
+        const endingLabel = document.getElementById('victory-ending-label');
+        if (state.runStatus === 'victory' && endingBar) {
+            const profile = state.getVictoryProfile();
+            const ending = VICTORY_ENDINGS[profile];
+            endingBar.classList.remove('hidden');
+            endingBar.dataset.profile = profile;
+            endingIcon.textContent  = ending.icon;
+            endingLabel.textContent = `${ending.title} — ${ending.headline}`;
+            // Sobreescribir artículo con el artículo del final narrativo
+            textEl.textContent  = ending.article;
+            headlineEl.textContent = ending.headline;
+            const quoteEl = document.getElementById('news-quote');
+            if (quoteEl) quoteEl.textContent = ending.quote;
+        } else if (endingBar) {
+            endingBar.classList.add('hidden');
+        }
+
+        // ── Semilla ──
+        const paperSeedCode = document.getElementById('paper-seed-code');
+        const btnCopySeed   = document.getElementById('btn-copy-seed');
+        if (paperSeedCode) {
+            const code = seedToCode(state.seed || 0);
+            paperSeedCode.textContent = code;
+            if (btnCopySeed) {
+                btnCopySeed.onclick = () => {
+                    navigator.clipboard.writeText(code).then(() => {
+                        btnCopySeed.textContent = '✅ Copiado';
+                        setTimeout(() => { btnCopySeed.textContent = '📋 Copiar'; }, 2000);
+                    });
+                };
+            }
+        }
+
+        // ── Diario label ──
+        if (state.isDailyChallenge) {
+            const edEl = document.getElementById('paper-edition');
+            if (edEl) edEl.textContent = '📅 DESAFÍO DIARIO';
+        }
+
         // Botón
         if (state.runStatus === 'victory' || state.runStatus === 'game_over') {
             btnContinue.textContent = '🗳️ NUEVA CARRERA';
@@ -705,4 +895,5 @@ document.addEventListener('DOMContentLoaded', () => {
             btnContinue.textContent = '🏛️ ACEPTAR CARGO →';
         }
     }
+
 });
