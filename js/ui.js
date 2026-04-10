@@ -409,6 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const card = document.createElement('div');
         card.className = `meter-card is-${status}`;
+        card.dataset.meterId = meter.id; // Added for hover preview matching
         if (isPerm) card.className = 'meter-card is-perm';
 
         const icon = meter.icon || '📊';
@@ -502,16 +503,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="card-effects-zone">${effectsHTML}</div>
             `;
 
+            // Hover Preview Events
+            el.addEventListener('mouseenter', () => {
+                if (cardsEl.dataset.locked === 'true') return;
+                card.effects.forEach(eff => {
+                    const meterEl = document.querySelector(`.meter-card[data-meter-id="${eff.meterId}"]`);
+                    if (meterEl) {
+                        meterEl.classList.add(eff.amount >= 0 ? 'preview-pos' : 'preview-neg');
+                    }
+                });
+            });
+
+            el.addEventListener('mouseleave', () => {
+                card.effects.forEach(eff => {
+                    const meterEl = document.querySelector(`.meter-card[data-meter-id="${eff.meterId}"]`);
+                    if (meterEl) {
+                        meterEl.classList.remove('preview-pos', 'preview-neg');
+                    }
+                });
+            });
+
             el.addEventListener('click', () => {
                 if (cardsEl.dataset.locked === 'true') return;
                 cardsEl.dataset.locked = 'true';
 
                 try { AudioManager.cardClick(); } catch (e) { }
 
-                el.classList.add('selected');
-                cardsEl.querySelectorAll('.decision-card').forEach(c => {
-                    if (c !== el) c.classList.add('rejected');
+                // Quitar previews al confirmar click
+                card.effects.forEach(eff => {
+                    const meterEl = document.querySelector(`.meter-card[data-meter-id="${eff.meterId}"]`);
+                    if (meterEl) meterEl.classList.remove('preview-pos', 'preview-neg');
                 });
+
+                // Squash anim (impact visual)
+                el.classList.add('squash-active');
+
+                setTimeout(() => {
+                    el.classList.remove('squash-active');
+                    el.classList.add('selected');
+                    cardsEl.querySelectorAll('.decision-card').forEach(c => {
+                        if (c !== el) c.classList.add('rejected');
+                    });
+                }, 100);
 
                 setTimeout(() => {
                     GameState.applyCardEffects(card.effects);

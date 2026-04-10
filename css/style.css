@@ -72,9 +72,31 @@ body::before {
     z-index: 0;
 }
 
+.meter-card.is-safe .meter-fill { background-color: var(--emerald); }
+
+/* Hover Previews */
+.meter-card.preview-pos {
+    box-shadow: 0 0 10px rgba(45, 198, 83, 0.8);
+    transform: scale(1.02);
+    border-color: var(--emerald);
+}
+.meter-card.preview-pos .meter-fill {
+    box-shadow: 0 0 8px var(--emerald);
+    background-color: var(--emerald) !important;
+}
+
+.meter-card.preview-neg {
+    box-shadow: 0 0 10px rgba(230, 57, 70, 0.8);
+    transform: scale(0.98);
+    border-color: var(--crimson);
+}
+.meter-card.preview-neg .meter-fill {
+    box-shadow: 0 0 8px var(--crimson);
+    background-color: var(--crimson) !important;
+}
+
 /* ===========================
-   PANTALLA PRINCIPAL
-   =========================== */
+   PANTALLAS PRINCIPALES Y OVERLAYS =========================== */
 #game-screen {
     position: relative;
     z-index: 1;
@@ -827,6 +849,12 @@ body::before {
         0 0 18px rgba(45, 198, 83, 0.4),
         5px 5px 0 var(--emerald) !important;
     transform: scale(1.06) !important;
+}
+
+.decision-card.squash-active {
+    transform: scale(0.95, 1.05) translateY(10px) !important;
+    box-shadow: 0 0 0 transparent !important;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .decision-card.rejected {
