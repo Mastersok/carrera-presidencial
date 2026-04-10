@@ -27,9 +27,24 @@ const AudioManager = (() => {
     let victorySynth;        // PolySynth      — victory acorde final
     let metal;               // MetalSynth     — victory/ascend sparkle
     let uiSynth;             // PluckSynth     — uiClick
+    let babbleSynth;         // PluckSynth     — newspaper babble
+
+    // ── Música Dinámica (MusicManager) ────────────────────────────────────────
+    let musicPart;           // Tone.Part para la secuencia melódica
+    let musicBass;           // MonoSynth para el bajo
+    let musicPad;            // PolySynth para el fondo
+    let musicIntensity = 'calm'; // 'calm' | 'tension' | 'crisis'
+    let musicRoleIndex = 0;
+    const CHORDS = [
+        ['C3', 'E3', 'G3'], // Candidato (C Major) - Optimista
+        ['G2', 'B2', 'D3'], // Alcalde (G Major) - Activo
+        ['D2', 'F#2', 'A2'],// Diputado (D Major) - Formal
+        ['E2', 'G#2', 'B2'],// Senador (E Major) - Poderoso
+        ['F2', 'A2', 'C3']  // Presidente (F Major) - Épico
+    ];
 
     // ── Efectos ───────────────────────────────────────────────────────────────
-    let masterComp, reverbBus;
+    let masterComp, reverbBus, pauseFilter;
 
     // ── Inicialización ────────────────────────────────────────────────────────
     async function boot() {
@@ -44,9 +59,12 @@ const AudioManager = (() => {
         masterComp = new Tone.Compressor({ threshold: -14, ratio: 4, attack: 0.003, release: 0.15 })
             .toDestination();
 
+        // Filtro de pausa (LPE)
+        pauseFilter = new Tone.Filter(20000, "lowpass").connect(masterComp);
+
         // Reverb: sala pequeña
         reverbBus = new Tone.Reverb({ decay: 0.9, wet: 0.22 });
-        reverbBus.connect(masterComp);
+        reverbBus.connect(pauseFilter);
         await reverbBus.generate();
 
         // ── cardHover: Synth triangle, muy corto ─────────────────────────────
@@ -55,7 +73,7 @@ const AudioManager = (() => {
             oscillator : { type: 'triangle' },
             envelope   : { attack: 0.001, decay: 0.04, sustain: 0, release: 0.04 },
             volume     : -10
-        }).connect(masterComp);
+        }).connect(pauseFilter);
 
         // ── cardClick: MembraneSynth + PluckSynth percusivo ──────────────────
         clickMembrane = new Tone.MembraneSynth({
@@ -64,11 +82,11 @@ const AudioManager = (() => {
             envelope   : { attack: 0.001, decay: 0.12, sustain: 0, release: 0.1 },
             oscillator : { type: 'sine' },
             volume     : -4
-        }).connect(masterComp);
+        }).connect(pauseFilter);
 
         // attackNoise=20 = casi ruido puro = "snap" de sello/carta
         clickSnap = new Tone.PluckSynth({ attackNoise: 20, dampening: 1500, resonance: 0.88 })
-            .connect(masterComp);
+            .connect(pauseFilter);
 
         // ── cardReject: MonoSynth con portamento ─────────────────────────────
         // Portamento hace que el pitch GLIDE entre notas = sonido de "nope"
@@ -82,38 +100,34 @@ const AudioManager = (() => {
             },
             portamento : 0.07,   // glide de 70ms entre notas
             volume     : -8
-        }).connect(masterComp);
+        }).connect(pauseFilter);
 
         // ── meterCritical: Synth square, alarma musical ──────────────────────
-        // Synth con square wave da el carácter de alarma electrónica limpia
-        // Mucho mejor que MetalSynth que sonaba a golpe industrial
         alarmSynth = new Tone.Synth({
             oscillator : { type: 'square' },
             envelope   : { attack: 0.001, decay: 0.05, sustain: 0.7, release: 0.08 },
             volume     : -12
-        }).connect(masterComp);
+        }).connect(pauseFilter);
 
         // ── Pool melódico de PluckSynth (newRound, ascend, victory, startGame) ──
         for (let i = 0; i < 6; i++) {
             const p = new Tone.PluckSynth({ attackNoise: 2, dampening: 5000, resonance: 0.989 });
-            p.connect(masterComp);
+            p.connect(pauseFilter);
             p.connect(reverbBus);
             pluckMelody.push(p);
         }
 
         // ── gameOver: MonoSynth con filterEnvelope = trombón con sordina ─────
-        // La clave del trombón triste: filterEnvelope.attack lento = "waaah"
-        // Oscillator sawtooth = armónicos de viento-metal
         trombone = new Tone.MonoSynth({
             oscillator   : { type: 'sawtooth' },
             envelope     : { attack: 0.04, decay: 0.2, sustain: 0.65, release: 0.5 },
             filterEnvelope: {
                 attack: 0.1, decay: 0.4, sustain: 0.1, release: 0.4,
-                baseFrequency: 180, octaves: 4.5   // filter abre y cierra = "waah"
+                baseFrequency: 180, octaves: 4.5
             },
             volume: -6
         });
-        trombone.connect(masterComp);
+        trombone.connect(pauseFilter);
         trombone.connect(reverbBus);
 
         // Boom para inicio del game over
@@ -122,7 +136,7 @@ const AudioManager = (() => {
             octaves    : 10,
             envelope   : { attack: 0.001, decay: 0.4, sustain: 0, release: 0.3 },
             volume     : -2
-        }).connect(masterComp);
+        }).connect(pauseFilter);
 
         // ── victory: PolySynth para acordes simultáneos ──────────────────────
         victorySynth = new Tone.PolySynth(Tone.Synth, {
@@ -130,7 +144,7 @@ const AudioManager = (() => {
             envelope   : { attack: 0.02, decay: 0.1, sustain: 0.6, release: 1.0 },
             volume     : -10
         });
-        victorySynth.connect(masterComp);
+        victorySynth.connect(pauseFilter);
         victorySynth.connect(reverbBus);
 
         // ── MetalSynth: solo para sparkle decorativo (ascend/victory) ────────
@@ -144,6 +158,49 @@ const AudioManager = (() => {
         // ── uiClick: PluckSynth con resonancia baja = decay rápido = "tick" ──
         uiSynth = new Tone.PluckSynth({ attackNoise: 1, dampening: 4000, resonance: 0.93 })
             .connect(masterComp);
+
+        // ── babble: Voz cómica rápida ────────────────────────────────────────
+        babbleSynth = new Tone.PluckSynth({ attackNoise: 5, dampening: 2000, resonance: 0.95, volume: -15 })
+            .connect(reverbBus);
+
+        // ── Configuración de MÚSICA ──────────────────────────────────────────
+        musicPad = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: 'triangle' },
+            envelope: { attack: 1.5, decay: 0.5, sustain: 0.8, release: 2 },
+            volume: -24
+        }).connect(reverbBus);
+
+        musicBass = new Tone.MonoSynth({
+            oscillator: { type: 'sine' },
+            envelope: { attack: 0.1, decay: 0.3, sustain: 0.4, release: 0.5 },
+            volume: -22
+        }).connect(masterComp);
+
+        // Secuencia básica 4 notas
+        musicPart = new Tone.Part((time, note) => {
+            const currentChord = CHORDS[musicRoleIndex];
+            
+            // Bass: siempre la tónica
+            musicBass.triggerAttackRelease(currentChord[0], '2n', time);
+            
+            // Melodía / Pad según intensidad
+            if (musicIntensity === 'calm') {
+                musicPad.triggerAttackRelease(currentChord, '2n', time);
+            } else if (musicIntensity === 'tension') {
+                musicPad.triggerAttackRelease(currentChord, '4n', time);
+                musicPad.triggerAttackRelease(currentChord, '4n', time + Tone.Time('4n'));
+                musicBass.volume.rampTo(-18, 1);
+            } else {
+                // Crisis: Arpegio rápido y disonante
+                currentChord.forEach((note, i) => {
+                    musicPad.triggerAttackRelease(note, '8n', time + i * Tone.Time('8n'));
+                });
+                musicBass.volume.rampTo(-15, 1);
+            }
+        }, [0, "1:0:0", "2:0:0", "3:0:0"]);
+
+        musicPart.loop = true;
+        musicPart.loopEnd = "4:0:0";
 
         ready = true;
     }
@@ -273,6 +330,47 @@ const AudioManager = (() => {
             melody('C6', t + 0.50);
             clickMembrane.triggerAttackRelease('C2', '16n', t + 0.50);
             metal.triggerAttackRelease('32n', t + 0.54);
+
+            // Iniciar música
+            Tone.Transport.bpm.value = 100;
+            musicPart.start(0);
+            Tone.Transport.start();
+        },
+
+        // ── Sistema de Música Dinámica ─────────────────────────────────────
+        updateMusic(roleIdx, intensity) {
+            if (!ready) return;
+            musicRoleIndex = Math.min(CHORDS.length - 1, roleIdx);
+            musicIntensity = intensity; // 'calm', 'tension', 'crisis'
+            
+            // Ajustar pulso según intensidad
+            if (intensity === 'crisis') {
+                Tone.Transport.bpm.rampTo(125, 2);
+            } else if (intensity === 'tension') {
+                Tone.Transport.bpm.rampTo(110, 2);
+            } else {
+                Tone.Transport.bpm.rampTo(100, 2);
+            }
+        },
+
+        // ── Efecto de Pausa ────────────────────────────────────────────────
+        pauseMusic(isPaused) {
+            if (!ready) return;
+            const freq = isPaused ? 400 : 20000;
+            pauseFilter.frequency.rampTo(freq, 0.5);
+            // Bajar volumen general un poco
+            masterComp.threshold.rampTo(isPaused ? -25 : -14, 0.5);
+        },
+
+        babble() {
+            if (!ready) return;
+            const t = Tone.now();
+            // Secuencia de notas rápidas aleatorias para el efecto "Animal Crossing"
+            const notes = ['C5', 'E5', 'G5', 'A5', 'C6'];
+            for (let i = 0; i < 12; i++) {
+                const note = notes[Math.floor(Math.random() * notes.length)];
+                babbleSynth.triggerAttackRelease(note, '32n', t + i * 0.08);
+            }
         }
     };
 
