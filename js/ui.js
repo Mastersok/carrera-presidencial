@@ -435,6 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="meter-track">
                 <div class="${fillClass}" style="width:${val}%"></div>
+                <div class="meter-preview-fill"></div>
                 ${thresholdMarker}
             </div>
             <div class="meter-tooltip">${tooltipText}</div>
@@ -510,6 +511,37 @@ document.addEventListener('DOMContentLoaded', () => {
                     const meterEl = document.querySelector(`.meter-card[data-meter-id="${eff.meterId}"]`);
                     if (meterEl) {
                         meterEl.classList.add(eff.amount >= 0 ? 'preview-pos' : 'preview-neg');
+                        
+                        // Text Preview 
+                        const valSpan = meterEl.querySelector('.meter-value');
+                        let currentVal = 0;
+                        if (valSpan && !valSpan.dataset.previewActive) {
+                            valSpan.dataset.original = valSpan.innerHTML;
+                            valSpan.dataset.previewActive = 'true';
+                            
+                            currentVal = parseInt(valSpan.textContent);
+                            if (!isNaN(currentVal)) {
+                                const newVal = Math.max(0, Math.min(100, currentVal + eff.amount));
+                                const previewClass = eff.amount >= 0 ? 'pos' : 'neg';
+                                valSpan.innerHTML = `${currentVal}% <span class="preview-text ${previewClass}">→ ${newVal}%</span>`;
+                            }
+                        }
+
+                        // Bar Preview
+                        const previewFill = meterEl.querySelector('.meter-preview-fill');
+                        if (previewFill && !isNaN(currentVal)) {
+                            previewFill.style.opacity = '1';
+                            if (eff.amount >= 0) {
+                                previewFill.style.left = `${currentVal}%`;
+                                previewFill.style.width = `${Math.min(100 - currentVal, eff.amount)}%`;
+                                previewFill.style.backgroundColor = 'rgba(45, 198, 83, 0.8)';
+                            } else {
+                                const newVal = Math.max(0, currentVal + eff.amount);
+                                previewFill.style.left = `${newVal}%`;
+                                previewFill.style.width = `${currentVal - newVal}%`;
+                                previewFill.style.backgroundColor = 'rgba(230, 57, 70, 0.9)';
+                            }
+                        }
                     }
                 });
             });
@@ -519,6 +551,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     const meterEl = document.querySelector(`.meter-card[data-meter-id="${eff.meterId}"]`);
                     if (meterEl) {
                         meterEl.classList.remove('preview-pos', 'preview-neg');
+                        
+                        const valSpan = meterEl.querySelector('.meter-value');
+                        if (valSpan && valSpan.dataset.previewActive === 'true') {
+                            valSpan.innerHTML = valSpan.dataset.original;
+                            valSpan.dataset.previewActive = 'false';
+                        }
+
+                        const previewFill = meterEl.querySelector('.meter-preview-fill');
+                        if (previewFill) previewFill.style.opacity = '0';
                     }
                 });
             });
@@ -532,7 +573,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Quitar previews al confirmar click
                 card.effects.forEach(eff => {
                     const meterEl = document.querySelector(`.meter-card[data-meter-id="${eff.meterId}"]`);
-                    if (meterEl) meterEl.classList.remove('preview-pos', 'preview-neg');
+                    if (meterEl) {
+                        meterEl.classList.remove('preview-pos', 'preview-neg');
+                        
+                        const valSpan = meterEl.querySelector('.meter-value');
+                        if (valSpan && valSpan.dataset.previewActive === 'true') {
+                            valSpan.innerHTML = valSpan.dataset.original;
+                            valSpan.dataset.previewActive = 'false';
+                        }
+
+                        const previewFill = meterEl.querySelector('.meter-preview-fill');
+                        if (previewFill) previewFill.style.opacity = '0';
+                    }
                 });
 
                 // Squash anim (impact visual)
