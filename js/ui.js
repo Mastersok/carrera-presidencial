@@ -155,7 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
     btnProfileStart.addEventListener('click', () => {
         if (!selectedProfile) return;
         try { AudioManager.uiClick(); } catch (e) {}
-        AudioManager.startGame(); // La música empieza aquí
         profileOverlay.classList.add('hidden');
         launchGame();
         setTimeout(() => GameState.startNewRun(pendingProfileSeed, selectedProfile, pendingProfileIsDaily), 400);
@@ -192,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         e.stopPropagation();
         try { AudioManager.uiClick(); } catch (e) { }
-        try { AudioManager.pauseMusic(true); } catch (e) { }
         pauseOverlay.classList.remove('hidden');
         // Actualizar texto del botón a "▶️"
         btnPause.textContent = '▶️';
@@ -202,7 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         e.stopPropagation();
         try { AudioManager.uiClick(); } catch (e) { }
-        try { AudioManager.pauseMusic(false); } catch (e) { }
         pauseOverlay.classList.add('hidden');
         btnPause.textContent = '⏸️';
     });
@@ -211,7 +208,6 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         e.stopPropagation();
         try { AudioManager.uiClick(); } catch (e) { }
-        try { AudioManager.pauseMusic(false); } catch (e) { }
         pauseOverlay.classList.add('hidden');
         btnPause.textContent = '⏸️';
         eventOverlay.classList.add('hidden');
@@ -248,13 +244,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pauseOverlay.classList.contains('hidden')) {
                 // Abrir pausa
                 try { AudioManager.uiClick(); } catch (e) { }
-                try { AudioManager.pauseMusic(true); } catch (e) { }
                 pauseOverlay.classList.remove('hidden');
                 btnPause.textContent = '▶️';
             } else {
                 // Cerrar pausa
                 try { AudioManager.uiClick(); } catch (e) { }
-                try { AudioManager.pauseMusic(false); } catch (e) { }
                 pauseOverlay.classList.add('hidden');
                 btnPause.textContent = '⏸️';
             }
@@ -318,21 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 eventOverlay.classList.add('hidden');
                 showNewspaper(state, true, '¡Pasaste de candidato anónimo a Presidente de la Nación! La historia te juzgará... con algo de sarcasmo.');
                 break;
-        }
-
-        // ── ACTUALIZAR MÚSICA DINÁMICA ──
-        if (state.runStatus === 'active') {
-            const meters = [...state.activeMeters];
-            if (state.permanentMeter) meters.push(state.permanentMeter);
-            
-            const criticalCount = meters.filter(m => m.value <= 20).length;
-            const tensionCount  = meters.filter(m => m.value > 20 && m.value <= 40).length;
-            
-            let intensity = 'calm';
-            if (criticalCount > 0) intensity = 'crisis';
-            else if (tensionCount > 0) intensity = 'tension';
-            
-            AudioManager.updateMusic(state.roleIndex, intensity);
         }
     });
 
@@ -835,7 +814,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showNewspaper(state, isWin, customMessage) {
         overlay.classList.remove('hidden');
-        try { AudioManager.babble(); } catch(e) {}
         const cfg = state.getCurrentRoleConfig();
         const today = new Date();
         const dateStr = today.toLocaleDateString('es-CL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });

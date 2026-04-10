@@ -39,5 +39,5 @@ Esta es la 'biblia' del estado del proyecto para la carpeta de documentación.
 ## FASE 7: Roadmap hacia Steam [EN PROCESO]
 - [x] Pilar 1: Juice & Game Feel (Fase 1: Física y Hovers).
 - [x] Pilar 1: Juice & Game Feel (Fase 2: Partículas y Shake).
-- [x] Pilar 2: Profundidad y Rejugabilidad (Perfiles y Promesas).
+- [x] Pilar 2: Profundidad y Rejugabilidad (Perfiles, Promesas, Eventos por cargo, Múltiples finales, Seed).
 - [ ] Pilar 3: Música Dinámica y Audio Babble.

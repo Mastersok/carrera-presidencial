@@ -59,3 +59,21 @@ Todas las novedades, implementaciones tecnológicas y decisiones arquitecturales
 - **Añadido:** **Múltiples Finales** (Estadista, Caudillo, Oligarca, Dictador).
 - **Añadido:** **Seed System** y **Daily Challenge** (Semillas compartibles y retos diarios).
 - **Mejora:** Lógica de juego determinista basada en Mulberry32.
+
+## [v0.6.1] - Pool Rotation & Indicadores de Perfil
+- **Mejora:** Pool de perfiles ampliado a 8 — cada run muestra solo 4, elegidos determinísticamente por semilla (patrón roguelike: Slay the Spire / Dead Cells).
+- **Mejora:** Pool de eventos ampliado a 17 — selección anti-repetición por run usando `usedEventIds` en lugar de pre-selección fija.
+- **Añadido:** Indicador visual en medidores: muestra ícono y porcentaje del perfil activo (verde = bono, rojo = penalización).
+- **Fix:** Input de semilla invisible sobre fondo dorado — corregido contraste (fondo blanco, borde negro).
+- **Fix:** Evento especial podía asignar el mismo medidor para efecto positivo y negativo — corregido con helper `pickOther()`.
+- **Fix:** Doble render de cartas al resolver evento especial — corregido eliminando `notifyStateChange("effects_applied")` de `applyEventChoice`.
+
+## [v0.6.2] - Eventos con Coherencia Narrativa por Cargo
+- **Mejora:** Cada evento ahora tiene una propiedad `roles: [índices]` que indica en qué cargos puede dispararse.
+  - Candidato (0): eventos locales y de campaña (escándalos, encuestas, debates, gastos filtrados).
+  - Alcalde (1): gestión municipal (huelgas, terremotos, obras colapsadas, gabinete renunciante).
+  - Diputado (2): arena legislativa (economía nacional, moción de censura).
+  - Senador/Presidente (3/4): escena internacional (Foro Económico Mundial, organismos internacionales).
+- **Añadido:** 2 eventos nuevos para cargos bajos: "¡TU PRIMER DEBATE TELEVISADO!" (candidato/alcalde) y "¡FILTRARON LOS GASTOS DE TU CAMPAÑA!" (candidato/diputado).
+- **Mejora:** `_triggerRandomEvent` filtra el pool por cargo actual, luego excluye eventos ya vistos en el run. Si se agotan los nuevos, reutiliza con filtro de cargo activo.
+- **Fix:** Eventos de alto nivel (Foro Económico Mundial, FMI, mociones de censura) ya no pueden aparecer cuando el jugador es Candidato a Alcalde.

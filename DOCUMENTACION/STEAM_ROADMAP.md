@@ -19,7 +19,11 @@
 | Cobertura garantizada de medidores | ✅ |
 | Menú de pausa | ✅ |
 | Audio básico | ✅ |
-| Múltiples finales | ❌ |
+| Perfiles iniciales (pool 8, muestra 4 por run) | ✅ |
+| Eventos especiales por cargo (17, filtrados por rol) | ✅ |
+| Sistema de Promesas (efectos retardados) | ✅ |
+| Seed system + Daily Challenge | ✅ |
+| Múltiples finales (Estadista/Caudillo/Oligarca/Dictador) | ✅ |
 | Metaprogresión / Desbloqueables | ❌ |
 | Achievements | ❌ |
 | Menú de opciones completo | ❌ |
