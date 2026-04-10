@@ -25,7 +25,9 @@
             <p id="start-subtitle">De candidato anónimo a Presidente de la Nación</p>
             <button id="btn-play">⚡ JUGAR</button>
             <button id="btn-daily">📅 DESAFÍO DIARIO</button>
+            <button id="btn-leaderboard">📊 MI HISTORIAL</button>
             <button id="btn-tutorial">📖 ¿CÓMO JUGAR?</button>
+            <button id="btn-options-start">⚙️ OPCIONES</button>
             <div id="seed-input-row">
                 <input id="seed-input" type="text" maxlength="6" placeholder="CÓDIGO" title="Ingresa un código de 6 caracteres para reproducir una partida">
                 <button id="btn-seed-play">🔁 USAR SEMILLA</button>
@@ -113,6 +115,7 @@
             <h1 id="pause-title">⏸️ PARTIDA EN PAUSA</h1>
             <div class="pause-buttons">
                 <button id="btn-resume" class="pause-btn-option">▶️ CONTINUAR</button>
+                <button id="btn-pause-options" class="pause-btn-option">⚙️ OPCIONES</button>
                 <button id="btn-restart" class="pause-btn-option">🔄 REINICIAR</button>
                 <button id="btn-main-menu" class="pause-btn-option">🏠 MENÚ PRINCIPAL</button>
             </div>
@@ -320,6 +323,14 @@
                 <span>PÁGINA 1</span>
             </div>
 
+            <!-- ══ SCORE DIARIO ══ -->
+            <div id="daily-score-section" class="hidden">
+                <div id="daily-score-number"></div>
+                <div id="daily-score-label"></div>
+                <div id="daily-share-text"></div>
+                <button id="btn-copy-share">📋 Copiar resultado</button>
+            </div>
+
             <!-- ══ FINAL NARRATIVO ══ -->
             <div id="victory-ending-bar" class="hidden">
                 <span id="victory-ending-icon"></span>
@@ -360,6 +371,60 @@
     <!-- ═══════════════════════════════════════════════════
      OVERLAY DE EVENTO ALEATORIO (tipo Reigns)
      ═══════════════════════════════════════════════════ -->
+    <!-- ═══════════════════════════════════════════════════
+     OVERLAY DE OPCIONES
+     ═══════════════════════════════════════════════════ -->
+    <div id="options-overlay" class="hidden">
+        <div id="options-content">
+            <button id="btn-options-close" class="options-close-btn">✕</button>
+            <h1 id="options-title">⚙️ CONFIGURACIÓN</h1>
+            
+            <div class="options-group">
+                <h3>🔊 AUDIO</h3>
+                <div class="option-item">
+                    <label for="slider-music">Música</label>
+                    <div class="slider-container">
+                        <input type="range" id="slider-music" min="0" max="100" value="70">
+                        <span id="music-vol-val">70%</span>
+                    </div>
+                </div>
+                <div class="option-item">
+                    <label for="slider-sfx">Efectos de Sonido</label>
+                    <div class="slider-container">
+                        <input type="range" id="slider-sfx" min="0" max="100" value="80">
+                        <span id="sfx-vol-val">80%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="options-group">
+                <h3>🖥️ PANTALLA Y ACCESIBILIDAD</h3>
+                <div class="option-item toggle-item">
+                    <label>Pantalla Completa</label>
+                    <button id="btn-toggle-fullscreen" class="toggle-btn">DESACTIVADO</button>
+                </div>
+                <div class="option-item toggle-item">
+                    <label>Reducir Animaciones</label>
+                    <button id="btn-toggle-animations" class="toggle-btn">DESACTIVADO</button>
+                </div>
+            </div>
+
+            <div class="options-group">
+                <h3>🌍 IDIOMA</h3>
+                <div class="option-item">
+                    <select id="select-language">
+                        <option value="es">Español (Chile)</option>
+                        <option value="en">English (US)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="options-footer">
+                <p>Carrera Presidencial — Versión 0.6.0</p>
+            </div>
+        </div>
+    </div>
+
     <div id="event-overlay" class="hidden">
         <div id="event-content">
             <div id="event-badge">⚡ EVENTO ESPECIAL</div>
@@ -378,6 +443,36 @@
                     <div class="event-opt-effects"></div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+     OVERLAY DE LEADERBOARD DIARIO
+     ═══════════════════════════════════════════════════ -->
+    <div id="leaderboard-overlay" class="hidden">
+        <div id="leaderboard-content">
+            <div id="leaderboard-header">
+                <span id="leaderboard-icon">📊</span>
+                <h2>HISTORIAL DESAFÍO DIARIO</h2>
+            </div>
+            <div id="leaderboard-today-box" class="hidden">
+                <div id="leaderboard-today-label">HOY YA JUGASTE</div>
+                <div id="leaderboard-today-score"></div>
+                <div id="leaderboard-today-meta"></div>
+            </div>
+            <table id="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Puntaje</th>
+                        <th>Final</th>
+                        <th>Cargo alcanzado</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body"></tbody>
+            </table>
+            <p id="leaderboard-empty" class="hidden">Aún no has jugado ningún Desafío Diario.<br>¡El primer intento es hoy!</p>
+            <button id="btn-close-leaderboard">✕ CERRAR</button>
         </div>
     </div>
 

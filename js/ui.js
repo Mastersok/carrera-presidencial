@@ -81,9 +81,82 @@ document.addEventListener('DOMContentLoaded', () => {
     const eventOptB    = document.getElementById('event-opt-b');
 
     // ── Botones nuevos del start-screen ─────────────────
-    const btnDaily    = document.getElementById('btn-daily');
-    const seedInput   = document.getElementById('seed-input');
-    const btnSeedPlay = document.getElementById('btn-seed-play');
+    const btnDaily       = document.getElementById('btn-daily');
+    const btnLeaderboard = document.getElementById('btn-leaderboard');
+    const seedInput      = document.getElementById('seed-input');
+    const btnSeedPlay    = document.getElementById('btn-seed-play');
+
+    // ── Leaderboard overlay ──────────────────────────────
+    const leaderboardOverlay   = document.getElementById('leaderboard-overlay');
+    const leaderboardBody      = document.getElementById('leaderboard-body');
+    const leaderboardEmpty     = document.getElementById('leaderboard-empty');
+    const leaderboardTodayBox  = document.getElementById('leaderboard-today-box');
+    const btnCloseLeaderboard  = document.getElementById('btn-close-leaderboard');
+
+    // ── Referencias de Opciones (Pilar 4) ────────────────
+    const optionsOverlay         = document.getElementById('options-overlay');
+    const btnOptionsStart        = document.getElementById('btn-options-start');
+    const btnPauseOptions        = document.getElementById('btn-pause-options');
+    const btnOptionsClose        = document.getElementById('btn-options-close');
+    const sliderMusic            = document.getElementById('slider-music');
+    const sliderSFX              = document.getElementById('slider-sfx');
+    const musicVolVal            = document.getElementById('music-vol-val');
+    const sfxVolVal              = document.getElementById('sfx-vol-val');
+    const btnToggleFullscreen    = document.getElementById('btn-toggle-fullscreen');
+    const btnToggleAnimations    = document.getElementById('btn-toggle-animations');
+    const selectLanguage         = document.getElementById('select-language');
+
+    // ── CONFIGURACIÓN (SettingsManager) ─────────────────
+    const DEFAULT_SETTINGS = {
+        musicVol: 70,
+        sfxVol: 80,
+        fullscreen: false,
+        reduceAnimations: false,
+        language: 'es'
+    };
+
+    let settings = { ...DEFAULT_SETTINGS };
+
+    function loadSettings() {
+        const saved = localStorage.getItem('cp_settings');
+        if (saved) {
+            try { settings = { ...settings, ...JSON.parse(saved) }; } catch(e) {}
+        }
+        applySettings();
+        updateOptionsUI();
+    }
+
+    function saveSettings() {
+        localStorage.setItem('cp_settings', JSON.stringify(settings));
+    }
+
+    function applySettings() {
+        AudioManager.setMusicVolume(settings.musicVol);
+        AudioManager.setSFXVolume(settings.sfxVol);
+
+        if (settings.reduceAnimations) {
+            document.body.classList.add('reduce-animations');
+        } else {
+            document.body.classList.remove('reduce-animations');
+        }
+    }
+
+    function updateOptionsUI() {
+        sliderMusic.value = settings.musicVol;
+        musicVolVal.textContent = `${settings.musicVol}%`;
+        sliderSFX.value = settings.sfxVol;
+        sfxVolVal.textContent = `${settings.sfxVol}%`;
+
+        btnToggleFullscreen.textContent = settings.fullscreen ? 'ACTIVADO' : 'DESACTIVADO';
+        btnToggleFullscreen.classList.toggle('active', settings.fullscreen);
+
+        btnToggleAnimations.textContent = settings.reduceAnimations ? 'ACTIVADO' : 'DESACTIVADO';
+        btnToggleAnimations.classList.toggle('active', settings.reduceAnimations);
+
+        if (selectLanguage) selectLanguage.value = settings.language;
+    }
+
+    loadSettings();
 
     function openProfileScreen(seed, isDaily) {
         pendingProfileSeed    = seed;
@@ -137,10 +210,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     btnDaily.addEventListener('click', async () => {
+        if (!GameState.canPlayDaily()) {
+            showLeaderboard(true); // mostrar historial con "ya jugaste hoy"
+            return;
+        }
         await AudioManager.init();
         AudioManager.startGame();
         launchGame();
         setTimeout(() => GameState.startNewRun(getDailySeed(), null, true), 400);
+    });
+
+    btnLeaderboard.addEventListener('click', () => showLeaderboard(false));
+    btnCloseLeaderboard.addEventListener('click', () => {
+        leaderboardOverlay.classList.add('hidden');
     });
 
     btnSeedPlay.addEventListener('click', async () => {
@@ -253,6 +335,79 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnPause.textContent = '⏸️';
             }
         }
+    });
+
+    // ── Manejo de Opciones (Pilar 4) ────────────────────
+    function showOptions() {
+        updateOptionsUI();
+        optionsOverlay.classList.remove('hidden');
+    }
+
+    btnOptionsStart.addEventListener('click', () => {
+        try { AudioManager.uiClick(); } catch(e) {}
+        showOptions();
+    });
+
+    btnPauseOptions.addEventListener('click', () => {
+        try { AudioManager.uiClick(); } catch(e) {}
+        showOptions();
+    });
+
+    btnOptionsClose.addEventListener('click', () => {
+        try { AudioManager.uiClick(); } catch(e) {}
+        optionsOverlay.classList.add('hidden');
+    });
+
+    sliderMusic.addEventListener('input', (e) => {
+        settings.musicVol = parseInt(e.target.value);
+        musicVolVal.textContent = `${settings.musicVol}%`;
+        AudioManager.setMusicVolume(settings.musicVol);
+        saveSettings();
+    });
+
+    sliderSFX.addEventListener('input', (e) => {
+        settings.sfxVol = parseInt(e.target.value);
+        sfxVolVal.textContent = `${settings.sfxVol}%`;
+        AudioManager.setSFXVolume(settings.sfxVol);
+        saveSettings();
+    });
+
+    btnToggleFullscreen.addEventListener('click', () => {
+        try { AudioManager.uiClick(); } catch(e) {}
+        settings.fullscreen = !settings.fullscreen;
+        if (settings.fullscreen) {
+            document.documentElement.requestFullscreen().catch(() => {
+                settings.fullscreen = false;
+                updateOptionsUI();
+            });
+        } else {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            }
+        }
+        updateOptionsUI();
+        saveSettings();
+    });
+
+    btnToggleAnimations.addEventListener('click', () => {
+        try { AudioManager.uiClick(); } catch(e) {}
+        settings.reduceAnimations = !settings.reduceAnimations;
+        applySettings();
+        updateOptionsUI();
+        saveSettings();
+    });
+
+    if (selectLanguage) {
+        selectLanguage.addEventListener('change', (e) => {
+            settings.language = e.target.value;
+            saveSettings();
+        });
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+        settings.fullscreen = !!document.fullscreenElement;
+        updateOptionsUI();
+        saveSettings();
     });
 
     // ── Escuchar eventos del Engine ──────────────────────
@@ -812,6 +967,51 @@ document.addEventListener('DOMContentLoaded', () => {
         presidente: { img: 'img/char_presidente.png.jpg', section: 'PRESIDENCIA DE LA REPÚBLICA', caption: 'El mandatario en el Palacio de Gobierno' },
     };
 
+    const ENDING_ICONS = { estadista: '🏛️', caudillo: '📣', oligarca: '🕸️', dictador: '🛡️' };
+    const ENDING_NAMES = { estadista: 'ESTADISTA', caudillo: 'CAUDILLO', oligarca: 'OLIGARCA', dictador: 'DICTADOR' };
+
+    function showLeaderboard(highlightToday) {
+        const history = GameState.getDailyHistory();
+        const todayPlayed = !GameState.canPlayDaily();
+
+        // Caja "ya jugaste hoy"
+        leaderboardTodayBox.classList.toggle('hidden', !todayPlayed);
+        if (todayPlayed && history.length > 0) {
+            const t = history[0];
+            const endingLabel = t.ending ? `${ENDING_ICONS[t.ending]} ${ENDING_NAMES[t.ending]}` : '💀 Derrota';
+            document.getElementById('leaderboard-today-score').textContent = `${t.score.toLocaleString('es-CL')} pts`;
+            document.getElementById('leaderboard-today-meta').textContent = `${endingLabel} · ${t.cargoName}`;
+        }
+
+        // Bloquear botón diario si ya jugó hoy
+        btnDaily.textContent = todayPlayed ? '📅 YA JUGASTE HOY' : '📅 DESAFÍO DIARIO';
+        btnDaily.style.opacity = todayPlayed ? '0.55' : '';
+
+        // Tabla
+        leaderboardBody.innerHTML = '';
+        if (history.length === 0) {
+            leaderboardEmpty.classList.remove('hidden');
+        } else {
+            leaderboardEmpty.classList.add('hidden');
+            history.forEach((entry, i) => {
+                const endingLabel = entry.ending
+                    ? `${ENDING_ICONS[entry.ending]} ${ENDING_NAMES[entry.ending]}`
+                    : '💀 Derrota';
+                const tr = document.createElement('tr');
+                if (i === 0 && todayPlayed) tr.classList.add('leaderboard-today-row');
+                tr.innerHTML = `
+                    <td>${entry.date}</td>
+                    <td class="lb-score">${entry.score.toLocaleString('es-CL')}</td>
+                    <td>${endingLabel}</td>
+                    <td>${entry.cargoName}</td>`;
+                leaderboardBody.appendChild(tr);
+            });
+        }
+
+        if (highlightToday) leaderboardTodayBox.classList.remove('hidden');
+        leaderboardOverlay.classList.remove('hidden');
+    }
+
     function showNewspaper(state, isWin, customMessage) {
         overlay.classList.remove('hidden');
         const cfg = state.getCurrentRoleConfig();
@@ -958,8 +1158,48 @@ document.addEventListener('DOMContentLoaded', () => {
             if (edEl) edEl.textContent = '📅 DESAFÍO DIARIO';
         }
 
+        // ── Score diario (solo al terminar la carrera, no entre cargos) ──
+        const dailyScoreSection = document.getElementById('daily-score-section');
+        const isEndOfRun = state.runStatus === 'victory' || state.runStatus === 'game_over';
+        if (state.isDailyChallenge && isEndOfRun && dailyScoreSection) {
+            const result = GameState.saveDailyResult();
+            const score = result.score;
+            const endingLabel = result.ending
+                ? `${ENDING_ICONS[result.ending]} ${ENDING_NAMES[result.ending]}`
+                : '💀 Derrota';
+
+            document.getElementById('daily-score-number').textContent = `${score.toLocaleString('es-CL')} pts`;
+            document.getElementById('daily-score-label').textContent =
+                `${endingLabel} · Cargo: ${result.cargoName}`;
+
+            // Texto para compartir
+            const today = new Date();
+            const dateShare = `${today.getDate().toString().padStart(2,'0')}/${(today.getMonth()+1).toString().padStart(2,'0')}/${today.getFullYear()}`;
+            const shareText = `🏛️ CARRERA PRESIDENCIAL — Desafío ${dateShare}\nFinal: ${endingLabel} · Cargo: ${result.cargoName}\nPuntaje: ${score.toLocaleString('es-CL')} pts\n¿Me superas?`;
+            const shareEl = document.getElementById('daily-share-text');
+            if (shareEl) shareEl.textContent = shareText;
+
+            const btnCopyShare = document.getElementById('btn-copy-share');
+            if (btnCopyShare) {
+                btnCopyShare.onclick = () => {
+                    navigator.clipboard.writeText(shareText).then(() => {
+                        btnCopyShare.textContent = '✅ ¡Copiado!';
+                        setTimeout(() => { btnCopyShare.textContent = '📋 Copiar resultado'; }, 2000);
+                    });
+                };
+            }
+
+            dailyScoreSection.classList.remove('hidden');
+
+            // Actualizar botón diario en start screen
+            btnDaily.textContent = '📅 YA JUGASTE HOY';
+            btnDaily.style.opacity = '0.55';
+        } else if (dailyScoreSection) {
+            dailyScoreSection.classList.add('hidden');
+        }
+
         // Botón
-        if (state.runStatus === 'victory' || state.runStatus === 'game_over') {
+        if (isEndOfRun) {
             btnContinue.textContent = '🗳️ NUEVA CARRERA';
         } else {
             btnContinue.textContent = '🏛️ ACEPTAR CARGO →';

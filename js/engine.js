@@ -401,6 +401,8 @@ const GameState = {
     // Eventos aleatorios
     nextEventRound: 999,
     pendingEvent: null,
+    // Puntaje por cargo (para leaderboard)
+    cargoScores: [],
 
     startNewRun: function (seed, profile, isDaily) {
         this.roleIndex = 0;
@@ -412,6 +414,7 @@ const GameState = {
         this.corruptionScore = 0;
         this.popularityScore = 0;
         this.controlScore = 0;
+        this.cargoScores = [];
 
         // ── Seleccionar 4 perfiles para esta run (determinista por semilla) ──
         // Se baraja el pool completo y se toman los primeros 4
@@ -617,6 +620,10 @@ const GameState = {
     },
 
     evaluateEndOfRole: function (roleConfig) {
+        // Registrar puntaje de este cargo (peso mayor en cargos superiores)
+        const avg = this.activeMeters.reduce((s, m) => s + m.value, 0) / this.activeMeters.length;
+        this.cargoScores.push(Math.round(avg * (this.roleIndex + 1) * 0.5));
+
         const failed = this.activeMeters.some(m => m.value < roleConfig.minThreshold);
         if (failed) {
             this.runStatus = "game_over";
@@ -630,6 +637,42 @@ const GameState = {
                 this.notifyStateChange("victory");
             }
         }
+    },
+
+    calculateScore: function () {
+        const base = this.cargoScores.reduce((s, v) => s + v, 0);
+        const permBonus = this.permanentMeter ? Math.floor(this.permanentMeter.value / 2) : 0;
+        const multipliers = { estadista: 1.5, caudillo: 1.2, dictador: 1.1, oligarca: 1.0 };
+        const isVictory = this.runStatus === 'victory';
+        const mult = isVictory ? (multipliers[this.getVictoryProfile()] || 1.0) : 0.5;
+        return Math.round((base + permBonus) * mult);
+    },
+
+    _dailyKey: function () {
+        const d = new Date();
+        return `cp_daily_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+    },
+
+    canPlayDaily: function () {
+        return !localStorage.getItem(this._dailyKey());
+    },
+
+    saveDailyResult: function () {
+        const score = this.calculateScore();
+        const ending = this.runStatus === 'victory' ? this.getVictoryProfile() : null;
+        const cargoName = ROLES[this.roleIndex].name;
+        const d = new Date();
+        const dateLabel = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`;
+        const result = { date: dateLabel, score, ending, cargoName };
+        localStorage.setItem(this._dailyKey(), JSON.stringify(result));
+        const hist = JSON.parse(localStorage.getItem('cp_daily_history') || '[]');
+        hist.unshift(result);
+        localStorage.setItem('cp_daily_history', JSON.stringify(hist.slice(0, 30)));
+        return result;
+    },
+
+    getDailyHistory: function () {
+        return JSON.parse(localStorage.getItem('cp_daily_history') || '[]');
     },
 
     getVictoryProfile: function () {
