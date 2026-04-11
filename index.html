@@ -22,15 +22,17 @@
         <div id="start-content">
             <div id="start-logo">🏛️</div>
             <h1 id="start-title">CARRERA<br>PRESIDENCIAL</h1>
-            <p id="start-subtitle">De candidato anónimo a Presidente de la Nación</p>
-            <button id="btn-play">⚡ JUGAR</button>
-            <button id="btn-daily">📅 DESAFÍO DIARIO</button>
-            <button id="btn-leaderboard">📊 MI HISTORIAL</button>
-            <button id="btn-tutorial">📖 ¿CÓMO JUGAR?</button>
-            <button id="btn-options-start">⚙️ OPCIONES</button>
+            <p id="start-subtitle" data-i18n="ui.start.subtitle">De candidato anónimo a Presidente de la Nación</p>
+            <button id="btn-play" data-i18n="ui.start.btn_play">⚡ JUGAR</button>
+            <button id="btn-daily" data-i18n="ui.start.btn_daily">📅 DESAFÍO DIARIO</button>
+            <button id="btn-leaderboard" data-i18n="ui.start.btn_leaderboard">📊 MI HISTORIAL</button>
+            <button id="btn-tutorial" data-i18n="ui.start.btn_tutorial">📖 ¿CÓMO JUGAR?</button>
+            <button id="btn-options-start" data-i18n="ui.start.btn_options">⚙️ OPCIONES</button>
             <div id="seed-input-row">
-                <input id="seed-input" type="text" maxlength="6" placeholder="CÓDIGO" title="Ingresa un código de 6 caracteres para reproducir una partida">
-                <button id="btn-seed-play">🔁 USAR SEMILLA</button>
+                <input id="seed-input" type="text" maxlength="6" placeholder="CÓDIGO"
+                    data-i18n-placeholder="ui.start.seed_placeholder"
+                    title="Ingresa un código de 6 caracteres para reproducir una partida">
+                <button id="btn-seed-play" data-i18n="ui.start.btn_seed_play">🔁 USAR SEMILLA</button>
             </div>
         </div>
     </div>
@@ -65,7 +67,7 @@
                 <img id="role-character" src="img/char_candidato.png.jpg" alt="Personaje">
             </div>
             <div id="perm-meter-area">
-                <p class="section-label">★ LEGADO</p>
+                <p class="section-label" data-i18n="ui.game.label_legacy">★ LEGADO</p>
                 <div id="permanent-meter"></div>
             </div>
         </div>
@@ -73,14 +75,14 @@
         <!-- ZONA CENTRAL: SOLO MEDIDORES ACTIVOS -->
         <section id="meters-area">
             <div id="temp-meters">
-                <p class="section-label">▴ MEDIDORES ACTIVOS</p>
+                <p class="section-label" data-i18n="ui.game.label_meters">▴ MEDIDORES ACTIVOS</p>
                 <div id="active-meters"></div>
             </div>
         </section>
 
         <!-- ZONA INFERIOR: CARTAS -->
         <section id="cards-area">
-            <p class="section-label">⚡ ELIGE TU DECISIÓN</p>
+            <p class="section-label" data-i18n="ui.game.label_cards">⚡ ELIGE TU DECISIÓN</p>
             <div id="cards-container"></div>
         </section>
 
@@ -97,13 +99,13 @@
     <div id="ascend-overlay" class="hidden">
         <div id="ascend-confetti"></div>
         <div id="ascend-content">
-            <p id="ascend-from-label">COMPLETASTE TU ETAPA COMO</p>
+            <p id="ascend-from-label" data-i18n="ui.ascend.from_label">COMPLETASTE TU ETAPA COMO</p>
             <p id="ascend-from-role">CANDIDATO A ALCALDE</p>
-            <h1 id="ascend-title">¡ASCENDISTE!</h1>
+            <h1 id="ascend-title" data-i18n="ui.ascend.title">¡ASCENDISTE!</h1>
             <img id="ascend-character" src="" alt="Nuevo cargo">
-            <p id="ascend-to-label">TU NUEVO CARGO ES</p>
+            <p id="ascend-to-label" data-i18n="ui.ascend.to_label">TU NUEVO CARGO ES</p>
             <h2 id="ascend-new-role">ALCALDE</h2>
-            <button id="btn-ascend-continue">📰 VER INFORME DE GESTIÓN</button>
+            <button id="btn-ascend-continue" data-i18n="ui.ascend.btn_continue">📰 VER INFORME DE GESTIÓN</button>
         </div>
     </div>
 
@@ -112,12 +114,14 @@
      ═══════════════════════════════════════════════════ -->
     <div id="pause-overlay" class="hidden">
         <div id="pause-content">
-            <h1 id="pause-title">⏸️ PARTIDA EN PAUSA</h1>
+            <h1 id="pause-title" data-i18n="ui.pause.title">⏸️ PARTIDA EN PAUSA</h1>
             <div class="pause-buttons">
-                <button id="btn-resume" class="pause-btn-option">▶️ CONTINUAR</button>
-                <button id="btn-pause-options" class="pause-btn-option">⚙️ OPCIONES</button>
-                <button id="btn-restart" class="pause-btn-option">🔄 REINICIAR</button>
-                <button id="btn-main-menu" class="pause-btn-option">🏠 MENÚ PRINCIPAL</button>
+                <button id="btn-resume" class="pause-btn-option" data-i18n="ui.pause.btn_resume">▶️ CONTINUAR</button>
+                <button id="btn-pause-options" class="pause-btn-option" data-i18n="ui.pause.btn_options">⚙️
+                    OPCIONES</button>
+                <button id="btn-restart" class="pause-btn-option" data-i18n="ui.pause.btn_restart">🔄 REINICIAR</button>
+                <button id="btn-main-menu" class="pause-btn-option" data-i18n="ui.pause.btn_menu">🏠 MENÚ
+                    PRINCIPAL</button>
             </div>
         </div>
     </div>
@@ -127,79 +131,125 @@
      ═══════════════════════════════════════════════════ -->
     <div id="tutorial-overlay" class="hidden">
         <div id="tutorial-content">
-            <button id="btn-tutorial-close" class="tutorial-close-btn">✕ CERRAR</button>
+            <button id="btn-tutorial-close" class="tutorial-close-btn" data-i18n="ui.tutorial.close">✕ CERRAR</button>
 
-            <h1 id="tutorial-title">📖 ¿CÓMO JUGAR?</h1>
-            <p id="tutorial-subtitle">Todo lo que necesitas saber para tu Carrera Presidencial</p>
+            <h1 id="tutorial-title" data-i18n="ui.tutorial.title">📖 ¿CÓMO JUGAR?</h1>
+            <p id="tutorial-subtitle" data-i18n="ui.tutorial.subtitle">Todo lo que necesitas saber para tu Carrera
+                Presidencial</p>
 
             <div class="tutorial-section">
-                <h2 class="tutorial-section-title">🎯 OBJETIVO DEL JUEGO</h2>
-                <p>Comienza como <strong>Candidato a Alcalde</strong> y asciende cargo tras cargo hasta convertirte en
+                <h2 class="tutorial-section-title" data-i18n="ui.tutorial.obj_title">🎯 OBJETIVO DEL JUEGO</h2>
+                <p data-i18n="ui.tutorial.obj_desc">Comienza como <strong>Candidato a Alcalde</strong> y asciende cargo
+                    tras cargo hasta convertirte en
                     <strong>Presidente de la Nación</strong>. En cada cargo, debes tomar decisiones estratégicas
                     manteniendo tus medidores por encima del umbral mínimo requerido.
                 </p>
             </div>
 
             <div class="tutorial-section">
-                <h2 class="tutorial-section-title">📊 SISTEMA DE MEDIDORES</h2>
-                <p>Cada cargo tiene <strong>3 medidores temporales</strong> (que cambian en cada partida) y <strong>1
+                <h2 class="tutorial-section-title" data-i18n="ui.tutorial.meters_title">📊 SISTEMA DE MEDIDORES</h2>
+                <p data-i18n="ui.tutorial.meters_desc">Cada cargo tiene <strong>3 medidores temporales</strong> (que
+                    cambian en cada partida) y <strong>1
                         medidor permanente</strong> (activo durante toda la run):</p>
-                <ul class="tutorial-list">
-                    <li><strong>Medidores Temporales:</strong> Se seleccionan aleatoriamente al inicio de cada cargo.
-                        Cada uno comienza en 50%.</li>
-                    <li><strong>Medidor Permanente:</strong> Te acompaña durante toda la partida. Su umbral es más bajo
-                        (30%), pero igualmente peligroso si lo descuidas.</li>
-                    <li><strong>Regla de Oro:</strong> Si <strong>cualquier medidor llega a 0%</strong>, ¡tu carrera
-                        política termina inmediatamente!</li>
+                <ul class="tutorial-list" data-i18n-html="ui.tutorial.meters_list">
                 </ul>
             </div>
 
             <div class="tutorial-section">
-                <h2 class="tutorial-section-title">🃏 SISTEMA DE CARTAS</h2>
-                <p>En cada ronda se te presentan <strong>3 cartas de decisión</strong>. Debes elegir UNA de ellas:</p>
-                <ul class="tutorial-list">
-                    <li><strong>⚖️ Neutral:</strong> Decisiones balanceadas con efectos moderados.</li>
-                    <li><strong>📈 Beneficiosa:</strong> Grandes ganancias, pero con riesgos menores.</li>
-                    <li><strong>🎲 Arriesgada:</strong> Puede ser desastrosa o muy beneficiosa.</li>
+                <h2 class="tutorial-section-title" data-i18n="ui.tutorial.cards_title">🃏 SISTEMA DE CARTAS</h2>
+                <p data-i18n="ui.tutorial.cards_desc">En cada ronda se te presentan <strong>3 cartas de
+                        decisión</strong>. Debes elegir UNA de ellas:</p>
+                <ul class="tutorial-list" data-i18n-html="ui.tutorial.cards_list">
                 </ul>
-                <p class="tutorial-tip">💡 <strong>Consejo:</strong> Cada carta tiene efectos positivos y negativos.
+                <p class="tutorial-tip" data-i18n="ui.tutorial.cards_tip">💡 <strong>Consejo:</strong> Cada carta tiene
+                    efectos positivos y negativos.
                     ¡Evalúa cuidadosamente qué medidores puedes permitirte sacrificar!</p>
             </div>
 
             <div class="tutorial-section">
-                <h2 class="tutorial-section-title">🏆 CÓMO GANAR Y PERDER</h2>
+                <h2 class="tutorial-section-title" data-i18n="ui.tutorial.win_title">🏆 CÓMO GANAR Y PERDER</h2>
                 <div class="tutorial-win-condition">
-                    <h3>✅ PARA ASCENDER:</h3>
-                    <p>Al completar todas las rondas de un cargo, <strong>todos tus medidores deben estar por encima del
+                    <h3 data-i18n="ui.tutorial.win_ascend">✅ PARA ASCENDER:</h3>
+                    <p data-i18n="ui.tutorial.win_ascend_desc">Al completar todas las rondas de un cargo, <strong>todos
+                            tus medidores deben estar por encima del
                             umbral mínimo</strong> de ese cargo. Los umbrales aumentan con cada ascenso:</p>
-                    <ul class="tutorial-list">
-                        <li><strong>Alcalde:</strong> 40% mínimo</li>
-                        <li><strong>Diputado:</strong> 50% mínimo</li>
-                        <li><strong>Senador:</strong> 60% mínimo</li>
-                        <li><strong>Presidente:</strong> 65% mínimo</li>
+                    <ul class="tutorial-list" data-i18n-html="ui.tutorial.win_list">
                     </ul>
                 </div>
                 <div class="tutorial-loss-condition">
-                    <h3>❌ CAUSAS DE DERROTA:</h3>
-                    <ul class="tutorial-list">
-                        <li><strong>Cualquier medidor llega a 0%:</strong> Derrota inmediata, sin importar las rondas
-                            restantes.</li>
-                        <li><strong>No superar el umbral al final del cargo:</strong> Si completas las rondas pero algún
-                            medidor está bajo el mínimo, no asciendes.</li>
+                    <h3 data-i18n="ui.tutorial.win_loss">❌ CAUSAS DE DERROTA:</h3>
+                    <ul class="tutorial-list" data-i18n-html="ui.tutorial.win_loss_list">
                     </ul>
                 </div>
             </div>
 
             <div class="tutorial-section">
-                <h2 class="tutorial-section-title">⚡ PROMESAS DE CAMPAÑA</h2>
-                <p>Algunas cartas activan <strong>promesas</strong> que tienen efectos retardados. Estas promesas
+                <h2 class="tutorial-section-title" data-i18n="ui.tutorial.promises_title">⚡ PROMESAS DE CAMPAÑA</h2>
+                <p data-i18n="ui.tutorial.promises_desc">Algunas cartas activan <strong>promesas</strong> que tienen
+                    efectos retardados. Estas promesas
                     expirarán después de ciertas rondas y pueden afectar tus medidores positiva o negativamente.
                     ¡Gestiónalas con cuidado!</p>
             </div>
 
             <div class="tutorial-section">
-                <h2 class="tutorial-section-title">📰 EL PERIÓDICO</h2>
-                <p>Al final de cada cargo, un <strong>periódico</strong> resume tu gestión con titulares, estadísticas y
+                <h2 class="tutorial-section-title" data-i18n="ui.tutorial.profiles_title">🎭 PERFILES DE ORIGEN</h2>
+                <p data-i18n="ui.tutorial.profiles_desc">Al iniciar cada partida, eliges tu <strong>trasfondo
+                        político</strong>. Cada perfil tiene un
+                    <strong>bono (+)</strong> y una <strong>penalización (−)</strong> permanente:
+                </p>
+                <ul class="tutorial-list" data-i18n-html="ui.tutorial.profiles_list">
+                </ul>
+                <p class="tutorial-tip" data-i18n="ui.tutorial.profiles_tip">💡 <strong>Consejo:</strong> Cada run solo
+                    muestra 4 perfiles disponibles.
+                    ¡Elige sabiamente según los medidores activos!</p>
+            </div>
+
+            <div class="tutorial-section">
+                <h2 class="tutorial-section-title" data-i18n="ui.tutorial.events_title">⚠️ EVENTOS ESPECIALES</h2>
+                <p data-i18n="ui.tutorial.events_desc">Durante tu mandato, pueden ocurrir <strong>eventos
+                        aleatorios</strong> que interrumpen el flujo
+                    normal
+                    del juego. Estas son crisis o oportunidades únicas con decisiones de alto impacto:</p>
+                <ul class="tutorial-list" data-i18n-html="ui.tutorial.events_list">
+                </ul>
+                <p class="tutorial-tip" data-i18n="ui.tutorial.events_tip">💡 <strong>Importante:</strong> Los eventos
+                    son específicos para cada cargo.
+                    ¡Un candidato no enfrentará los mismos problemas que un Presidente!</p>
+            </div>
+
+            <div class="tutorial-section">
+                <h2 class="tutorial-section-title" data-i18n="ui.tutorial.endings_title">🏅 MÚLTIPLES FINALES</h2>
+                <p data-i18n="ui.tutorial.endings_desc">Tus decisiones determinan <strong>cómo te recordará la
+                        historia</strong>. Hay 4 finales posibles
+                    si llegas a Presidente:</p>
+                <ul class="tutorial-list" data-i18n-html="ui.tutorial.endings_list">
+                </ul>
+                <p class="tutorial-tip" data-i18n="ui.tutorial.endings_tip">💡 <strong>Dato:</strong> El periódico final
+                    cuenta tu historia única basada
+                    en tus decisiones y medidores finales. ¡Cada run genera un informe diferente!</p>
+            </div>
+
+            <div class="tutorial-section">
+                <h2 class="tutorial-section-title" data-i18n="ui.tutorial.seeds_title">🔑 SEMILLAS Y DESAFÍO DIARIO</h2>
+                <p data-i18n="ui.tutorial.seeds_desc">Compite con amigos usando el <strong>sistema de semillas</strong>:
+                </p>
+                <ul class="tutorial-list" data-i18n-html="ui.tutorial.seeds_list">
+                </ul>
+                <p class="tutorial-tip" data-i18n="ui.tutorial.seeds_tip">💡 <strong>Truco:</strong> La misma semilla
+                    siempre genera la misma partida.
+                    ¡Perfecto para practicar o competir!</p>
+            </div>
+
+            <div class="tutorial-section">
+                <h2 class="tutorial-section-title" data-i18n="ui.tutorial.tips_title">🎮 CONSEJOS ESTRATÉGICOS</h2>
+                <ul class="tutorial-list" data-i18n-html="ui.tutorial.tips_list">
+                </ul>
+            </div>
+
+            <div class="tutorial-section">
+                <h2 class="tutorial-section-title" data-i18n="ui.tutorial.news_title">📰 EL PERIÓDICO</h2>
+                <p data-i18n="ui.tutorial.news_desc">Al final de cada cargo, un <strong>periódico</strong> resume tu
+                    gestión con titulares, estadísticas y
                     citas. Es el reflejo de tus decisiones y te cuenta la historia de tu mandato.</p>
             </div>
 
@@ -246,17 +296,19 @@
                 <div class="mast-top-stripe"></div>
                 <div class="masthead-row-top">
                     <span id="paper-date" class="masthead-meta">Domingo, 22 de marzo de 2026</span>
-                    <span class="masthead-meta masthead-founded">Fundado en 1952 &bull; Circulación Nacional</span>
+                    <span class="masthead-meta masthead-founded" id="paper-founded"
+                        data-i18n-html="newspaper.founded">Fundado en 1952 &bull; Circulación Nacional</span>
                     <span id="paper-price" class="masthead-meta">$2.50</span>
                 </div>
                 <div class="mast-rule-thin"></div>
                 <div class="masthead-title-row">
                     <div class="masthead-ornament">❧</div>
-                    <h1 class="masthead-title">El Diario Democrático</h1>
+                    <h1 class="masthead-title" id="paper-title" data-i18n="newspaper.name">El Diario Democrático</h1>
                     <div class="masthead-ornament">❧</div>
                 </div>
                 <div class="masthead-row-bot">
-                    <span class="masthead-motto">"La voz que no se calla"</span>
+                    <span class="masthead-motto" id="paper-motto" data-i18n="newspaper.motto">"La voz que no se
+                        calla"</span>
                     <span id="paper-edition" class="masthead-meta">Edición Nº 4521</span>
                 </div>
                 <div class="mast-rule-double"></div>
@@ -280,7 +332,8 @@
                     </figure>
                     <div class="paper-col-rule"></div>
                     <div class="paper-stats-block">
-                        <h4 class="paper-stats-title">&#9644; BALANCE DEL MANDATO &#9644;</h4>
+                        <h4 class="paper-stats-title" id="paper-stats-title" data-i18n="ui.newspaper.stats_title">
+                            &#9644; BALANCE DEL MANDATO &#9644;</h4>
                         <ul id="news-stats"></ul>
                     </div>
                 </div>
@@ -291,7 +344,9 @@
                     <p id="news-subhead" class="paper-subhead">Candidato a Alcalde — Ronda 8 de 8 — Umbral mínimo: 40%
                     </p>
                     <div class="mast-rule-thin" style="margin:8px 0 6px"></div>
-                    <p class="paper-byline">Por nuestro <em>corresponsal político</em> &mdash; Ciudad Capital</p>
+                    <p class="paper-byline" id="paper-byline" data-i18n-html="ui.newspaper.byline">Por nuestro
+                        <em>corresponsal político</em> &mdash; Ciudad Capital
+                    </p>
                     <div class="mast-rule-thin" style="margin:6px 0 10px"></div>
                     <p id="news-text" class="paper-article">El apoyo popular fue indiscutible...</p>
                     <blockquote id="news-quote" class="paper-quote">«Demostramos que se puede gobernar con
@@ -357,14 +412,15 @@
      ═══════════════════════════════════════════════════ -->
     <div id="profile-overlay" class="hidden">
         <div id="profile-content">
-            <h1 id="profile-title">🎭 ELIGE TU ORIGEN</h1>
-            <p id="profile-subtitle">Tu pasado define tus ventajas y tus debilidades.</p>
+            <h1 id="profile-title" data-i18n="ui.profile.title">🎭 ELIGE TU ORIGEN</h1>
+            <p id="profile-subtitle" data-i18n="ui.profile.subtitle">Tu pasado define tus ventajas y tus debilidades.
+            </p>
             <div id="profile-cards"></div>
             <div id="profile-seed-row">
-                <span id="profile-seed-label">Semilla de partida:</span>
+                <span id="profile-seed-label" data-i18n="ui.profile.seed_label">Semilla de partida:</span>
                 <span id="profile-seed-code">------</span>
             </div>
-            <button id="btn-profile-start" disabled>⚡ ¡A LA CARGA!</button>
+            <button id="btn-profile-start" disabled data-i18n="ui.profile.btn_start">⚡ ¡A LA CARGA!</button>
         </div>
     </div>
 
@@ -377,40 +433,63 @@
     <div id="options-overlay" class="hidden">
         <div id="options-content">
             <button id="btn-options-close" class="options-close-btn">✕</button>
-            <h1 id="options-title">⚙️ CONFIGURACIÓN</h1>
-            
+            <h1 id="options-title" data-i18n="ui.options.title">⚙️ CONFIGURACIÓN</h1>
+
             <div class="options-group">
-                <h3>🔊 AUDIO</h3>
+                <h3 data-i18n="ui.options.section_audio">🔊 AUDIO</h3>
                 <div class="option-item">
-                    <label for="slider-music">Música</label>
+                    <label for="slider-music" data-i18n="ui.options.label_music">Música</label>
                     <div class="slider-container">
                         <input type="range" id="slider-music" min="0" max="100" value="70">
                         <span id="music-vol-val">70%</span>
                     </div>
                 </div>
                 <div class="option-item">
-                    <label for="slider-sfx">Efectos de Sonido</label>
+                    <label for="slider-sfx" data-i18n="ui.options.label_sfx">Efectos de Sonido</label>
                     <div class="slider-container">
                         <input type="range" id="slider-sfx" min="0" max="100" value="80">
                         <span id="sfx-vol-val">80%</span>
                     </div>
                 </div>
+                <div class="option-item toggle-item">
+                    <label data-i18n="ui.options.label_mute">Silenciar al minimizar</label>
+                    <button id="btn-toggle-muteblur" class="toggle-btn">DESACTIVADO</button>
+                </div>
             </div>
 
             <div class="options-group">
-                <h3>🖥️ PANTALLA Y ACCESIBILIDAD</h3>
+                <h3 data-i18n="ui.options.section_gameplay">🎮 JUGABILIDAD Y VISUALES</h3>
                 <div class="option-item toggle-item">
-                    <label>Pantalla Completa</label>
+                    <label data-i18n="ui.options.label_fastmode">Modo Rápido</label>
+                    <button id="btn-toggle-fastmode" class="toggle-btn">DESACTIVADO</button>
+                </div>
+                <div class="option-item">
+                    <label for="slider-shake" data-i18n="ui.options.label_shake">Intensidad de Sacudida</label>
+                    <div class="slider-container">
+                        <input type="range" id="slider-shake" min="0" max="100" value="100">
+                        <span id="shake-val">100%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="options-group">
+                <h3 data-i18n="ui.options.section_access">🖥️ ACCESIBILIDAD</h3>
+                <div class="option-item toggle-item">
+                    <label data-i18n="ui.options.label_fullscreen">Pantalla Completa</label>
                     <button id="btn-toggle-fullscreen" class="toggle-btn">DESACTIVADO</button>
                 </div>
                 <div class="option-item toggle-item">
-                    <label>Reducir Animaciones</label>
+                    <label data-i18n="ui.options.label_anim">Reducir Animaciones</label>
                     <button id="btn-toggle-animations" class="toggle-btn">DESACTIVADO</button>
+                </div>
+                <div class="option-item toggle-item">
+                    <label data-i18n="ui.options.label_contrast">Alto Contraste</label>
+                    <button id="btn-toggle-contrast" class="toggle-btn">DESACTIVADO</button>
                 </div>
             </div>
 
             <div class="options-group">
-                <h3>🌍 IDIOMA</h3>
+                <h3 data-i18n="ui.options.section_lang">🌍 IDIOMA</h3>
                 <div class="option-item">
                     <select id="select-language">
                         <option value="es">Español (Chile)</option>
@@ -420,14 +499,14 @@
             </div>
 
             <div class="options-footer">
-                <p>Carrera Presidencial — Versión 0.6.0</p>
+                <p id="options-version" data-i18n="ui.options.version">Carrera Presidencial — Versión 0.8.0</p>
             </div>
         </div>
     </div>
 
     <div id="event-overlay" class="hidden">
         <div id="event-content">
-            <div id="event-badge">⚡ EVENTO ESPECIAL</div>
+            <div id="event-badge" data-i18n="ui.event.badge">⚡ EVENTO ESPECIAL</div>
             <div id="event-icon">🌪️</div>
             <h1 id="event-title">TÍTULO DEL EVENTO</h1>
             <p id="event-desc">Descripción del evento aquí.</p>
@@ -453,31 +532,36 @@
         <div id="leaderboard-content">
             <div id="leaderboard-header">
                 <span id="leaderboard-icon">📊</span>
-                <h2>HISTORIAL DESAFÍO DIARIO</h2>
+                <h2 data-i18n="ui.leaderboard.title">HISTORIAL DESAFÍO DIARIO</h2>
             </div>
             <div id="leaderboard-today-box" class="hidden">
-                <div id="leaderboard-today-label">HOY YA JUGASTE</div>
+                <div id="leaderboard-today-label" data-i18n="ui.leaderboard.today_label">HOY YA JUGASTE</div>
                 <div id="leaderboard-today-score"></div>
                 <div id="leaderboard-today-meta"></div>
             </div>
             <table id="leaderboard-table">
                 <thead>
                     <tr>
-                        <th>Fecha</th>
-                        <th>Puntaje</th>
-                        <th>Final</th>
-                        <th>Cargo alcanzado</th>
+                        <th data-i18n="ui.leaderboard.col_date">Fecha</th>
+                        <th data-i18n="ui.leaderboard.col_score">Puntaje</th>
+                        <th data-i18n="ui.leaderboard.col_ending">Final</th>
+                        <th data-i18n="ui.leaderboard.col_role">Cargo alcanzado</th>
                     </tr>
                 </thead>
                 <tbody id="leaderboard-body"></tbody>
             </table>
-            <p id="leaderboard-empty" class="hidden">Aún no has jugado ningún Desafío Diario.<br>¡El primer intento es hoy!</p>
-            <button id="btn-close-leaderboard">✕ CERRAR</button>
+            <p id="leaderboard-empty" class="hidden" data-i18n="ui.leaderboard.empty">Aún no has jugado ningún Desafío
+                Diario.<br>¡El primer intento es hoy!</p>
+            <button id="btn-close-leaderboard" data-i18n="ui.leaderboard.btn_close">✕ CERRAR</button>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <!-- i18n: debe cargarse ANTES de engine/ui para que t() esté disponible -->
+    <script src="js/i18n.js"></script>
+    <script src="locales/es.js"></script>
+    <script src="locales/en.js"></script>
     <script src="js/engine.js"></script>
     <script src="js/cards.js"></script>
     <script src="js/audio.js"></script>

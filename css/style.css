@@ -1,5 +1,5 @@
-/* =============================================
-   CARRERA PRESIDENCIAL — Estilo v3.1
+﻿/* =============================================
+   CARRERA PRESIDENCIAL â€” Estilo v3.1
    Paleta: "Poder & Golpe"
    ============================================= */
 
@@ -61,7 +61,7 @@ body {
     font-family: var(--font-ui);
 }
 
-/* === FONDO AMBIENTAL — Halftone cartoon === */
+/* === FONDO AMBIENTAL â€” Halftone cartoon === */
 body::before {
     content: '';
     position: fixed;
@@ -183,7 +183,7 @@ body::before {
     position: relative;
 }
 
-/* ── Botón de Pausa ── */
+/* â”€â”€ BotÃ³n de Pausa â”€â”€ */
 .pause-btn {
     width: 52px;
     height: 52px;
@@ -232,7 +232,7 @@ body::before {
     padding: 6px 14px;
 }
 
-/* Caja del personaje — debajo del badge */
+/* Caja del personaje â€” debajo del badge */
 #character-box {
     width: 160px;
     height: 160px;
@@ -271,7 +271,7 @@ body::before {
     letter-spacing: 0.05em;
 }
 
-/* Etiqueta del umbral mínimo */
+/* Etiqueta del umbral mÃ­nimo */
 .threshold-tag {
     display: inline-block;
     font-size: 0.6rem;
@@ -432,7 +432,7 @@ body::before {
     padding: 10px;
 }
 
-/* Medidores activos — columna única, ancho completo */
+/* Medidores activos â€” columna Ãºnica, ancho completo */
 #meters-area {
     grid-area: meters;
     display: flex;
@@ -517,7 +517,7 @@ body::before {
     border-top-color: #fdf6e3;
 }
 
-/* Semáforo lateral */
+/* SemÃ¡foro lateral */
 .meter-card.is-safe {
     border-left: 4px solid var(--emerald);
 }
@@ -669,7 +669,7 @@ body::before {
     background: var(--gold);
 }
 
-/* Marca del umbral mínimo */
+/* Marca del umbral mÃ­nimo */
 .meter-threshold {
     position: absolute;
     top: -3px;
@@ -681,7 +681,7 @@ body::before {
 }
 
 .meter-threshold::after {
-    content: '▼';
+    content: 'â–¼';
     position: absolute;
     top: -12px;
     left: 50%;
@@ -691,7 +691,7 @@ body::before {
 }
 
 /* ===========================
-   CARTAS DE DECISIÓN — Estilo Cartoon TCG
+   CARTAS DE DECISIÃ“N â€” Estilo Cartoon TCG
    =========================== */
 #cards-area {
     grid-area: cards;
@@ -707,7 +707,7 @@ body::before {
     perspective: 1200px;
 }
 
-/* ─── ESTRUCTURA PRINCIPAL DE LA CARTA ─── */
+/* â”€â”€â”€ ESTRUCTURA PRINCIPAL DE LA CARTA â”€â”€â”€ */
 .decision-card {
     position: relative;
     width: 100%;
@@ -721,7 +721,7 @@ body::before {
     border: 3px solid #1a1209;
     box-shadow: 5px 5px 0 #1a1209;
 
-    /* Fondo crema cálido — como una carta de juego física */
+    /* Fondo crema cÃ¡lido â€” como una carta de juego fÃ­sica */
     background: var(--bg-card);
 
     overflow: hidden;
@@ -733,8 +733,8 @@ body::before {
         opacity 0.45s;
 }
 
-/* ─── ZONA 1: ENCABEZADO DE COLOR ─── */
-/* Color sólido vibrante — cartoon, no futurista */
+/* â”€â”€â”€ ZONA 1: ENCABEZADO DE COLOR â”€â”€â”€ */
+/* Color sÃ³lido vibrante â€” cartoon, no futurista */
 .card-banner {
     position: relative;
     padding: 10px 12px 8px;
@@ -745,7 +745,7 @@ body::before {
     overflow: hidden;
 }
 
-/* Patrón de puntos halftone sutil para dar textura cartoon */
+/* PatrÃ³n de puntos halftone sutil para dar textura cartoon */
 .card-banner::after {
     content: '';
     position: absolute;
@@ -755,7 +755,7 @@ body::before {
     pointer-events: none;
 }
 
-/* Tipos de carta — colores sólidos, nada de gradientes oscuros */
+/* Tipos de carta â€” colores sÃ³lidos, nada de gradientes oscuros */
 .card-type-neutral .card-banner {
     background: var(--bg-panel);
     /* azul del juego */
@@ -771,7 +771,7 @@ body::before {
     /* rojo cartoon */
 }
 
-/* Ícono grande del banner */
+/* Ãcono grande del banner */
 .card-banner-icon {
     font-size: 1.8rem;
     line-height: 1;
@@ -779,7 +779,7 @@ body::before {
     z-index: 1;
 }
 
-/* Número de carta — gema dorada en esquina */
+/* NÃºmero de carta â€” gema dorada en esquina */
 .card-banner-number {
     width: 26px;
     height: 26px;
@@ -798,7 +798,7 @@ body::before {
     flex-shrink: 0;
 }
 
-/* ─── ZONA 2: TÍTULO ─── */
+/* â”€â”€â”€ ZONA 2: TÃTULO â”€â”€â”€ */
 .card-title-zone {
     padding: 7px 12px 4px;
     background: var(--bg-card);
@@ -815,7 +815,7 @@ body::before {
     text-transform: uppercase;
 }
 
-/* ─── ZONA 3: DESCRIPCIÓN ─── */
+/* â”€â”€â”€ ZONA 3: DESCRIPCIÃ“N â”€â”€â”€ */
 .card-desc-zone {
     padding: 5px 12px 8px;
     background: var(--bg-card);
@@ -830,7 +830,7 @@ body::before {
     font-style: italic;
 }
 
-/* ─── ZONA 4: EFECTOS — Pastillas cartoon ─── */
+/* â”€â”€â”€ ZONA 4: EFECTOS â€” Pastillas cartoon â”€â”€â”€ */
 .card-effects-zone {
     padding: 6px 10px 8px;
     display: flex;
@@ -854,7 +854,7 @@ body::before {
     font-size: 0.68rem;
     font-weight: 800;
     border: 2px solid;
-    /* Sombra offset en las píldoras también */
+    /* Sombra offset en las pÃ­ldoras tambiÃ©n */
     box-shadow: 2px 2px 0;
 }
 
@@ -894,7 +894,7 @@ body::before {
     color: var(--gold);
 }
 
-/* ─── ANIMACIÓN DE ENTRADA ─── */
+/* â”€â”€â”€ ANIMACIÃ“N DE ENTRADA â”€â”€â”€ */
 @keyframes card-enter {
     from {
         opacity: 0;
@@ -907,7 +907,7 @@ body::before {
     }
 }
 
-/* ─── ESTADOS: Seleccionada / Rechazada ─── */
+/* â”€â”€â”€ ESTADOS: Seleccionada / Rechazada â”€â”€â”€ */
 .decision-card.selected {
     border-color: var(--emerald) !important;
     box-shadow:
@@ -936,7 +936,7 @@ body::before {
     40%, 80% { transform: scale(0.86) translateY(8px) translateX(4px) rotate(1deg); }
 }
 
-/* Partículas */
+/* PartÃ­culas */
 .particle {
     position: fixed;
     pointer-events: none;
@@ -968,7 +968,7 @@ body::before {
 }
 
 /* ===========================
-   PERSONAJE DINÁMICO
+   PERSONAJE DINÃMICO
    =========================== */
 #role-character {
     display: block;
@@ -1000,16 +1000,16 @@ body::before {
     min-height: 8px;
 }
 
-/* ═══════════════════════════════════════════════════
-   PERIÓDICO — Diseño Estilo Diario Real
-   ═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   PERIÃ“DICO â€” DiseÃ±o Estilo Diario Real
+   ═══════════════════════════════════════════════════ */
 .hidden {
     display: none !important;
 }
 
-/* ════════════════════════════════════════════════════════
-   PERIÓDICO — overlay + paper
-   ════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════
+   PERIÃ“DICO â€” overlay + paper
+   ════════════════════════════════════════════════════════ */
 #newspaper-overlay {
     position: fixed;
     inset: 0;
@@ -1034,14 +1034,14 @@ body::before {
 
 #newspaper-paper {
     position: relative;
-    /* Papel envejecido: color base + manchas de antigüedad + grano de newsprint */
+    /* Papel envejecido: color base + manchas de antigÃ¼edad + grano de newsprint */
     background-color: #f0e6c8;
     background-image:
-        /* líneas horizontales de newsprint */
+        /* lÃ­neas horizontales de newsprint */
         repeating-linear-gradient(180deg,
             transparent 0px, transparent 3px,
             rgba(0, 0, 0, 0.018) 3px, rgba(0, 0, 0, 0.018) 4px),
-        /* manchas de humedad / antigüedad */
+        /* manchas de humedad / antigÃ¼edad */
         radial-gradient(ellipse at 6% 3%, rgba(160, 130, 70, 0.18) 0%, transparent 40%),
         radial-gradient(ellipse at 94% 8%, rgba(140, 110, 55, 0.13) 0%, transparent 35%),
         radial-gradient(ellipse at 80% 96%, rgba(150, 120, 60, 0.14) 0%, transparent 40%),
@@ -1071,7 +1071,7 @@ body::before {
     }
 }
 
-/* ── CABECERA ── */
+/* â”€â”€ CABECERA â”€â”€ */
 .paper-masthead {
     padding: 10px 24px 0;
     text-align: center;
@@ -1154,7 +1154,7 @@ body::before {
     padding-bottom: 5px;
 }
 
-/* ── FRANJA DE SECCIÓN ── */
+/* â”€â”€ FRANJA DE SECCIÃ“N â”€â”€ */
 .paper-section-flag {
     background: #8b1a1a;
     color: #f0e6c8;
@@ -1177,7 +1177,7 @@ body::before {
     background: rgba(240, 230, 200, 0.35);
 }
 
-/* ── CUERPO 3 COLUMNAS ── */
+/* â”€â”€ CUERPO 3 COLUMNAS â”€â”€ */
 .paper-body {
     display: grid;
     grid-template-columns: 180px 1fr 158px;
@@ -1203,7 +1203,7 @@ body::before {
     padding-right: 20px;
 }
 
-/* ── FOTO DEL PERSONAJE ── */
+/* â”€â”€ FOTO DEL PERSONAJE â”€â”€ */
 .paper-photo-figure {
     margin: 0 0 10px;
     position: relative;
@@ -1212,7 +1212,7 @@ body::before {
 .paper-photo {
     width: 100%;
     display: block;
-    /* Efecto periódico: blanco y negro + alto contraste */
+    /* Efecto periÃ³dico: blanco y negro + alto contraste */
     filter: grayscale(1) contrast(1.3) brightness(1.08) sepia(0.12);
     border: 1px solid #2a1f0e;
 }
@@ -1247,7 +1247,7 @@ body::before {
     margin: 10px 0;
 }
 
-/* ── ESTADÍSTICAS (columna izquierda) ── */
+/* â”€â”€ ESTADÃSTICAS (columna izquierda) â”€â”€ */
 .paper-stats-title {
     font-family: var(--font-ui);
     font-size: 0.5rem;
@@ -1333,7 +1333,7 @@ body::before {
     color: #8b1a1a;
 }
 
-/* ── TITULAR PRINCIPAL ── */
+/* â”€â”€ TITULAR PRINCIPAL â”€â”€ */
 .paper-headline {
     font-family: var(--font-paper);
     font-size: clamp(1.4rem, 3.5vw, 2rem);
@@ -1368,7 +1368,7 @@ body::before {
     margin: 0;
 }
 
-/* ── CUERPO DEL ARTÍCULO + DROP CAP ── */
+/* â”€â”€ CUERPO DEL ARTÃCULO + DROP CAP â”€â”€ */
 .paper-article {
     font-size: 0.85rem;
     line-height: 1.72;
@@ -1387,7 +1387,7 @@ body::before {
     color: #1a1108;
 }
 
-/* ── CITA / PULL QUOTE ── */
+/* â”€â”€ CITA / PULL QUOTE â”€â”€ */
 .paper-quote {
     margin: 16px 0 0;
     padding: 10px 12px;
@@ -1424,7 +1424,7 @@ body::before {
     font-style: normal;
 }
 
-/* ── SIDEBAR: otros titulares ── */
+/* â”€â”€ SIDEBAR: otros titulares â”€â”€ */
 .sidebar-title {
     font-family: var(--font-ui);
     font-size: 0.52rem;
@@ -1451,7 +1451,7 @@ body::before {
     border-bottom: none;
 }
 
-/* ── AVISOS PUBLICITARIOS ── */
+/* â”€â”€ AVISOS PUBLICITARIOS â”€â”€ */
 .paper-ad {
     border: 1px solid #b8a882;
     background: rgba(0, 0, 0, 0.03);
@@ -1478,7 +1478,7 @@ body::before {
     text-align: center;
 }
 
-/* ── BARRA INFERIOR ── */
+/* â”€â”€ BARRA INFERIOR â”€â”€ */
 .paper-bottom-bar {
     background: #2a1f0e;
     color: #f0e6c8;
@@ -1491,7 +1491,7 @@ body::before {
     padding: 4px 24px;
 }
 
-/* ── BOTÓN ── */
+/* â”€â”€ BOTÃ“N â”€â”€ */
 .paper-footer {
     padding: 16px 24px 20px;
     background: linear-gradient(rgba(240, 230, 200, 0), rgba(224, 214, 188, 0.6));
@@ -1524,9 +1524,9 @@ body::before {
     box-shadow: none;
 }
 
-/* ═══════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    PANTALLA DE INICIO
-   ═══════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════ */
 @keyframes fade-out {
     from {
         opacity: 1;
@@ -1596,88 +1596,27 @@ body::before {
     line-height: 1.4;
 }
 
-#btn-play {
-    margin-top: 8px;
-    padding: 14px 40px;
-    background: #1a1209;
-    color: #fdf6e3;
-    font-family: var(--font-title);
-    font-size: 1.4rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    border: var(--outline-thick);
-    cursor: pointer;
-    box-shadow: var(--shadow-offset);
-    border-radius: 8px;
-    transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
+/* -- Botones del Menú Principal (Unificados) -- */
+#btn-play, #btn-daily, #btn-leaderboard, #btn-tutorial, #btn-options-start {
+    display: block; width: 100%; max-width: 320px; margin: 8px auto; padding: 14px 24px;
+    font-family: var(--font-title); text-transform: uppercase; text-align: center;
+    border: var(--outline-thick); border-radius: 12px; cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 4px 4px 0 #1a1209; letter-spacing: 2px;
 }
+#btn-play { background: #1a1209; color: #fdf6e3; font-size: 1.5rem; margin-bottom: 12px; }
+#btn-play:hover { background: var(--crimson); transform: translate(-1px, -1px); box-shadow: 6px 6px 0 #1a1209; }
+#btn-daily, #btn-leaderboard, #btn-tutorial, #btn-options-start { background: #fdf6e3; color: #1a1209; font-size: 1rem; }
+#btn-daily:hover, #btn-leaderboard:hover, #btn-tutorial:hover, #btn-options-start:hover { background: var(--gold-light); transform: translate(-1px, -1px); box-shadow: 6px 6px 0 #1a1209; }
+#btn-play:active, #btn-daily:active, #btn-leaderboard:active, #btn-tutorial:active, #btn-options-start:active { transform: translate(3px, 3px); box-shadow: none; }
+#btn-tutorial { background: var(--gold); }
+#seed-input-row { display: flex; gap: 0; justify-content: center; align-items: stretch; margin-top: 15px; max-width: 320px; width: 100%; margin-left: auto; margin-right: auto; }
+#seed-input { flex-grow: 1; font-family: var(--font-title); font-size: 1.1rem; letter-spacing: 4px; text-transform: uppercase; padding: 10px; border: var(--outline-thick); border-right: none; border-radius: 12px 0 0 12px; background: #fff; color: #1a1209; text-align: center; width: 60%; }
+#btn-seed-play { font-family: var(--font-title); font-size: 0.9rem; padding: 10px 15px; background: #1a1209; border: var(--outline-thick); color: var(--gold); border-radius: 0 12px 12px 0; cursor: pointer; transition: all 0.2s; box-shadow: 4px 4px 0 rgba(0,0,0,0.15); white-space: nowrap; }
+#btn-seed-play:hover { background: #333; }
 
-#btn-play:hover {
-    background: var(--crimson);
-    box-shadow: 6px 6px 0 #1a1209;
-}
-
-#btn-play:active {
-    transform: translate(4px, 4px);
-    box-shadow: none;
-}
-
-#btn-tutorial {
-    margin-top: 10px;
-    padding: 12px 32px;
-    background: var(--gold);
-    color: #1a1209;
-    font-family: var(--font-title);
-    font-size: 1.1rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    border: var(--outline-thick);
-    cursor: pointer;
-    box-shadow: var(--shadow-offset);
-    border-radius: 8px;
-    transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
-}
-
-#btn-tutorial:hover {
-    background: var(--gold-light);
-    box-shadow: 6px 6px 0 #1a1209;
-}
-
-#btn-tutorial:active {
-    transform: translate(4px, 4px);
-    box-shadow: none;
-}
-
-#btn-daily, #btn-options-start {
-    margin-top: 5px;
-    padding: 10px 24px;
-    background: #fdf6e3;
-    color: #1a1209;
-    font-family: var(--font-title);
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    border: var(--outline-thick);
-    cursor: pointer;
-    box-shadow: 3px 3px 0 #1a1209;
-    border-radius: 8px;
-    transition: all 0.2s;
-    width: 100%;
-}
-
-#btn-daily:hover, #btn-options-start:hover {
-    background: var(--gold-light);
-    box-shadow: 5px 5px 0 #1a1209;
-}
-
-#btn-daily:active, #btn-options-start:active {
-    transform: translate(3px, 3px);
-    box-shadow: none;
-}
-
-/* ═══════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    PANTALLA DE ASCENSO
-   ═══════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════ */
 #ascend-overlay {
     position: fixed;
     inset: 0;
@@ -1831,9 +1770,9 @@ body::before {
     box-shadow: none;
 }
 
-/* ═══════════════════════════════════════════════════
-   PANTALLA DE INTRO / MISIÓN
-   ═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   PANTALLA DE INTRO / MISIÃ“N
+   ═══════════════════════════════════════════════════ */
 #intro-overlay {
     position: fixed;
     inset: 0;
@@ -1842,7 +1781,7 @@ body::before {
     align-items: center;
     justify-content: center;
     z-index: 150;
-    /* Misma jerarquía que ascend */
+    /* Misma jerarquÃ­a que ascend */
     animation: fade-in 0.3s ease;
     overflow: hidden;
 }
@@ -1996,9 +1935,9 @@ body::before {
     box-shadow: none;
 }
 
-/* ═══════════════════════════════════════════════════
-   MENÚ DE PAUSA
-   ═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   MENÃš DE PAUSA
+   ═══════════════════════════════════════════════════ */
 #pause-overlay {
     position: fixed;
     inset: 0;
@@ -2085,7 +2024,7 @@ body::before {
     transform: scale(1.03);
 }
 
-/* Reiniciar: ámbar */
+/* Reiniciar: Ã¡mbar */
 #btn-restart {
     background: var(--amber);
     color: #1a1209;
@@ -2097,7 +2036,7 @@ body::before {
     transform: scale(1.03);
 }
 
-/* Menú Principal: carmesí */
+/* MenÃº Principal: carmesÃ­ */
 #btn-main-menu {
     background: var(--crimson);
     color: #fdf6e3;
@@ -2138,9 +2077,9 @@ body::before {
     }
 }
 
-/* ═══════════════════════════════════════════════════
-   TUTORIAL / CÓMO JUGAR
-   ═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   TUTORIAL / CÃ“MO JUGAR
+   ═══════════════════════════════════════════════════ */
 #tutorial-overlay {
     position: fixed;
     inset: 0;
@@ -2340,7 +2279,7 @@ body::before {
     box-shadow: 2px 2px 0 #1a1209;
 }
 
-/* Responsive: scroll en móvil */
+/* Responsive: scroll en mÃ³vil */
 @media (max-width: 600px) {
     #tutorial-content {
         padding: 24px 16px 20px;
@@ -2358,11 +2297,11 @@ body::before {
     }
 }
 
-/* ═══════════════════════════════════════════════════
-   PILAR 2 — NUEVOS ESTILOS
-   ═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   PILAR 2 â€” NUEVOS ESTILOS
+   ═══════════════════════════════════════════════════ */
 
-/* ── Start screen extras ── */
+/* â”€â”€ Start screen extras â”€â”€ */
 #btn-daily {
     background: linear-gradient(135deg, #ff9f1c, #f5c518);
     color: #1a1209;
@@ -2442,7 +2381,7 @@ body::before {
     box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
 }
 
-/* ── Overlay de perfiles ── */
+/* â”€â”€ Overlay de perfiles â”€â”€ */
 #profile-overlay {
     position: fixed; inset: 0;
     background: rgba(10,12,40,0.97);
@@ -2569,7 +2508,7 @@ body::before {
 #btn-profile-start:not(:disabled):hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 #000; }
 #btn-profile-start:not(:disabled):active { transform: translate(2px,2px); box-shadow: 3px 3px 0 #000; }
 
-/* ── Overlay de evento aleatorio ── */
+/* â”€â”€ Overlay de evento aleatorio â”€â”€ */
 #event-overlay {
     position: fixed; inset: 0;
     background: rgba(10,12,40,0.97);
@@ -2684,7 +2623,7 @@ body::before {
 .event-eff.pos { background: #d4f5d9; color: #1a5c2a; }
 .event-eff.neg { background: #fde4e4; color: #7a1010; }
 
-/* ── Barra de promesas ── */
+/* â”€â”€ Barra de promesas â”€â”€ */
 #active-promises {
     display: flex;
     flex-wrap: wrap;
@@ -2722,7 +2661,7 @@ body::before {
     font-weight: 700;
 }
 
-/* ── Badge de promesa en cartas ── */
+/* â”€â”€ Badge de promesa en cartas â”€â”€ */
 .promise-badge {
     background: linear-gradient(135deg, #ff9f1c, #f5c518);
     color: #1a1209;
@@ -2736,7 +2675,7 @@ body::before {
     border-top: 2px solid rgba(0,0,0,0.2);
 }
 
-/* ── Semilla en periódico ── */
+/* â”€â”€ Semilla en periÃ³dico â”€â”€ */
 #paper-seed-row {
     display: flex;
     align-items: center;
@@ -2775,7 +2714,7 @@ body::before {
 }
 #btn-copy-seed:hover { background: #f5f0e0; }
 
-/* ── Barra de final narrativo en periódico ── */
+/* â”€â”€ Barra de final narrativo en periÃ³dico â”€â”€ */
 #victory-ending-bar {
     display: flex;
     align-items: center;
@@ -2795,7 +2734,7 @@ body::before {
 #victory-ending-icon { font-size: 1.4rem; }
 #victory-ending-label { font-size: 0.9rem; }
 
-/* ── Profile meter bonus/malus badge ── */
+/* â”€â”€ Profile meter bonus/malus badge â”€â”€ */
 .profile-meter-badge {
     font-size: 0.65rem;
     font-weight: 700;
@@ -2809,16 +2748,211 @@ body::before {
 .profile-meter-badge.bonus { background: #d4f5d9; color: #1a5c2a; border: 1px solid #8bcf96; }
 .profile-meter-badge.malus { background: #fde4e4; color: #7a1010; border: 1px solid #e89090; }
 
-/* ── Daily challenge badge ── */
+/* â”€â”€ Daily challenge badge â”€â”€ */
 #events-bar {
     min-height: 0;
     padding: 4px 0;
 }
 #events-bar:empty { display: none; }
 
-/* ═══════════════════════════════════════════════════
-   PILAR 4 — MENÚ DE OPCIONES (REDiseño Branding)
-   ═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   PILAR 4 â€” MENÃš DE OPCIONES (REDiseÃ±o Branding)
+   ═══════════════════════════════════════════════════ */
+#options-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 10, 40, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    animation: fade-in 0.3s ease;
+}
+
+#options-content {
+    background: #fdf6e3;
+    color: #1a1209;
+    width: min(500px, 90vw);
+    padding: 30px;
+    border: var(--outline-thick);
+    box-shadow: 
+        8px 8px 0 #1a1209,
+        16px 16px 0 rgba(26, 18, 9, 0.2);
+    border-radius: 12px;
+    position: relative;
+    font-family: var(--font-ui);
+}
+
+#options-title {
+    font-family: var(--font-title);
+    font-size: 2.4rem;
+    text-align: center;
+    margin-bottom: 25px;
+    color: #1a1209;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-bottom: 3px solid #1a1209;
+    padding-bottom: 10px;
+}
+
+.options-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--crimson);
+    border: var(--outline);
+    color: #fdf6e3;
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 3px 3px 0 #1a1209;
+    transition: all 0.2s;
+}
+
+.options-close-btn:hover {
+    background: #a02020;
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 #1a1209;
+}
+
+.options-group {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(26, 18, 9, 0.05);
+    border: 2px solid rgba(26, 18, 9, 0.1);
+    border-radius: 8px;
+}
+
+.options-group h3 {
+    font-family: var(--font-title);
+    font-size: 0.95rem;
+    color: #1a1209;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.option-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.option-item label {
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #4a3f30;
+}
+
+.option-item.toggle-item {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.slider-container input[type="range"] {
+    flex-grow: 1;
+    -webkit-appearance: none;
+    height: 12px;
+    background: #e0d8c0;
+    border: 2px solid #1a1209;
+    border-radius: 4px;
+    outline: none;
+}
+
+.slider-container input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    background: var(--gold);
+    border: 2px solid #1a1209;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 #1a1209;
+}
+
+#music-vol-val, #sfx-vol-val {
+    background: #f0e8d0;
+    padding: 2px 10px;
+    border-radius: 6px;
+    border: 2px solid #c49a00;
+}
+#btn-copy-seed {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    background: #fff;
+    border: 2px solid #c49a00;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-dim);
+    transition: background 0.15s;
+}
+#btn-copy-seed:hover { background: #f5f0e0; }
+
+/* â”€â”€ Barra de final narrativo en periÃ³dico â”€â”€ */
+#victory-ending-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 20px;
+    font-family: 'Bangers', cursive;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    border-bottom: 2px solid rgba(0,0,0,0.1);
+}
+#victory-ending-bar.hidden { display: none; }
+#victory-ending-bar[data-profile="estadista"] { background: #e8f4fd; color: #1a3a5c; }
+#victory-ending-bar[data-profile="caudillo"]  { background: #fef3e2; color: #7a3a00; }
+#victory-ending-bar[data-profile="oligarca"]  { background: #f5e8fd; color: #3a0060; }
+#victory-ending-bar[data-profile="dictador"]  { background: #fde8e8; color: #600010; }
+#victory-ending-icon { font-size: 1.4rem; }
+#victory-ending-label { font-size: 0.9rem; }
+
+/* â”€â”€ Profile meter bonus/malus badge â”€â”€ */
+.profile-meter-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 8px;
+    margin-left: 4px;
+    display: inline-block;
+    vertical-align: middle;
+    letter-spacing: 0;
+}
+.profile-meter-badge.bonus { background: #d4f5d9; color: #1a5c2a; border: 1px solid #8bcf96; }
+.profile-meter-badge.malus { background: #fde4e4; color: #7a1010; border: 1px solid #e89090; }
+
+/* â”€â”€ Daily challenge badge â”€â”€ */
+#events-bar {
+    min-height: 0;
+    padding: 4px 0;
+}
+#events-bar:empty { display: none; }
+
+/* ═══════════════════════════════════════════════════
+   PILAR 4 â€” MENÃš DE OPCIONES (REDiseÃ±o Branding)
+   ═══════════════════════════════════════════════════ */
 #options-overlay {
     position: fixed;
     inset: 0;
@@ -2962,6 +3096,8 @@ body::before {
     text-align: center;
 }
 
+/* Los estilos comunes estÃ¡n definidos en la secciÃ³n del MenÃº Principal */
+
 .toggle-btn {
     background: #eee;
     border: 2px solid #1a1209;
@@ -3011,21 +3147,12 @@ body.reduce-animations *::after {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
 }
-/* ── Botón historial en start screen ── */
-#btn-leaderboard {
-    background: transparent;
-    border: 2px solid rgba(255,255,255,0.4);
-    color: #fff;
-    font-size: 0.85rem;
-    padding: 8px 20px;
-    margin-top: -6px;
-}
-#btn-leaderboard:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
+/* El botÃ³n ya estÃ¡ estilizado arriba en el bloque de botones comunes */
 
-/* ── Score diario en periódico ── */
+/* â”€â”€ Score diario en periÃ³dico â”€â”€ */
 #daily-score-section {
-    background: linear-gradient(135deg, #1a1f5e 0%, #252b6e 100%);
-    color: #f5c518;
+    background: #fdf6e3;
+    color: #1a1209;
     text-align: center;
     padding: 16px 20px;
     margin: 0;
@@ -3070,30 +3197,34 @@ body.reduce-animations *::after {
 }
 #btn-copy-share:hover { background: #ffd740; }
 
-/* ── Overlay leaderboard ── */
+/* â”€â”€ Overlay historial (RediseÃ±o) â”€â”€ */
 #leaderboard-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(10,10,30,0.92);
+    background: rgba(10,10,30,0.85);
+    backdrop-filter: blur(8px);
     z-index: 1100;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
+    animation: fade-in 0.3s ease;
 }
-#leaderboard-overlay.hidden { display: none; }
 
 #leaderboard-content {
     background: #fdf6e3;
-    border: 4px solid #1a1f5e;
+    border: var(--outline-thick);
     border-radius: 12px;
     max-width: 560px;
     width: 100%;
     max-height: 85vh;
     overflow-y: auto;
     padding: 24px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-    font-family: 'Inter', sans-serif;
+    box-shadow: 
+        8px 8px 0 #1a1209,
+        16px 16px 0 rgba(0,0,0,0.2);
+    font-family: var(--font-ui);
+    color: #1a1209;
 }
 
 #leaderboard-header {
@@ -3102,20 +3233,21 @@ body.reduce-animations *::after {
     gap: 12px;
     margin-bottom: 16px;
     padding-bottom: 12px;
-    border-bottom: 3px solid #1a1f5e;
+    border-bottom: 3px solid #1a1209;
 }
 #leaderboard-icon { font-size: 2rem; }
 #leaderboard-header h2 {
     font-family: 'Bangers', cursive;
     font-size: 1.6rem;
     letter-spacing: 2px;
-    color: #1a1f5e;
+    color: #1a1209;
     margin: 0;
 }
 
 #leaderboard-today-box {
-    background: linear-gradient(135deg, #1a1f5e, #252b6e);
-    color: #f5c518;
+    background: var(--gold);
+    color: #1a1209;
+    border: 2px solid #1a1209;
     border-radius: 8px;
     padding: 14px 18px;
     margin-bottom: 16px;
@@ -3146,7 +3278,7 @@ body.reduce-animations *::after {
     font-size: 0.85rem;
 }
 #leaderboard-table thead tr {
-    background: #1a1f5e;
+    background: #1a1209;
     color: #f5c518;
 }
 #leaderboard-table th {
@@ -3167,7 +3299,7 @@ body.reduce-animations *::after {
     font-family: 'Bangers', cursive;
     font-size: 1.1rem;
     letter-spacing: 1px;
-    color: #1a1f5e;
+    color: #1a1209;
 }
 
 #leaderboard-empty {
@@ -3181,9 +3313,10 @@ body.reduce-animations *::after {
 #btn-close-leaderboard {
     display: block;
     margin: 18px auto 0;
-    background: #1a1f5e;
-    color: #f5c518;
-    border: none;
+    background: var(--crimson);
+    color: #fdf6e3;
+    border: var(--outline);
+    box-shadow: 4px 4px 0 #1a1209;
     padding: 10px 32px;
     font-family: 'Bangers', cursive;
     font-size: 1rem;

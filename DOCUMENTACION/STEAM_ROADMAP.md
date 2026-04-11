@@ -25,10 +25,10 @@
 | Seed system + Daily Challenge | ✅ |
 | Múltiples finales (Estadista/Caudillo/Oligarca/Dictador) | ✅ |
 | Metaprogresión / Desbloqueables | ❌ |
-| Achievements | ❌ |
-| Menú de opciones completo | ❌ |
+| Achievements | ✅ |
+| Menú de opciones completo | ✅ |
 | Soporte teclado/mando | ❌ |
-| Localización ES/EN | ❌ |
+| Localización ES/EN | ✅ |
 
 ---
 
@@ -183,14 +183,14 @@
 **Prioridad: QUINTO**
 *El humor político cínico vende muchísimo en el mercado anglosajón.*
 
-- [ ] Extraer TODOS los textos a locales/es.json
-- [ ] Traducir a locales/en.json
-- [ ] Adaptar el periódico a ambos idiomas
-- [ ] Adaptar las 115 cartas a ambos idiomas
-- [ ] Toggle de idioma en Menú de Opciones
+- [x] Extraer TODOS los textos a locales/es.js
+- [x] Traducir a locales/en.js
+- [x] Adaptar el periódico a ambos idiomas
+- [x] Adaptar las 115 cartas a ambos idiomas
+- [x] Toggle de idioma en Menú de Opciones
 
 **Stack técnico:**
-- i18next (estándar industria para JS, liviano)
+- I18n custom IIFE (js/i18n.js) — sin dependencias externas, carga via `<script>` tags
 
 ---
 

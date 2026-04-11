@@ -1,5 +1,6 @@
 /**
- * AUDIO.JS v7.1 — Diseño de sonidos corregido con Tone.js (Música deshabilitada)
+ * AUDIO.JS v7.2 — Diseño de sonidos corregido con Tone.js
+ * Soporte para control de volumen (Pilar 4)
  */
 
 const AudioManager = (() => {
@@ -20,8 +21,11 @@ const AudioManager = (() => {
     let metal;               // MetalSynth     — victory/ascend sparkle
     let uiSynth;             // PluckSynth     — uiClick
 
-    // ── Efectos ───────────────────────────────────────────────────────────────
+    // ── Efectos y Mezcla ──────────────────────────────────────────────────────
     let masterComp, reverbBus;
+    let musicGain, sfxGain;
+    let pendingMusicVol = 0.7;
+    let pendingSFXVol = 0.8;
 
     // ── Inicialización ────────────────────────────────────────────────────────
     async function boot() {
@@ -32,23 +36,27 @@ const AudioManager = (() => {
         }
         await Tone.start();
 
-        // Compresor maestro
+        // Nodos de volumen
+        musicGain = new Tone.Gain(pendingMusicVol).toDestination();
+        sfxGain = new Tone.Gain(pendingSFXVol).toDestination();
+
+        // Compresor maestro para SFX
         masterComp = new Tone.Compressor({ threshold: -14, ratio: 4, attack: 0.003, release: 0.15 })
-            .toDestination();
+            .connect(sfxGain);
 
         // Reverb: sala pequeña
         reverbBus = new Tone.Reverb({ decay: 0.9, wet: 0.22 });
         reverbBus.connect(masterComp);
         await reverbBus.generate();
 
-        // ── cardHover: Synth triangle, muy corto ─────────────────────────────
+        // ── cardHover ────────────────────────────────────────────────────────
         hoverSynth = new Tone.Synth({
             oscillator : { type: 'triangle' },
             envelope   : { attack: 0.001, decay: 0.04, sustain: 0, release: 0.04 },
             volume     : -10
         }).connect(masterComp);
 
-        // ── cardClick: MembraneSynth + PluckSynth percusivo ──────────────────
+        // ── cardClick ────────────────────────────────────────────────────────
         clickMembrane = new Tone.MembraneSynth({
             pitchDecay : 0.04,
             octaves    : 5,
@@ -60,7 +68,7 @@ const AudioManager = (() => {
         clickSnap = new Tone.PluckSynth({ attackNoise: 20, dampening: 1500, resonance: 0.88 })
             .connect(masterComp);
 
-        // ── cardReject: MonoSynth con portamento ─────────────────────────────
+        // ── cardReject ───────────────────────────────────────────────────────
         rejectSynth = new Tone.MonoSynth({
             oscillator   : { type: 'triangle' },
             envelope     : { attack: 0.01, decay: 0.15, sustain:0.2, release: 0.25 },
@@ -72,14 +80,14 @@ const AudioManager = (() => {
             volume     : -8
         }).connect(masterComp);
 
-        // ── meterCritical: Synth square, alarma musical ──────────────────────
+        // ── meterCritical ────────────────────────────────────────────────────
         alarmSynth = new Tone.Synth({
             oscillator : { type: 'square' },
             envelope   : { attack: 0.001, decay: 0.05, sustain: 0.7, release: 0.08 },
             volume     : -12
         }).connect(masterComp);
 
-        // ── Pool melódico de PluckSynth ──
+        // ── Pool melódico ──
         for (let i = 0; i < 6; i++) {
             const p = new Tone.PluckSynth({ attackNoise: 2, dampening: 5000, resonance: 0.989 });
             p.connect(masterComp);
@@ -87,7 +95,7 @@ const AudioManager = (() => {
             pluckMelody.push(p);
         }
 
-        // ── gameOver: MonoSynth con filterEnvelope ─────
+        // ── gameOver ──
         trombone = new Tone.MonoSynth({
             oscillator   : { type: 'sawtooth' },
             envelope     : { attack: 0.04, decay: 0.2, sustain: 0.65, release: 0.5 },
@@ -107,7 +115,7 @@ const AudioManager = (() => {
             volume     : -2
         }).connect(masterComp);
 
-        // ── victory: PolySynth ──
+        // ── victory ──
         victorySynth = new Tone.PolySynth(Tone.Synth, {
             oscillator : { type: 'triangle8' },
             envelope   : { attack: 0.02, decay: 0.1, sustain: 0.6, release: 1.0 },
@@ -141,6 +149,27 @@ const AudioManager = (() => {
         async init() {
             try { await boot(); } catch(e) { console.warn('[Audio]', e); }
         },
+        
+        // Pilar 4: Control de volumen
+        setMusicVolume(val) {
+            const v = val / 100;
+            pendingMusicVol = v;
+            if (ready) {
+                musicGain.gain.rampTo(v, 0.1);
+            }
+        },
+        setSFXVolume(val) {
+            const v = val / 100;
+            pendingSFXVol = v;
+            if (ready) {
+                sfxGain.gain.rampTo(v, 0.1);
+            }
+        },
+        setMasterMute(mute) {
+            if (!ready) return;
+            Tone.getDestination().mute = mute;
+        },
+
         cardHover() { if (ready) hoverSynth.triggerAttackRelease('E5', '32n'); },
         cardClick() {
             if (!ready) return;
@@ -200,7 +229,6 @@ const AudioManager = (() => {
             clickMembrane.triggerAttackRelease('C2', '16n', t + 0.50);
             metal.triggerAttackRelease('32n', t + 0.54);
         },
-        // Placeholders para evitar errores en ui.js
         updateMusic() {},
         pauseMusic() {},
         babble() {}

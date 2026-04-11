@@ -104,14 +104,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const sfxVolVal              = document.getElementById('sfx-vol-val');
     const btnToggleFullscreen    = document.getElementById('btn-toggle-fullscreen');
     const btnToggleAnimations    = document.getElementById('btn-toggle-animations');
+    const btnToggleContrast      = document.getElementById('btn-toggle-contrast');
+    const btnToggleMuteBlur      = document.getElementById('btn-toggle-muteblur');
+    const btnToggleFastMode      = document.getElementById('btn-toggle-fastmode');
+    const sliderShake            = document.getElementById('slider-shake');
+    const shakeVal               = document.getElementById('shake-val');
     const selectLanguage         = document.getElementById('select-language');
 
     // ── CONFIGURACIÓN (SettingsManager) ─────────────────
     const DEFAULT_SETTINGS = {
         musicVol: 70,
         sfxVol: 80,
+        muteOnBlur: false,
+        fastMode: false,
+        shakeIntensity: 100,
         fullscreen: false,
         reduceAnimations: false,
+        highContrast: false,
         language: 'es'
     };
 
@@ -134,11 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
         AudioManager.setMusicVolume(settings.musicVol);
         AudioManager.setSFXVolume(settings.sfxVol);
 
-        if (settings.reduceAnimations) {
-            document.body.classList.add('reduce-animations');
-        } else {
-            document.body.classList.remove('reduce-animations');
-        }
+        document.body.classList.toggle('reduce-animations', !!settings.reduceAnimations);
+        document.body.classList.toggle('high-contrast', !!settings.highContrast);
+        document.body.classList.toggle('fast-mode', !!settings.fastMode);
     }
 
     function updateOptionsUI() {
@@ -147,11 +154,26 @@ document.addEventListener('DOMContentLoaded', () => {
         sliderSFX.value = settings.sfxVol;
         sfxVolVal.textContent = `${settings.sfxVol}%`;
 
-        btnToggleFullscreen.textContent = settings.fullscreen ? 'ACTIVADO' : 'DESACTIVADO';
+        sliderShake.value = settings.shakeIntensity;
+        shakeVal.textContent = `${settings.shakeIntensity}%`;
+
+        const _on  = I18n.tStr('ui.options.btn_on',  'ACTIVADO');
+        const _off = I18n.tStr('ui.options.btn_off', 'DESACTIVADO');
+
+        btnToggleFullscreen.textContent = settings.fullscreen ? _on : _off;
         btnToggleFullscreen.classList.toggle('active', settings.fullscreen);
 
-        btnToggleAnimations.textContent = settings.reduceAnimations ? 'ACTIVADO' : 'DESACTIVADO';
+        btnToggleAnimations.textContent = settings.reduceAnimations ? _on : _off;
         btnToggleAnimations.classList.toggle('active', settings.reduceAnimations);
+
+        btnToggleContrast.textContent = settings.highContrast ? _on : _off;
+        btnToggleContrast.classList.toggle('active', settings.highContrast);
+
+        btnToggleMuteBlur.textContent = settings.muteOnBlur ? _on : _off;
+        btnToggleMuteBlur.classList.toggle('active', settings.muteOnBlur);
+
+        btnToggleFastMode.textContent = settings.fastMode ? _on : _off;
+        btnToggleFastMode.classList.toggle('active', settings.fastMode);
 
         if (selectLanguage) selectLanguage.value = settings.language;
     }
@@ -175,13 +197,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'profile-card';
             card.dataset.profileId = p.id;
+            const pName   = I18n.tStr(`game.profiles.${p.id}.name`,   p.name);
+            const pDesc   = I18n.tStr(`game.profiles.${p.id}.desc`,   p.desc);
+            const pTagPos = I18n.tStr(`game.profiles.${p.id}.tagPos`, p.tagPos);
+            const pTagNeg = I18n.tStr(`game.profiles.${p.id}.tagNeg`, p.tagNeg);
             card.innerHTML = `
                 <div class="profile-icon">${p.icon}</div>
-                <div class="profile-name">${p.name}</div>
-                <div class="profile-desc">${p.desc}</div>
+                <div class="profile-name">${pName}</div>
+                <div class="profile-desc">${pDesc}</div>
                 <div class="profile-tags">
-                    <span class="profile-tag tag-pos">${p.tagPos}</span>
-                    <span class="profile-tag tag-neg">${p.tagNeg}</span>
+                    <span class="profile-tag tag-pos">${pTagPos}</span>
+                    <span class="profile-tag tag-neg">${pTagNeg}</span>
                 </div>`;
             card.addEventListener('click', () => {
                 profileCardsEl.querySelectorAll('.profile-card').forEach(c => c.classList.remove('selected'));
@@ -397,12 +423,66 @@ document.addEventListener('DOMContentLoaded', () => {
         saveSettings();
     });
 
+    btnToggleContrast.addEventListener('click', () => {
+        try { AudioManager.uiClick(); } catch(e) {}
+        settings.highContrast = !settings.highContrast;
+        applySettings();
+        updateOptionsUI();
+        saveSettings();
+    });
+
+    btnToggleMuteBlur.addEventListener('click', () => {
+        try { AudioManager.uiClick(); } catch(e) {}
+        settings.muteOnBlur = !settings.muteOnBlur;
+        updateOptionsUI();
+        saveSettings();
+    });
+
+    btnToggleFastMode.addEventListener('click', () => {
+        try { AudioManager.uiClick(); } catch(e) {}
+        settings.fastMode = !settings.fastMode;
+        applySettings();
+        updateOptionsUI();
+        saveSettings();
+    });
+
+    sliderShake.addEventListener('input', (e) => {
+        settings.shakeIntensity = parseInt(e.target.value);
+        shakeVal.textContent = `${settings.shakeIntensity}%`;
+        saveSettings();
+    });
+
+    // Manejo de Mute on Blur
+    document.addEventListener('visibilitychange', () => {
+        if (settings.muteOnBlur) {
+            AudioManager.setMasterMute(document.hidden);
+        }
+    });
+
     if (selectLanguage) {
         selectLanguage.addEventListener('change', (e) => {
             settings.language = e.target.value;
             saveSettings();
+            // Aplicar idioma al DOM y redesplegar UI dinámica
+            I18n.setLang(settings.language);
+            // Actualizar strings de toggles que dependen del idioma
+            updateOptionsUI();
         });
     }
+
+    // Aplicar idioma guardado al iniciar
+    I18n.setLang(settings.language || 'es');
+
+    // Re-render elementos dinámicos cuando cambia el idioma en medio de una partida
+    document.addEventListener('languageChanged', () => {
+        if (GameState.runStatus === 'active') {
+            renderHeader(GameState);
+            renderMeters(GameState);
+            renderCards(GameState);
+            renderPromises(GameState);
+        }
+        updateOptionsUI();
+    });
 
     document.addEventListener('fullscreenchange', () => {
         settings.fullscreen = !!document.fullscreenElement;
@@ -455,7 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderHeader(state);
                 renderMeters(state);
                 shakeScreen();
-                setTimeout(() => showNewspaper(state, false, message), 800);
+                setTimeout(() => showNewspaper(state, false, message), settings.fastMode ? 400 : 800);
                 break;
             case 'won_role':
                 AudioManager.ascend();
@@ -465,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'victory':
                 AudioManager.victory();
                 eventOverlay.classList.add('hidden');
-                showNewspaper(state, true, '¡Pasaste de candidato anónimo a Presidente de la Nación! La historia te juzgará... con algo de sarcasmo.');
+                showNewspaper(state, true, I18n.tStr('ui.newspaper.victory_message', '¡Pasaste de candidato anónimo a Presidente de la Nación! La historia te juzgará... con algo de sarcasmo.'));
                 break;
         }
     });
@@ -503,26 +583,32 @@ document.addEventListener('DOMContentLoaded', () => {
     function showIntroScreen(state) {
         const cfg = state.getCurrentRoleConfig();
 
-        document.getElementById('intro-role').textContent = cfg.name.toUpperCase();
+        const roleName = I18n.tStr(`game.roles.${cfg.id}.name`, cfg.name);
+        document.getElementById('intro-role').textContent = roleName.toUpperCase();
 
         const introChar = document.getElementById('intro-character');
         if (ROLE_CHARACTERS[cfg.id]) {
             introChar.src = ROLE_CHARACTERS[cfg.id];
         }
 
-        document.getElementById('intro-rounds').textContent = `${cfg.totalRounds} rondas`;
+        const _rounLabel = I18n.tStr('ui.intro.rounds_label', 'rondas');
+        document.getElementById('intro-rounds').textContent = `${cfg.totalRounds} ${_rounLabel}`;
         document.getElementById('intro-threshold').textContent = `${cfg.minThreshold}%`;
 
         const listEl = document.getElementById('intro-meters-list');
         listEl.innerHTML = '';
         state.activeMeters.forEach(m => {
+            const mName = I18n.tStr(`game.meters.${m.id}.name`, m.name);
             const li = document.createElement('li');
-            li.innerHTML = `${m.icon || '📊'} ${m.name}`;
+            li.innerHTML = `${m.icon || '📊'} ${mName}`;
             listEl.appendChild(li);
         });
         if (state.permanentMeter) {
+            const pm = state.permanentMeter;
+            const pmName = I18n.tStr(`game.perm_meters.${pm.id}.name`, pm.name);
+            const _permLabel = I18n.tStr('ui.game.perm_label', '(Permanente)');
             const li = document.createElement('li');
-            li.innerHTML = `<strong>${state.permanentMeter.icon || '★'} ${state.permanentMeter.name} (Permanente)</strong>`;
+            li.innerHTML = `<strong>${pm.icon || '★'} ${pmName} ${_permLabel}</strong>`;
             listEl.appendChild(li);
         }
 
@@ -533,17 +619,26 @@ document.addEventListener('DOMContentLoaded', () => {
     //   EVENTO ALEATORIO (tipo Reigns)
     // ────────────────────────────────────────────────────
     function showEventOverlay(ev) {
+        const evTitle = I18n.tStr(`game.events.${ev.id}.title`, ev.title);
+        const evDesc  = I18n.tStr(`game.events.${ev.id}.desc`,  ev.desc);
         document.getElementById('event-icon').textContent  = ev.icon;
-        document.getElementById('event-title').textContent = ev.title;
-        document.getElementById('event-desc').textContent  = ev.desc;
+        document.getElementById('event-title').textContent = evTitle;
+        document.getElementById('event-desc').textContent  = evDesc;
 
-        function fillOption(el, opt) {
-            el.querySelector('.event-opt-label').textContent = opt.label;
-            el.querySelector('.event-opt-hint').textContent  = opt.hint;
+        function fillOption(el, opt, optKey) {
+            const label = I18n.tStr(`game.events.${ev.id}.${optKey}_label`, opt.label);
+            const hint  = I18n.tStr(`game.events.${ev.id}.${optKey}_hint`,  opt.hint);
+            el.querySelector('.event-opt-label').textContent = label;
+            el.querySelector('.event-opt-hint').textContent  = hint;
             const effectsEl = el.querySelector('.event-opt-effects');
             effectsEl.innerHTML = opt.effects.map(e => {
                 const pos = e.amount >= 0;
-                return `<span class="event-eff ${pos ? 'pos' : 'neg'}">${pos ? '▲' : '▼'} ${Math.abs(e.amount)}% ${e.meterName}</span>`;
+                const mLocKey = e.meterId ? `game.meters.${e.meterId}.name` : null;
+                const mLocKeyP = e.meterId ? `game.perm_meters.${e.meterId}.name` : null;
+                const mName = (mLocKey && I18n.tStr(mLocKey, '') !== '')
+                    ? I18n.tStr(mLocKey, e.meterName)
+                    : (mLocKeyP ? I18n.tStr(mLocKeyP, e.meterName) : e.meterName);
+                return `<span class="event-eff ${pos ? 'pos' : 'neg'}">${pos ? '▲' : '▼'} ${Math.abs(e.amount)}% ${mName}</span>`;
             }).join('');
             el.onclick = null; // reset
             el.addEventListener('click', () => {
@@ -553,8 +648,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }, { once: true });
         }
 
-        fillOption(eventOptA, ev.optA);
-        fillOption(eventOptB, ev.optB);
+        fillOption(eventOptA, ev.optA, 'optA');
+        fillOption(eventOptB, ev.optB, 'optB');
         eventOverlay.classList.remove('hidden');
     }
 
@@ -570,9 +665,12 @@ document.addEventListener('DOMContentLoaded', () => {
         state.activePromises.forEach(p => {
             const tag = document.createElement('div');
             tag.className = 'promise-tag';
+            const _rLabel = p.roundsLeft !== 1
+                ? I18n.tStr('ui.newspaper.promise_rounds_pl', 'rondas')
+                : I18n.tStr('ui.newspaper.promise_rounds',    'ronda');
             tag.innerHTML = `
                 <span class="promise-label">${p.label}</span>
-                <span class="promise-rounds">${p.roundsLeft} ronda${p.roundsLeft !== 1 ? 's' : ''}</span>`;
+                <span class="promise-rounds">${p.roundsLeft} ${_rLabel}</span>`;
             barEl.appendChild(tag);
         });
     }
@@ -585,8 +683,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentCfg = state.getCurrentRoleConfig();
         const nextRole = ROLES[state.roleIndex + 1];
 
-        document.getElementById('ascend-from-role').textContent = currentCfg.name.toUpperCase();
-        document.getElementById('ascend-new-role').textContent = nextRole.name.toUpperCase();
+        const fromName = I18n.tStr(`game.roles.${currentCfg.id}.name`, currentCfg.name);
+        const toName   = I18n.tStr(`game.roles.${nextRole.id}.name`,   nextRole.name);
+        document.getElementById('ascend-from-role').textContent = fromName.toUpperCase();
+        document.getElementById('ascend-new-role').textContent = toName.toUpperCase();
 
         const ascendChar = document.getElementById('ascend-character');
         ascendChar.src = ROLE_CHARACTERS[nextRole.id] || '';
@@ -619,8 +719,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function shakeScreen() {
+        const intensity = (settings.shakeIntensity || 0) / 100;
+        if (intensity <= 0) return;
+        gameScreen.style.setProperty('--shake-intensity', intensity);
         gameScreen.classList.add('shake');
-        setTimeout(() => gameScreen.classList.remove('shake'), 500);
+        setTimeout(() => gameScreen.classList.remove('shake'), settings.fastMode ? 250 : 500);
     }
 
     // ────────────────────────────────────────────────────
@@ -653,7 +756,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderHeader(state) {
         const cfg = state.getCurrentRoleConfig();
-        roleEl.textContent = cfg.name;
+        const roleName = I18n.tStr(`game.roles.${cfg.id}.name`, cfg.name);
+        roleEl.textContent = roleName;
         roleIconEl.textContent = ROLE_ICONS[cfg.id] || '🏛️';
 
         // Actualizar personaje
@@ -663,13 +767,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Mostrar umbral mínimo
         const thresholdEl = document.getElementById('threshold-label');
-        if (thresholdEl) thresholdEl.textContent = `Mínimo: ${cfg.minThreshold}%`;
+        if (thresholdEl) thresholdEl.textContent = `${I18n.tStr('ui.game.threshold_label', 'Mínimo: {0}%').replace('{0}', cfg.minThreshold)}`;
 
         // Tooltips dinámicos del header
         const roleTooltip = document.getElementById('role-tooltip');
         const roundTooltip = document.getElementById('round-tooltip');
-        if (roleTooltip) roleTooltip.textContent = `Eres ${cfg.name} — supera el ${cfg.minThreshold}% en todos los medidores para avanzar al siguiente cargo`;
-        if (roundTooltip) roundTooltip.textContent = `Ronda ${state.currentRound} de ${cfg.totalRounds} — completa todas las rondas manteniendo tus medidores por encima del mínimo`;
+        const ttPre  = I18n.tStr('ui.tooltip.role_prefix',  'Eres');
+        const ttSuf  = I18n.tStr('ui.tooltip.role_suffix',  '— supera el');
+        const ttSuf2 = I18n.tStr('ui.tooltip.role_suffix2', '% en todos los medidores para avanzar al siguiente cargo');
+        if (roleTooltip) roleTooltip.textContent = `${ttPre} ${roleName} ${ttSuf} ${cfg.minThreshold}${ttSuf2}`;
+        const ttRnd  = I18n.tStr('ui.tooltip.round_prefix', 'Ronda');
+        const ttOf   = I18n.tStr('ui.tooltip.round_of',     'de');
+        const ttRSuf = I18n.tStr('ui.tooltip.round_suffix', '— completa todas las rondas manteniendo tus medidores por encima del mínimo');
+        if (roundTooltip) roundTooltip.textContent = `${ttRnd} ${state.currentRound} ${ttOf} ${cfg.totalRounds} ${ttRSuf}`;
 
         roundPipsEl.innerHTML = '';
         for (let i = 1; i <= cfg.totalRounds; i++) {
@@ -717,6 +827,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isPerm) card.className = 'meter-card is-perm';
 
         const icon = meter.icon || '📊';
+        // Traducir nombre y descripción del medidor
+        const meterLocale = isPerm ? 'game.perm_meters.' : 'game.meters.';
+        meter = {
+            ...meter,
+            name: I18n.tStr(`${meterLocale}${meter.id}.name`, meter.name),
+            desc: I18n.tStr(`${meterLocale}${meter.id}.desc`, meter.desc || ''),
+        };
 
         let fillClass = isPerm ? 'meter-fill perm' : `meter-fill ${status}`;
         let valClass = isPerm ? 'meter-value perm' : `meter-value ${status}`;
@@ -729,9 +846,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const bonus   = (GameState.selectedProfile.meterBonuses   || {})[meter.id] || 0;
             const penalty = (GameState.selectedProfile.meterPenalties || {})[meter.id] || 0;
             if (bonus > 0) {
-                profileBadge = `<span class="profile-meter-badge bonus" title="Bono de origen activo: +${bonus}%">${GameState.selectedProfile.icon}+${bonus}%</span>`;
+                const ttBonus = I18n.tStr('ui.profile_badge.bonus_title', 'Bono de origen activo: +{0}%').replace('{0}', bonus);
+                profileBadge = `<span class="profile-meter-badge bonus" title="${ttBonus}">${GameState.selectedProfile.icon}+${bonus}%</span>`;
             } else if (penalty > 0) {
-                profileBadge = `<span class="profile-meter-badge malus" title="Penalidad de origen: −${penalty}%">${GameState.selectedProfile.icon}−${penalty}%</span>`;
+                const ttMalus = I18n.tStr('ui.profile_badge.malus_title', 'Penalidad de origen: −{0}%').replace('{0}', penalty);
+                profileBadge = `<span class="profile-meter-badge malus" title="${ttMalus}">${GameState.selectedProfile.icon}−${penalty}%</span>`;
             }
         }
 
@@ -808,6 +927,12 @@ document.addEventListener('DOMContentLoaded', () => {
         );
 
         options.forEach((card, idx) => {
+            // Traducir título y descripción de la carta
+            card = {
+                ...card,
+                title: I18n.tStr(`game.cards.${card.id}.title`, card.title),
+                desc:  I18n.tStr(`game.cards.${card.id}.desc`,  card.desc),
+            };
             const el = document.createElement('div');
 
             // Determinar el tipo visual de la carta según los efectos
@@ -843,8 +968,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>`;
             });
 
+            const _promiseBadgeTmpl = I18n.tStr('ui.newspaper.promise_badge', '⏳ PROMESA — vence en');
+            const _rondaLabel = card.promise && card.promise.roundsLeft !== 1
+                ? I18n.tStr('ui.newspaper.promise_rounds_pl', 'rondas')
+                : I18n.tStr('ui.newspaper.promise_rounds',    'ronda');
             const promiseBadge = card.isPromise && card.promise
-                ? `<div class="promise-badge">⏳ PROMESA — vence en ${card.promise.roundsLeft} ronda${card.promise.roundsLeft !== 1 ? 's' : ''}</div>`
+                ? `<div class="promise-badge">${_promiseBadgeTmpl} ${card.promise.roundsLeft} ${_rondaLabel}</div>`
                 : '';
 
             el.innerHTML = `
@@ -916,12 +1045,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             c.classList.add('rejected');
                         }
                     });
-                }, 100);
+                }, settings.fastMode ? 50 : 100);
 
                 setTimeout(() => {
                     GameState.applyCardEffects(card.effects, card.promise || null);
                     cardsEl.dataset.locked = 'false';
-                }, 900);
+                }, settings.fastMode ? 400 : 900);
             });
 
             cardsEl.appendChild(el);
@@ -976,15 +1105,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Caja "ya jugaste hoy"
         leaderboardTodayBox.classList.toggle('hidden', !todayPlayed);
+        const _defeatLabel = I18n.tStr('ui.leaderboard.defeat', '💀 Derrota');
         if (todayPlayed && history.length > 0) {
             const t = history[0];
-            const endingLabel = t.ending ? `${ENDING_ICONS[t.ending]} ${ENDING_NAMES[t.ending]}` : '💀 Derrota';
+            const endingName = t.ending ? I18n.tStr(`newspaper.ending_names.${t.ending}`, ENDING_NAMES[t.ending]) : null;
+            const endingLabel = endingName ? `${ENDING_ICONS[t.ending]} ${endingName}` : _defeatLabel;
             document.getElementById('leaderboard-today-score').textContent = `${t.score.toLocaleString('es-CL')} pts`;
             document.getElementById('leaderboard-today-meta').textContent = `${endingLabel} · ${t.cargoName}`;
         }
 
         // Bloquear botón diario si ya jugó hoy
-        btnDaily.textContent = todayPlayed ? '📅 YA JUGASTE HOY' : '📅 DESAFÍO DIARIO';
+        btnDaily.textContent = todayPlayed
+            ? I18n.tStr('ui.start.btn_daily_played', '📅 YA JUGASTE HOY')
+            : I18n.tStr('ui.start.btn_daily',        '📅 DESAFÍO DIARIO');
         btnDaily.style.opacity = todayPlayed ? '0.55' : '';
 
         // Tabla
@@ -994,9 +1127,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             leaderboardEmpty.classList.add('hidden');
             history.forEach((entry, i) => {
-                const endingLabel = entry.ending
-                    ? `${ENDING_ICONS[entry.ending]} ${ENDING_NAMES[entry.ending]}`
-                    : '💀 Derrota';
+                const endingName = entry.ending ? I18n.tStr(`newspaper.ending_names.${entry.ending}`, ENDING_NAMES[entry.ending]) : null;
+                const endingLabel = endingName ? `${ENDING_ICONS[entry.ending]} ${endingName}` : _defeatLabel;
                 const tr = document.createElement('tr');
                 if (i === 0 && todayPlayed) tr.classList.add('leaderboard-today-row');
                 tr.innerHTML = `
@@ -1027,9 +1159,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const photoEl = document.getElementById('paper-photo');
         if (photoEl) photoEl.src = roleMeta.img;
         const captionEl = document.getElementById('paper-caption');
-        if (captionEl) captionEl.textContent = roleMeta.caption;
+        const _caption = I18n.tStr(`newspaper.roles.${cfg.id}.caption`, roleMeta.caption);
+        if (captionEl) captionEl.textContent = _caption;
         const sectionEl = document.getElementById('paper-section-label');
-        if (sectionEl) sectionEl.textContent = isWin ? roleMeta.section : '⚠ ' + roleMeta.section;
+        const _section  = I18n.tStr(`newspaper.roles.${cfg.id}.section`, roleMeta.section);
+        const _flagPfx  = I18n.tStr('ui.newspaper.section_flag_prefix', '⚠ ');
+        if (sectionEl) sectionEl.textContent = isWin ? _section : _flagPfx + _section;
 
         // Fecha y edición
         document.getElementById('paper-date').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
@@ -1040,26 +1175,41 @@ document.addEventListener('DOMContentLoaded', () => {
         if (priceEl) priceEl.textContent = `$${(Math.random() * 3 + 1).toFixed(2)}`;
 
         // Titular
-        const roleData = NEWSPAPER[cfg.id] || NEWSPAPER['candidato'];
-        const headlinesPool = isWin ? roleData.win.headlines : roleData.loss.headlines;
+        const _roleKey    = `${cfg.id}_${isWin ? 'win' : 'loss'}`;
+        const headlinesLoc = I18n.t(`newspaper.headlines.${_roleKey}`);
+        const roleData    = NEWSPAPER[cfg.id] || NEWSPAPER['candidato'];
+        const headlinesPool = Array.isArray(headlinesLoc)
+            ? headlinesLoc
+            : (isWin ? roleData.win.headlines : roleData.loss.headlines);
 
         if (state.runStatus === 'victory') {
-            headlineEl.textContent = '¡PRESIDENTE ELECTO!';
+            headlineEl.textContent = I18n.tStr('newspaper.headlines.victory', '¡PRESIDENTE ELECTO!');
         } else {
             headlineEl.textContent = headlinesPool[Math.floor(Math.random() * headlinesPool.length)];
         }
 
         // Subtítulo del cargo (Y motivo de derrota si aplica)
+        const _roleName     = I18n.tStr(`game.roles.${cfg.id}.name`, cfg.name);
+        const _roundOf      = I18n.tStr('ui.newspaper.round_of', 'de');
+        const _threshLabel  = I18n.tStr('ui.newspaper.threshold_label', 'Umbral mínimo:');
         if (customMessage) {
-            const prefix = isWin ? 'NOTICIA DE ÚLTIMA HORA' : 'MOTIVO DE LA CAÍDA';
-            subheadEl.innerHTML = `<strong>${prefix}: ${customMessage}</strong><br>${cfg.name} — Ronda ${state.currentRound} de ${cfg.totalRounds}`;
+            const prefix = isWin
+                ? I18n.tStr('ui.newspaper.news_prefix_win',  'NOTICIA DE ÚLTIMA HORA')
+                : I18n.tStr('ui.newspaper.news_prefix_loss', 'MOTIVO DE LA CAÍDA');
+            subheadEl.innerHTML = `<strong>${prefix}: ${customMessage}</strong><br>${_roleName} — Ronda ${state.currentRound} ${_roundOf} ${cfg.totalRounds}`;
         } else {
-            subheadEl.textContent = `${cfg.name} — Ronda ${state.currentRound} de ${cfg.totalRounds} — Umbral mínimo: ${cfg.minThreshold}%`;
+            subheadEl.textContent = `${_roleName} — Ronda ${state.currentRound} ${_roundOf} ${cfg.totalRounds} — ${_threshLabel} ${cfg.minThreshold}%`;
         }
 
         // Cuerpo del artículo principal
-        const articlesPool = isWin ? roleData.win.articles : roleData.loss.articles;
-        const quotePool = isWin ? WIN_QUOTES : LOSS_QUOTES;
+        const articlesLoc  = I18n.t(`newspaper.articles.${_roleKey}`);
+        const articlesPool = Array.isArray(articlesLoc)
+            ? articlesLoc
+            : (isWin ? roleData.win.articles : roleData.loss.articles);
+        const quotePoolLoc = I18n.t(isWin ? 'game.win_quotes' : 'game.loss_quotes');
+        const quotePool    = Array.isArray(quotePoolLoc)
+            ? quotePoolLoc
+            : (isWin ? WIN_QUOTES : LOSS_QUOTES);
 
         textEl.textContent = articlesPool[Math.floor(Math.random() * articlesPool.length)];
 
@@ -1072,7 +1222,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Columna lateral — titulares aleatorios más variados
         const sidebarEl = document.getElementById('news-sidebar');
         if (sidebarEl) {
-            const shuffledSide = [...OTROS_TITULARES].sort(() => 0.5 - Math.random());
+            const othersLoc = I18n.t('newspaper.other_headlines');
+            const othersPool = Array.isArray(othersLoc) ? othersLoc : OTROS_TITULARES;
+            const shuffledSide = [...othersPool].sort(() => 0.5 - Math.random());
             sidebarEl.innerHTML = shuffledSide.slice(0, 4).map(h => `<div class="sidebar-item">${h}</div>`).join('');
         }
 
@@ -1082,7 +1234,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const existingAds = rightCol.querySelectorAll('.paper-ad');
             existingAds.forEach(ad => ad.remove());
 
-            const shuffledAds = [...AVISOS_CLASIFICADOS].sort(() => 0.5 - Math.random());
+            const adsLoc = I18n.t('newspaper.ads');
+            const adsPool = Array.isArray(adsLoc) ? adsLoc : AVISOS_CLASIFICADOS;
+            const shuffledAds = [...adsPool].sort(() => 0.5 - Math.random());
             const selectedAds = shuffledAds.slice(0, 2);
 
             selectedAds.forEach((ad, i) => {
@@ -1103,11 +1257,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const val = Math.round(m.value);
             const isPerm = state.permanentMeter && m.id === state.permanentMeter.id;
             const status = getMeterStatus(val, isPerm);
+            const mKey  = isPerm ? `game.perm_meters.${m.id}.name` : `game.meters.${m.id}.name`;
+            const mName = I18n.tStr(mKey, m.name);
 
             const li = document.createElement('li');
             li.className = 'stat-' + status;
             li.innerHTML = `
-                <span class="stat-name">${m.icon || '📊'} ${m.name}</span>
+                <span class="stat-name">${m.icon || '📊'} ${mName}</span>
                 <span class="stat-row">
                     <span class="stat-bar-wrap"><span class="stat-bar" style="width:${val}%"></span></span>
                     <span class="stat-val">${val}%</span>
@@ -1122,16 +1278,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const endingLabel = document.getElementById('victory-ending-label');
         if (state.runStatus === 'victory' && endingBar) {
             const profile = state.getVictoryProfile();
-            const ending = VICTORY_ENDINGS[profile];
+            const ending  = VICTORY_ENDINGS[profile];
+            const eTitle   = I18n.tStr(`newspaper.endings.${profile}.title`,    ending.title);
+            const eHeadline= I18n.tStr(`newspaper.endings.${profile}.headline`, ending.headline);
+            const eArticle = I18n.tStr(`newspaper.endings.${profile}.article`,  ending.article);
+            const eQuote   = I18n.tStr(`newspaper.endings.${profile}.quote`,    ending.quote);
             endingBar.classList.remove('hidden');
             endingBar.dataset.profile = profile;
             endingIcon.textContent  = ending.icon;
-            endingLabel.textContent = `${ending.title} — ${ending.headline}`;
+            endingLabel.textContent = `${eTitle} — ${eHeadline}`;
             // Sobreescribir artículo con el artículo del final narrativo
-            textEl.textContent  = ending.article;
-            headlineEl.textContent = ending.headline;
+            textEl.textContent     = eArticle;
+            headlineEl.textContent = eHeadline;
             const quoteEl = document.getElementById('news-quote');
-            if (quoteEl) quoteEl.textContent = ending.quote;
+            if (quoteEl) quoteEl.textContent = eQuote;
         } else if (endingBar) {
             endingBar.classList.add('hidden');
         }
@@ -1145,8 +1305,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnCopySeed) {
                 btnCopySeed.onclick = () => {
                     navigator.clipboard.writeText(code).then(() => {
-                        btnCopySeed.textContent = '✅ Copiado';
-                        setTimeout(() => { btnCopySeed.textContent = '📋 Copiar'; }, 2000);
+                        btnCopySeed.textContent = I18n.tStr('ui.newspaper.btn_copy_seed_ok', '✅ Copiado');
+                        setTimeout(() => { btnCopySeed.textContent = I18n.tStr('ui.newspaper.btn_copy_seed', '📋 Copiar'); }, 2000);
                     });
                 };
             }
@@ -1155,7 +1315,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // ── Diario label ──
         if (state.isDailyChallenge) {
             const edEl = document.getElementById('paper-edition');
-            if (edEl) edEl.textContent = '📅 DESAFÍO DIARIO';
+            if (edEl) edEl.textContent = I18n.tStr('ui.newspaper.daily_edition', '📅 DESAFÍO DIARIO');
         }
 
         // ── Score diario (solo al terminar la carrera, no entre cargos) ──
@@ -1164,18 +1324,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.isDailyChallenge && isEndOfRun && dailyScoreSection) {
             const result = GameState.saveDailyResult();
             const score = result.score;
-            const endingLabel = result.ending
-                ? `${ENDING_ICONS[result.ending]} ${ENDING_NAMES[result.ending]}`
-                : '💀 Derrota';
+            const endingName  = result.ending ? I18n.tStr(`newspaper.ending_names.${result.ending}`, ENDING_NAMES[result.ending]) : null;
+            const endingLabel = endingName
+                ? `${ENDING_ICONS[result.ending]} ${endingName}`
+                : I18n.tStr('ui.leaderboard.defeat', '💀 Derrota');
 
             document.getElementById('daily-score-number').textContent = `${score.toLocaleString('es-CL')} pts`;
             document.getElementById('daily-score-label').textContent =
-                `${endingLabel} · Cargo: ${result.cargoName}`;
+                `${endingLabel} · ${I18n.tStr('ui.newspaper.share_role', 'Cargo:')} ${result.cargoName}`;
 
             // Texto para compartir
-            const today = new Date();
-            const dateShare = `${today.getDate().toString().padStart(2,'0')}/${(today.getMonth()+1).toString().padStart(2,'0')}/${today.getFullYear()}`;
-            const shareText = `🏛️ CARRERA PRESIDENCIAL — Desafío ${dateShare}\nFinal: ${endingLabel} · Cargo: ${result.cargoName}\nPuntaje: ${score.toLocaleString('es-CL')} pts\n¿Me superas?`;
+            const today2 = new Date();
+            const dateShare = `${today2.getDate().toString().padStart(2,'0')}/${(today2.getMonth()+1).toString().padStart(2,'0')}/${today2.getFullYear()}`;
+            const _shareHeader    = I18n.tStr('ui.newspaper.share_header',    '🏛️ CARRERA PRESIDENCIAL — Desafío');
+            const _shareEnding    = I18n.tStr('ui.newspaper.share_ending',    'Final:');
+            const _shareRole      = I18n.tStr('ui.newspaper.share_role',      'Cargo:');
+            const _shareScore     = I18n.tStr('ui.newspaper.share_score',     'Puntaje:');
+            const _shareChallenge = I18n.tStr('ui.newspaper.share_challenge', '¿Me superas?');
+            const shareText = `${_shareHeader} ${dateShare}\n${_shareEnding} ${endingLabel} · ${_shareRole} ${result.cargoName}\n${_shareScore} ${score.toLocaleString('es-CL')} pts\n${_shareChallenge}`;
             const shareEl = document.getElementById('daily-share-text');
             if (shareEl) shareEl.textContent = shareText;
 
@@ -1183,8 +1349,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnCopyShare) {
                 btnCopyShare.onclick = () => {
                     navigator.clipboard.writeText(shareText).then(() => {
-                        btnCopyShare.textContent = '✅ ¡Copiado!';
-                        setTimeout(() => { btnCopyShare.textContent = '📋 Copiar resultado'; }, 2000);
+                        btnCopyShare.textContent = I18n.tStr('ui.newspaper.btn_copy_share_ok', '✅ ¡Copiado!');
+                        setTimeout(() => { btnCopyShare.textContent = I18n.tStr('ui.newspaper.btn_copy_share', '📋 Copiar resultado'); }, 2000);
                     });
                 };
             }
@@ -1192,7 +1358,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dailyScoreSection.classList.remove('hidden');
 
             // Actualizar botón diario en start screen
-            btnDaily.textContent = '📅 YA JUGASTE HOY';
+            btnDaily.textContent = I18n.tStr('ui.start.btn_daily_played', '📅 YA JUGASTE HOY');
             btnDaily.style.opacity = '0.55';
         } else if (dailyScoreSection) {
             dailyScoreSection.classList.add('hidden');
@@ -1200,9 +1366,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Botón
         if (isEndOfRun) {
-            btnContinue.textContent = '🗳️ NUEVA CARRERA';
+            btnContinue.textContent = I18n.tStr('ui.newspaper.btn_new_run',    '🗳️ NUEVA CARRERA');
         } else {
-            btnContinue.textContent = '🏛️ ACEPTAR CARGO →';
+            btnContinue.textContent = I18n.tStr('ui.newspaper.btn_accept_role','🏛️ ACEPTAR CARGO →');
         }
     }
 

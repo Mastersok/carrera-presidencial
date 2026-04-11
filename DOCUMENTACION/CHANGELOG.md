@@ -2,6 +2,17 @@
 
 Todas las novedades, implementaciones tecnológicas y decisiones arquitecturales de Carrera Presidencial se documentarán aquí.
 
+## [v0.8.0] - Menú de Opciones Avanzado & Homogeneización de Interfaz
+- **Añadido:** Menú de Opciones completo con persistencia en `localStorage`.
+  - Controles de Audio: Volumen Maestro, Música y SFX.
+  - Jugabilidad: Toggle de Modo Rápido (animaciones 2x) y Mute on Blur.
+  - Visuales: Slider de Intensidad de Sacudida (Screen Shake).
+  - Accesibilidad: Toggle de Pantalla Completa, Reducción de Animaciones y Modo de Alto Contraste.
+- **Mejora:** Homogeneización Visual del Menú Principal (Botones unificados, jerarquía clara, rediseño de fila de semilla).
+- **Mejora:** Rediseño completo del Historial (Leaderboard) para alinearlo con la estética de "Documento Nacional" (Sepia/Oro/Negro).
+- **Mejora:** Integración del sistema de localización en el nuevo menú de opciones.
+- **Fix:** Eliminación de inconsistencias cromáticas (azules y grises genéricos) en favor de la paleta oficial Poder & Golpe.
+
 ## [v0.1.0] - Inicio del Proyecto
 - **Añadido:** Estructura de carpetas inicial y ecosistema de documentación base.
 - **Añadido:** `DOCUMENTACION/GDD.md`, `TODO.md` y `CHANGELOG.md`.

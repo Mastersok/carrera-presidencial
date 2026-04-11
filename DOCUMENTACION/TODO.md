@@ -40,4 +40,7 @@ Esta es la 'biblia' del estado del proyecto para la carpeta de documentación.
 - [x] Pilar 1: Juice & Game Feel (Fase 1: Física y Hovers).
 - [x] Pilar 1: Juice & Game Feel (Fase 2: Partículas y Shake).
 - [x] Pilar 2: Profundidad y Rejugabilidad (Perfiles, Promesas, Eventos por cargo, Múltiples finales, Seed).
-- [ ] Pilar 3: Música Dinámica y Audio Babble.
+- [x] Pilar 3: Música Dinámica (Base implementada) y Sistema de Audio.
+- [x] Pilar 4: Menú de Opciones (Completo con Audio, Video y Accesibilidad).
+- [x] Pilar 5: Sistema de Achievements (Configuración técnica preparada).
+- [x] Pilar 6: Localización ES/EN (Sistema dinámico i18n).
