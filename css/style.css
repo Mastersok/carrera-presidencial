@@ -1,4 +1,4 @@
-﻿/* =============================================
+/* =============================================
    CARRERA PRESIDENCIAL â€” Estilo v3.1
    Paleta: "Poder & Golpe"
    ============================================= */
@@ -41,6 +41,77 @@
 
     --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --glow-gold: 0 0 15px rgba(245, 197, 24, 0.6);
+    --glow-crimson: 0 0 15px rgba(230, 57, 70, 0.6);
+}
+
+.shake {
+    animation: shake-anim 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake-anim {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+.particle-pos {
+    position: absolute;
+    color: var(--emerald-light);
+    filter: drop-shadow(0 0 5px var(--emerald));
+    font-weight: 900;
+    font-size: 1.8rem;
+    pointer-events: none;
+    z-index: 1001;
+    animation: float-up-fade 1.5s ease-out forwards;
+    text-shadow: 3px 3px 0 #1a1209;
+}
+
+.particle-neg {
+    position: absolute;
+    color: var(--crimson-light);
+    filter: drop-shadow(0 0 5px var(--crimson));
+    font-weight: 900;
+    font-size: 1.8rem;
+    pointer-events: none;
+    z-index: 1001;
+    animation: float-up-fade 1.5s ease-out forwards;
+    text-shadow: 3px 3px 0 #1a1209;
+}
+
+@keyframes float-up-fade {
+    0% { transform: translateY(0) scale(0.5); opacity: 0; }
+    20% { transform: translateY(-10px) scale(1.3); opacity: 1; }
+    80% { transform: translateY(-60px) scale(1); opacity: 1; }
+    100% { transform: translateY(-100px) scale(0.8); opacity: 0; }
+}
+
+.is-crit .meter-fill {
+    animation: pulse-crit 1s infinite alternate;
+}
+
+@keyframes pulse-crit {
+    from { opacity: 1; filter: brightness(1); }
+    to { opacity: 0.7; filter: brightness(1.3); }
+}
+
+.flash-pos {
+    animation: flash-pos-anim 0.3s ease-out forwards;
+}
+@keyframes flash-pos-anim {
+    0% { background: transparent; }
+    50% { background: rgba(45, 198, 83, 0.15); }
+    100% { background: transparent; }
+}
+
+.flash-neg {
+    animation: flash-neg-anim 0.4s ease-out forwards;
+}
+@keyframes flash-neg-anim {
+    0% { background: transparent; }
+    50% { background: rgba(230, 57, 70, 0.2); }
+    100% { background: transparent; }
 }
 
 *,
@@ -943,7 +1014,8 @@ body::before {
     z-index: 1000;
     font-weight: 900;
     font-family: var(--font-title);
-    animation: particle-float 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    font-size: 1.5rem;
+    animation: particle-float 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 .particle.pos { color: var(--emerald-light); text-shadow: 0 0 8px var(--emerald); }
@@ -2135,7 +2207,7 @@ body::before {
     background: var(--crimson);
     color: #fdf6e3;
     font-family: var(--font-ui);
-    font-size: 0.65rem;
+    font-size: 0.85rem;
     font-weight: 800;
     padding: 6px 12px;
     border: var(--outline);
@@ -2154,7 +2226,7 @@ body::before {
 
 #tutorial-title {
     font-family: var(--font-title);
-    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
     font-weight: 900;
     color: #1a1209;
     text-align: center;
@@ -2163,7 +2235,7 @@ body::before {
 }
 
 #tutorial-subtitle {
-    font-size: 0.8rem;
+    font-size: 1rem;
     color: #4a3f30;
     text-align: center;
     margin: 0 0 20px;
@@ -2180,7 +2252,7 @@ body::before {
 
 .tutorial-section-title {
     font-family: var(--font-title);
-    font-size: 1rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: #1a1209;
     margin: 0 0 8px;
@@ -2188,21 +2260,21 @@ body::before {
 }
 
 .tutorial-section p {
-    font-size: 0.75rem;
-    line-height: 1.55;
+    font-size: 0.95rem;
+    line-height: 1.6;
     color: #2a1f0e;
     margin: 0 0 8px;
 }
 
 .tutorial-list {
     margin: 6px 0 0 18px;
-    font-size: 0.73rem;
-    line-height: 1.5;
+    font-size: 0.9rem;
+    line-height: 1.6;
     color: #2a1f0e;
 }
 
 .tutorial-list li {
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 }
 
 .tutorial-tip {
@@ -2210,7 +2282,7 @@ body::before {
     border-left: 3px solid var(--gold);
     padding: 8px 10px;
     border-radius: 0 8px 8px 0;
-    font-size: 0.7rem;
+    font-size: 0.88rem;
     margin-top: 10px !important;
 }
 
@@ -2233,14 +2305,14 @@ body::before {
 
 .tutorial-win-condition h3 {
     font-family: var(--font-title);
-    font-size: 0.85rem;
+    font-size: 1rem;
     color: #1b5e20;
     margin: 0 0 6px;
 }
 
 .tutorial-loss-condition h3 {
     font-family: var(--font-title);
-    font-size: 0.85rem;
+    font-size: 1rem;
     color: #8b1a1a;
     margin: 0 0 6px;
 }
@@ -2292,7 +2364,7 @@ body::before {
     .tutorial-close-btn {
         top: 10px;
         right: 10px;
-        font-size: 0.6rem;
+        font-size: 0.78rem;
         padding: 5px 10px;
     }
 }
@@ -2511,12 +2583,78 @@ body::before {
 /* â”€â”€ Overlay de evento aleatorio â”€â”€ */
 #event-overlay {
     position: fixed; inset: 0;
-    background: rgba(10,12,40,0.97);
+    background: rgba(10,12,40,0.85); /* Un poco más transparente */
+    backdrop-filter: blur(5px);
     display: flex; align-items: center; justify-content: center;
     z-index: 400;
     padding: 20px;
 }
 #event-overlay.hidden { display: none; }
+
+#event-meters-preview {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 15px 0;
+    padding: 12px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.event-mini-meter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #1a1209;
+    padding: 2px 0;
+}
+
+.event-mini-meter.is-perm {
+    border-top: 1px dashed rgba(0,0,0,0.2);
+    margin-top: 4px;
+    padding-top: 6px;
+}
+
+.mini-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 45px;
+    line-height: 1;
+}
+
+.mini-name {
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-top: 2px;
+}
+
+.mini-icon { font-size: 1rem; }
+
+.mini-bar-wrap {
+    flex-grow: 1;
+    height: 8px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.mini-bar {
+    height: 100%;
+    background: #aaa;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.mini-bar.bar-safe { background: var(--emerald); }
+.mini-bar.bar-warn { background: var(--gold); }
+.mini-bar.bar-crit { background: var(--crimson); }
+
+.mini-val { min-width: 35px; text-align: right; }
 
 #event-content {
     max-width: 600px;

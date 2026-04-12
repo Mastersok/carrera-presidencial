@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Tracking de medidores en zona crítica (para no repetir alarma)
     const prevCritical = new Set();
+    let prevMeterValues = {};
 
     const ROLE_ICONS = {
         candidato: '🗳️',
@@ -625,6 +626,34 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('event-title').textContent = evTitle;
         document.getElementById('event-desc').textContent  = evDesc;
 
+        // Render mini-meters preview (Orden idéntico al juego: Activos y luego Permanente)
+        const previewEl = document.getElementById('event-meters-preview');
+        if (previewEl) {
+            previewEl.innerHTML = '';
+            const allMeters = [...GameState.activeMeters];
+            if (GameState.permanentMeter) allMeters.push(GameState.permanentMeter);
+            
+            allMeters.forEach(m => {
+                const val = Math.round(m.value);
+                const isPerm = GameState.permanentMeter && m.id === GameState.permanentMeter.id;
+                const status = getMeterStatus(val, isPerm);
+                const mKey  = isPerm ? `game.perm_meters.${m.id}.name` : `game.meters.${m.id}.name`;
+                const mName = I18n.tStr(mKey, m.name);
+                
+                const mini = document.createElement('div');
+                mini.className = `event-mini-meter status-${status} ${isPerm ? 'is-perm' : ''}`;
+                mini.innerHTML = `
+                    <div class="mini-meta">
+                        <span class="mini-icon">${m.icon || '📊'}</span>
+                        <span class="mini-name">${mName.split(' ')[0]}</span>
+                    </div>
+                    <div class="mini-bar-wrap"><div class="mini-bar bar-${status}" style="width:${val}%"></div></div>
+                    <span class="mini-val">${val}%</span>
+                `;
+                previewEl.appendChild(mini);
+            });
+        }
+
         function fillOption(el, opt, optKey) {
             const label = I18n.tStr(`game.events.${ev.id}.${optKey}_label`, opt.label);
             const hint  = I18n.tStr(`game.events.${ev.id}.${optKey}_hint`,  opt.hint);
@@ -791,21 +820,104 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function flashScreen(type) {
+        if (settings.reduceAnimations) return;
+        const main = document.body;
+        const cls = type === 'pos' ? 'flash-pos' : 'flash-neg';
+        main.classList.remove('flash-pos', 'flash-neg');
+        void main.offsetWidth;
+        main.classList.add(cls);
+        setTimeout(() => main.classList.remove(cls), 500);
+    }
+
+    function animateNumber(element, start, end, duration = 600) {
+        if (!element) return;
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const current = Math.floor(progress * (end - start) + start);
+            element.textContent = current + '%';
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            } else {
+                element.textContent = end + '%';
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
     function renderMeters(state) {
         const nowCritical = new Set();
 
-        metersEl.innerHTML = '';
-        state.activeMeters.forEach(m => {
-            const status = getMeterStatus(Math.round(m.value), false);
-            if (status === 'crit') nowCritical.add(m.id);
-            metersEl.appendChild(buildMeterCard(m, false));
+        // ── 1. LIMPIAR MEDIDORES ACTIVOS (Actualizar o Crear) ──
+        // Para evitar recrear todo y perder animaciones, solo borramos lo que no está en el estado
+        const currentActiveIds = new Set(state.activeMeters.map(m => m.id));
+        Array.from(metersEl.children).forEach(child => {
+            if (!currentActiveIds.has(child.dataset.meterId)) child.remove();
         });
 
-        permMeterEl.innerHTML = '';
+        state.activeMeters.forEach(m => {
+            const val = Math.round(m.value);
+            const status = getMeterStatus(val, false);
+            if (status === 'crit') nowCritical.add(m.id);
+            
+            let card = metersEl.querySelector(`.meter-card[data-meter-id="${m.id}"]`);
+            if (!card) {
+                card = buildMeterCard(m, false);
+                metersEl.appendChild(card);
+            }
+
+            // Actualizar visual del card
+            updateMeterCardVisuals(card, m, val, status, false);
+
+            // Efectos de cambio (Partículas + Animación de Número)
+            if (prevMeterValues[m.id] !== undefined && prevMeterValues[m.id] !== val) {
+                const startVal = prevMeterValues[m.id];
+                const diff = val - startVal;
+                
+                spawnParticle(card, diff);
+                const valEl = card.querySelector('.meter-value');
+                animateNumber(valEl, startVal, val);
+
+                if (diff < 0) {
+                    shakeScreen(Math.abs(diff) > 15 ? 10 : 5);
+                    flashScreen('neg');
+                } else if (diff > 0) {
+                    flashScreen('pos');
+                }
+            }
+            prevMeterValues[m.id] = val;
+        });
+
+        // ── 2. MEDIDOR PERMANENTE ──
         if (state.permanentMeter) {
-            const ps = getMeterStatus(Math.round(state.permanentMeter.value), true);
-            if (ps === 'crit') nowCritical.add(state.permanentMeter.id);
-            permMeterEl.appendChild(buildMeterCard(state.permanentMeter, true));
+            const pm = state.permanentMeter;
+            const val = Math.round(pm.value);
+            const ps = getMeterStatus(val, true);
+            if (ps === 'crit') nowCritical.add(pm.id);
+
+            let card = permMeterEl.querySelector(`.meter-card[data-meter-id="${pm.id}"]`);
+            if (!card) {
+                permMeterEl.innerHTML = ''; // El permanente es único, limpiar viejo
+                card = buildMeterCard(pm, true);
+                permMeterEl.appendChild(card);
+            }
+
+            updateMeterCardVisuals(card, pm, val, ps, true);
+
+            if (prevMeterValues[pm.id] !== undefined && prevMeterValues[pm.id] !== val) {
+                const startVal = prevMeterValues[pm.id];
+                const diff = val - startVal;
+                spawnParticle(card, diff);
+                const valEl = card.querySelector('.meter-value');
+                animateNumber(valEl, startVal, val);
+
+                if (diff < 0) shakeScreen(5);
+            }
+            prevMeterValues[pm.id] = val;
+        } else {
+            permMeterEl.innerHTML = '';
         }
 
         // Tocar alarma solo cuando un medidor ENTRA por primera vez en crítico
@@ -816,15 +928,63 @@ document.addEventListener('DOMContentLoaded', () => {
         nowCritical.forEach(id => prevCritical.add(id));
     }
 
+    function updateMeterCardVisuals(card, meter, val, status, isPerm) {
+        card.className = `meter-card status-${status} ${status === 'crit' ? 'is-crit' : ''} ${isPerm ? 'is-perm' : ''}`;
+        
+        const fill = card.querySelector('.meter-fill');
+        if (fill) {
+            fill.className = isPerm ? 'meter-fill perm' : `meter-fill ${status}`;
+            fill.style.width = `${val}%`;
+        }
+        
+        const valEl = card.querySelector('.meter-value');
+        if (valEl) {
+            valEl.className = isPerm ? 'meter-value perm' : `meter-value ${status}`;
+            // El texto se anima en renderMeters si hay cambio
+        }
+    }
+
+    function spawnParticle(element, amount) {
+        if (!element || amount === 0 || settings.reduceAnimations) return;
+        const rect = element.getBoundingClientRect();
+        const p = document.createElement('div');
+        p.className = amount > 0 ? 'particle-pos' : 'particle-neg';
+        p.textContent = (amount > 0 ? '+' : '') + amount;
+        
+        // Posición aleatoria ligera
+        const offsetX = (Math.random() - 0.5) * 40;
+        p.style.left = `${rect.left + rect.width / 2 + offsetX}px`;
+        p.style.top = `${rect.top}px`;
+        
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 800);
+    }
+
+    function shakeScreen(force = 5) {
+        if (settings.reduceAnimations) return;
+        const intense = (settings.shakeIntensity || 100) / 100;
+        if (intense <= 0) return;
+
+        const main = document.getElementById('game-screen');
+        if (!main) return;
+
+        main.classList.remove('shake');
+        void main.offsetWidth; // Trigger reflow
+        main.classList.add('shake');
+        
+        // Ajustar intensidad si fuera necesario vía CSS variable (todo: implementar si se requiere más detalle)
+        setTimeout(() => main.classList.remove('shake'), 400);
+    }
+
     function buildMeterCard(meter, isPerm) {
         const val = Math.round(meter.value);
         const status = getMeterStatus(val, isPerm);
         const cfg = GameState.getCurrentRoleConfig();
 
         const card = document.createElement('div');
-        card.className = `meter-card is-${status}`;
-        card.dataset.meterId = meter.id; // Added for hover preview matching
-        if (isPerm) card.className = 'meter-card is-perm';
+        card.className = `meter-card status-${status} ${status === 'crit' ? 'is-crit' : ''}`;
+        card.dataset.meterId = meter.id; 
+        if (isPerm) card.className += ' is-perm';
 
         const icon = meter.icon || '📊';
         // Traducir nombre y descripción del medidor
@@ -879,10 +1039,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return card;
     }
 
-    function spawnParticles(sourceEl, eff) {
+    function spawnParticles(sourceEl, eff, clickEvt = null) {
         const rect = sourceEl.getBoundingClientRect();
-        const startX = rect.left + rect.width / 2;
-        const startY = rect.top + rect.height / 2;
+        // PRIORIDAD: Coordenada de click si existe, sino centro de la carta
+        const startX = clickEvt ? clickEvt.clientX : rect.left + rect.width / 2;
+        const startY = clickEvt ? clickEvt.clientY : rect.top + rect.height / 2;
 
         const meterEl = document.querySelector(`.meter-card[data-meter-id="${eff.meterId}"]`);
         if (!meterEl) return;
@@ -890,28 +1051,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const destX = mRect.left + mRect.width / 2;
         const destY = mRect.top + mRect.height / 2;
 
-        for (let i = 0; i < 25; i++) {
+        // Aumentar a 50 partículas para mayor impacto
+        for (let i = 0; i < 50; i++) {
             const p = document.createElement('div');
             const isPos = eff.amount >= 0;
             p.className = `particle ${isPos ? 'pos' : 'neg'}`;
             p.textContent = isPos ? '+' : '-';
             p.style.left = `${startX}px`;
             p.style.top = `${startY}px`;
-            p.style.fontSize = `${12 + Math.random() * 12}px`;
+            // Un poco más grandes
+            p.style.fontSize = `${16 + Math.random() * 14}px`;
             
             // Random offset spread
-            const spread = 80;
+            const spread = 120;
             const dx = (destX - startX) + (Math.random() * spread - spread / 2);
             const dy = (destY - startY) + (Math.random() * spread - spread / 2);
             p.style.setProperty('--dx', `${dx}px`);
             p.style.setProperty('--dy', `${dy}px`);
 
-            // Higher randomness for speed and path
-            p.style.animationDelay = `${Math.random() * 0.4}s`;
-            p.style.animationDuration = `${0.5 + Math.random() * 0.5}s`;
+            // Variabilidad en duración
+            p.style.animationDelay = `${Math.random() * 0.5}s`;
+            p.style.animationDuration = `${0.8 + Math.random() * 0.7}s`;
 
             document.body.appendChild(p);
-            setTimeout(() => p.remove(), 1200);
+            setTimeout(() => p.remove(), 1500);
         }
     }
 
@@ -1011,7 +1174,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            el.addEventListener('click', () => {
+            el.addEventListener('click', (clickEvt) => {
                 if (cardsEl.dataset.locked === 'true') return;
                 cardsEl.dataset.locked = 'true';
 
@@ -1032,9 +1195,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.body.classList.add('hitstop-active');
                 setTimeout(() => document.body.classList.remove('hitstop-active'), 150);
 
-                // Spawn Particles
+                // Spawn Particles (Pasar el evento de mouse para origen exacto)
                 card.effects.forEach(eff => {
-                    spawnParticles(el, eff);
+                    spawnParticles(el, eff, clickEvt);
                 });
 
                 setTimeout(() => {

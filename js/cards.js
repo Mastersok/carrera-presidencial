@@ -388,8 +388,13 @@ const CardGenerator = {
             // Fase 1: metro forzado para garantizar cobertura
             chosenPrimaryId = forcedPrimaryId;
         } else if (template.primary === 'any') {
-            // Universal sin forzar: escoger al azar entre activos
-            chosenPrimaryId = activeMeters[Math.floor(_rng() * activeMeters.length)]?.id;
+            // Universal sin forzar: escoger al azar entre activos y permanente
+            const candidates = [...activeMeters];
+            if (permMeter) candidates.push(permMeter);
+            chosenPrimaryId = candidates[Math.floor(_rng() * candidates.length)]?.id;
+        } else if (permMeter && _rng() < 0.15) {
+            // 15% de chance de que una carta normal de cargo "bonus" el medidor permanente
+            chosenPrimaryId = permMeter.id;
         } else {
             chosenPrimaryId = template.primary;
         }
@@ -409,8 +414,8 @@ const CardGenerator = {
         } else if (negCandidates.length > 0) {
             negMeter = negCandidates[Math.floor(_rng() * negCandidates.length)];
         } else {
-            // Último recurso: permanente
-            negMeter = permMeter;
+            // Último recurso: permanente (si ya no hay otros)
+            negMeter = (permMeter && permMeter.id !== posMeter?.id) ? permMeter : activeMeters[0];
         }
 
         const effects = [];

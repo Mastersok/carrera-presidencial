@@ -1,6 +1,26 @@
 # Registro de Cambios (Changelog)
 
-Todas las novedades, implementaciones tecnológicas y decisiones arquitecturales de Carrera Presidencial se documentarán aquí.
+## [v0.8.3] - 2026-04-12
+### Añadido
+- **Efecto Surtidor (Counter Anims)**: Los números de los medidores ahora cuentan de forma animada en lugar de saltar bruscamente.
+- **Sistema de Partículas Mejorado**: 50+ partículas por decisión, originadas desde la posición exacta del click.
+- **Feedback Visual "Juicy"**: Destellos (flashes) de pantalla para ganancias/pérdidas y sacudidas (shake) dinámicas.
+- **Refactor de UI**: Optimización del renderizado de medidores para permitir persistencia de animaciones.
+
+## [v0.8.2] - 2026-04-12
+### Corregido
+- **ReferenceError en Eventos**: Se solucionó el fallo que impedía mostrar el overlay de eventos especiales.
+- **Sincronización de Puntos**: Las decisiones de eventos ahora se reflejan instantáneamente en los medidores (incluyendo permanentes).
+
+### Balanceo
+- **Probabilidades del Medidor Permanente**: Se introdujo una probabilidad del **15%** para que aparezcan cartas con efectos POSITIVOS en el medidor permanente (en lugar de solo negativos).
+- **Cartas Universales**: Los medidores permanentes ahora forman parte del pool de 'any', permitiendo mayor dinamismo.
+- **One-Event Rule**: Se estabilizó el sistema a exactamente un evento especial por cargo en el punto medio del mandato.
+
+## [v0.8.1] - 2026-04-11
+### Corregido
+- **UI de Eventos**: Rediseño del overlay con mini-medidores intuitivos (iconos + nombres).
+- **Menú Principal**: Unificación estética de botones y jerarquías visuales.
 
 ## [v0.8.0] - Menú de Opciones Avanzado & Homogeneización de Interfaz
 - **Añadido:** Menú de Opciones completo con persistencia en `localStorage`.

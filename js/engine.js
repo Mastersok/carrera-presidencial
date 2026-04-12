@@ -437,12 +437,14 @@ const GameState = {
     },
 
     startRole: function () {
+        const roleData = ROLES[this.roleIndex];
         this.currentRound = 1;
         this.activePromises = [];
         this.runStatus = "active";
         this.pendingEvent = null;
-
-        const roleData = ROLES[this.roleIndex];
+        
+        // Exactamente 1 evento por cargo a la mitad de las rondas
+        this.nextEventRound = Math.floor(roleData.totalRounds / 2) + 1;
         const shuffledMeters = [...roleData.tempMeters].sort(() => this.rng() - 0.5);
         const selected = shuffledMeters.slice(0, 3);
 
@@ -455,9 +457,6 @@ const GameState = {
             }
             return { id: m.id, name: m.name, icon: m.icon, desc: m.desc, value: startVal };
         });
-
-        // Programar primer evento aleatorio: ronda 3 o 4
-        this.nextEventRound = 3 + Math.floor(this.rng() * 2);
 
         console.log(`[Engine] Rol: ${roleData.name} | Seed: ${seedToCode(this.seed)}`, this.activeMeters);
         this.notifyStateChange("role_started");
@@ -500,14 +499,16 @@ const GameState = {
 
     applyEventChoice: function (effects) {
         effects.forEach(eff => {
-            const meter = this.activeMeters.find(m => m.id === eff.meterId);
+            let meter = this.activeMeters.find(m => m.id === eff.meterId);
+            if (!meter && this.permanentMeter && this.permanentMeter.id === eff.meterId) {
+                meter = this.permanentMeter;
+            }
             if (meter) {
                 meter.value = Math.min(100, Math.max(0, meter.value + eff.amount));
             }
         });
         this.pendingEvent = null;
-        // Reprogramar siguiente evento
-        this.nextEventRound = this.currentRound + 3 + Math.floor(this.rng() * 2);
+        this.nextEventRound = 999; // No más eventos este cargo
 
         // Verificar muerte
         const died = this.activeMeters.some(m => m.value <= 0) || (this.permanentMeter && this.permanentMeter.value <= 0);
@@ -516,8 +517,9 @@ const GameState = {
             this.notifyStateChange("game_over", "La crisis fue demasiado grave para sobrevivir.");
             return;
         }
-        // Avanzar ronda normalmente (sin double-render de cartas)
-        this._advanceRound();
+        // NOTA: Ya no llamamos a _advanceRound() aquí. 
+        // El evento es un "paréntesis" que no consume la ronda jugada.
+        this.notifyStateChange("effects_applied");
     },
 
     _checkDeathThenContinue: function () {
