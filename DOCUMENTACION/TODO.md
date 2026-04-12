@@ -38,9 +38,18 @@ Esta es la 'biblia' del estado del proyecto para la carpeta de documentación.
 
 ## FASE 7: Roadmap hacia Steam [EN PROCESO]
 - [x] Pilar 1: Juice & Game Feel (Fase 1: Física y Hovers).
-- [x] Pilar 1: Juice & Game Feel (Fase 2: Partículas y Shake).
+- [x] Pilar 1: Juice & Game Feel (Fase 2: Partículas, Shake y Counter Anims).
 - [x] Pilar 2: Profundidad y Rejugabilidad (Perfiles, Promesas, Eventos por cargo, Múltiples finales, Seed).
 - [x] Pilar 3: Música Dinámica (Base implementada) y Sistema de Audio.
 - [x] Pilar 4: Menú de Opciones (Completo con Audio, Video y Accesibilidad).
-- [x] Pilar 5: Sistema de Achievements (Configuración técnica preparada).
+- [ ] Pilar 5: Sistema de Achievements (Configuración técnica preparada).
 - [x] Pilar 6: Localización ES/EN (Sistema dinámico i18n).
+
+## FASE 8: Polish de Lanzamiento y Balanceo de Sistemas [EN PROCESO]
+- [x] **Refactor de UI**: Sistema de renderizado persistente (para no romper animaciones).
+- [x] **Juice Avanzado**: Origen de partículas en la posición del click (`MouseEvent` tracking).
+- [x] **Counter Anims**: Efecto de "surtidor de bencina" en los valores numéricos.
+- [x] **Balanceo v0.8.2**: Corregir sesgo negativo del medidor permanente (ahora 15% chance positivo).
+- [x] **Fix de Eventos**: Asegurar un evento especial único por cargo en el punto medio.
+- [ ] **Sistema de Ministros**: Diseño conceptual completo (vínculo con medidores activos).
+- [ ] **Metaprogresión**: Lógica de puntos de prestigio post-partida.

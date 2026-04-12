@@ -1,16 +1,13 @@
 # Política Dinámica - Documento de Diseño de Juego (GDD)
 
-Versión: 2.0  
-Fecha: Actualizado con todos los cambios discutidos  
-Género: Roguelike / Deckbuilder / Simulación política  
-Plataformas: PC / Web / Móvil (HTML + JS + CSS)  
+Versión: 3.0  
+Fecha: 2026-04-12 - Update "Juice & Steam Success"  
+Género: Roguelike / Simulación política / Estrategia de cartas  
 Perspectiva: 2D, interfaz de cartas y medidores  
 
 ## 1. VISIÓN DEL JUEGO
 ### 1.1 Concepto General
-El jugador comienza como candidato a alcalde y busca ascender hasta presidente, tomando decisiones estratégicas a través de cartas generadas dinámicamente. Cada run es única debido a la aleatorización de medidores activos y la generación contextual de cartas. El juego se reinicia completamente al perder (roguelike puro). 
-
-El diseño busca el "Efecto Candy Crush": rejugabilidad altísima, turnos rápidos, victorias satisfactorias y derrotas por decisiones propias que motivan a intentar "sacar otra partida más".
+El jugador comienza como candidato a alcalde y busca ascender hasta presidente, tomando decisiones estratégicas a través de cartas generadas dinámicamente. Cada run es única debido a la aleatorización de medidores activos y la generación contextual de cartas. El diseño actual evoluciona hacia un "RPG de Sistemas" donde el feedback visual (Juice) y el legado del jugador son los motores principales.
 
 ### 1.2 Pilares de Diseño
 1. **Decisión con Consecuencias:** Cada elección afecta múltiples medidores con trade-offs obligatorios.
@@ -18,7 +15,8 @@ El diseño busca el "Efecto Candy Crush": rejugabilidad altísima, turnos rápid
 3. **Narrativa Emergente:** El periódico al final de cada cargo cuenta tu historia única basada en los balances finales.
 4. **Estrategia Adaptativa:** Debes ajustar tu estrategia según qué medidores están activos.
 5. **Ritmo Ágil (Pacing rápido):** Derrotas y reinicios sin fricción. Partida completa en ~15 minutos.
-6. **Juicy UI & Audio:** Respuesta háptica y visual inmediata (sonidos fuertes al subir/bajar medidores, cartas físicas).
+6. **Juicy UI & Sound:** Respuesta sensorial inmediata. El juego debe "soltar" partículas, sacudirse y sonar mecánicamente satisfactorio (Game Feel).
+7. **Metaprogresión:** Desbloqueables y legado que incentivan una "próxima run" infinita.
 
 ## 2. SISTEMA DE MEDIDORES
 ### 2.1 Estructura

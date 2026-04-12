@@ -42,6 +42,7 @@
 - [x] Preview de efectos al hacer hover sobre cada carta (resaltar medidores afectados)
 - [x] Hitstop de 2-3 frames en momentos dramáticos
 - [x] Partículas al subir medidores (+) y al bajar (-)
+- [x] Counter Anims: Efecto de "surtidor de bencina" en los valores numéricos (conteo de números).
 - [x] Shake en la carta rechazada al seleccionar otra
 
 **Stack técnico:**
